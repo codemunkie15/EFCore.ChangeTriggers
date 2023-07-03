@@ -60,7 +60,7 @@ namespace _01_FullyFeatured
 
                 e.ConfigureChangeTrackingTrigger(options =>
                 {
-                    options.TriggerNameFactory = tableName => $"CustomTriggerName2_{tableName}";
+                    options.TriggerNameFactory = tableName => $"CustomTriggerName_{tableName}";
                 });
             });
 

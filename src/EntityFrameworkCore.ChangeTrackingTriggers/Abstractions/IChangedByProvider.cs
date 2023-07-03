@@ -2,6 +2,6 @@
 {
     public interface IChangedByProvider<TChangedBy>
     {
-        Task<TChangedBy> GetChangedBy();
+        Task<TChangedBy> GetChangedByAsync();
     }
 }

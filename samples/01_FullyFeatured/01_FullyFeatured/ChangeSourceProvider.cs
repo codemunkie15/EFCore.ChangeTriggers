@@ -5,7 +5,7 @@ namespace _01_FullyFeatured
 {
     internal class ChangeSourceProvider : IChangeSourceProvider<int>
     {
-        public Task<int> GetSourceTypeAsync()
+        public Task<int> GetChangeSourceAsync()
         {
             return Task.FromResult((int)ChangeSourceType.ConsoleApp);
         }

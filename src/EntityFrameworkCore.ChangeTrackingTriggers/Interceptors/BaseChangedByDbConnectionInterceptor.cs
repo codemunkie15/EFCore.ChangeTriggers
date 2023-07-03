@@ -16,7 +16,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Interceptors
 
         public override async Task ConnectionOpenedAsync(DbConnection connection, ConnectionEndEventData eventData, CancellationToken cancellationToken = new())
         {
-            var changedBy = await changedByProvider.GetChangedBy();
+            var changedBy = await changedByProvider.GetChangedByAsync();
 
             await SetChangeTrackingContextAsync(eventData, changedBy, cancellationToken);
         }

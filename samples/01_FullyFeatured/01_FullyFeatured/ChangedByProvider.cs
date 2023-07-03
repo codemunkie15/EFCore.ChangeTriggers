@@ -5,7 +5,7 @@ namespace _01_FullyFeatured
 {
     internal class ChangedByProvider : IChangedByProvider<int>
     {
-        public Task<int> GetChangedById()
+        public Task<int> GetChangedByAsync()
         {
             return Task.FromResult(1);
         }

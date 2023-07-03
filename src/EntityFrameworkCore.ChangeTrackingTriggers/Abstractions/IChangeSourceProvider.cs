@@ -2,6 +2,6 @@
 {
     public interface IChangeSourceProvider<TChangeSource>
     {
-        Task<TChangeSource> GetChangeSource();
+        Task<TChangeSource> GetChangeSourceAsync();
     }
 }
