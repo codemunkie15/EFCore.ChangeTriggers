@@ -1,7 +1,7 @@
 ﻿namespace EntityFrameworkCore.ChangeTrackingTriggers.Abstractions
 {
-    public interface IChangedByProvider<TChangedById>
+    public interface IChangedByProvider<TChangedBy>
     {
-        Task<TChangedById> GetChangedById();
+        Task<TChangedBy> GetChangedBy();
     }
 }

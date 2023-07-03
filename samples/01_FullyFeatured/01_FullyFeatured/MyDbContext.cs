@@ -29,7 +29,10 @@ namespace _01_FullyFeatured
 
             modelBuilder.Entity<User>(e =>
             {
-                //e.HasChangeTrackingTrigger<User, UserChange, int>();
+                /*
+                Manual configuration:
+                e.HasChangeTrackingTrigger<User, UserChange, int>();
+                */
                 e.ToTable("Users");
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
@@ -37,7 +40,10 @@ namespace _01_FullyFeatured
 
             modelBuilder.Entity<UserChange>(e =>
             {
-                //e.IsChangeTrackingTable<User, UserChange, int, User, ChangeSourceType>();
+                /*
+                Manual configuration:
+                e.IsChangeTrackingTable<User, UserChange, int, User, ChangeSourceType>();
+                */
                 e.ToTable("UserChanges");
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
@@ -45,7 +51,10 @@ namespace _01_FullyFeatured
 
             modelBuilder.Entity<Permission>(e =>
             {
-                //e.HasChangeTrackingTrigger<Permission, PermissionChange, int>();
+                /*
+                Manual configuration:
+                e.HasChangeTrackingTrigger<Permission, PermissionChange, int>();
+                */
                 e.ToTable("Permissions");
                 e.Property(u => u.Name).IsRequired();
 
@@ -57,14 +66,17 @@ namespace _01_FullyFeatured
 
             modelBuilder.Entity<PermissionChange>(e =>
             {
-                //e.IsChangeTrackingTable<Permission, PermissionChange, int>();
+                /*
+                Manual configuration:
+                e.IsChangeTrackingTable<Permission, PermissionChange, int>();
+                */
                 e.ToTable("PermissionChanges");
                 e.Property(u => u.Name).IsRequired();
             });
 
             modelBuilder.Entity<User>(e =>
             {
-                e.HasData(new User { Id = 1, Name = "Callum", DateOfBirth = "Test" });
+                e.HasData(new User { Id = 1, Name = "Robert", DateOfBirth = "01/01/2000" });
             });
         }
     }

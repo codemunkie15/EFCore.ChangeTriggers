@@ -1,7 +1,7 @@
 ﻿namespace EntityFrameworkCore.ChangeTrackingTriggers.Abstractions
 {
-    public interface IChangeSourceProvider<TSourceType>
+    public interface IChangeSourceProvider<TChangeSource>
     {
-        Task<TSourceType> GetSourceTypeAsync();
+        Task<TChangeSource> GetChangeSource();
     }
 }

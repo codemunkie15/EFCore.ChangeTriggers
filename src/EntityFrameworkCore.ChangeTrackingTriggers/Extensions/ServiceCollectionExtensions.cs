@@ -12,14 +12,14 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
         public static IServiceCollection UseChangedBy<
             TChangedByDbConnectionInterceptor,
             TChangedByProvider,
-            TChangedByIdType>
+            TChangedBy>
             (this IServiceCollection services)
-            where TChangedByDbConnectionInterceptor : BaseChangedByDbConnectionInterceptor<TChangedByIdType>
-            where TChangedByProvider : class, IChangedByProvider<TChangedByIdType>
+            where TChangedByDbConnectionInterceptor : BaseChangedByDbConnectionInterceptor<TChangedBy>
+            where TChangedByProvider : class, IChangedByProvider<TChangedBy>
         {
             return services
                 .AddScoped<IInterceptor, TChangedByDbConnectionInterceptor>()
-                .AddScoped<IChangedByProvider<TChangedByIdType>, TChangedByProvider>()
+                .AddScoped<IChangedByProvider<TChangedBy>, TChangedByProvider>()
                 .AddScoped<IChangedByMigrationScriptGenerator, ChangedByMigrationScriptGenerator>();
         }
 

@@ -7,7 +7,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators.Genera
     {
         public void Generate(IndentedStringBuilder builder)
         {
-            builder.AppendLine($"EXEC sp_set_session_context '{ChangeTrackingContextConstants.ChangedByContextName}', CHANGEDBYID");
+            builder.AppendLine($"EXEC sp_set_session_context '{ChangeTrackingContextConstants.ChangedByContextName}', ChangedBy");
         }
     }
 }
