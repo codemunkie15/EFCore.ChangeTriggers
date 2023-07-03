@@ -5,7 +5,7 @@ EntityFrameworkCore.ChangeTrackingTriggers is an EF Core add-on for storing and 
 The main advantage of using triggers is that any ad-hoc updates to the databases (not using EF Core) are included in change tracking. This can be important if your database often requires manual intervention outside of EF Core and you don't want to miss these changes in your change tracking.
 
 ## Getting started
-**NOTE: As your tracked entity and change entity will require most of the same properties, it is recommended to create a base class that both will extend. See the samples for an implemtation of this.**
+**NOTE: As your tracked entity and change entity will require most of the same properties, it is recommended to create a base class that both will extend. See the samples for an implementation of this.**
 1. Add the below nuget package to your project
 ```
 EntityFrameworkCore.ChangeTrackingTriggers.SqlServer

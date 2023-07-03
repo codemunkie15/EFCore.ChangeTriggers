@@ -27,7 +27,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             // https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-7.0/breaking-changes#sqlserver-tables-with-triggers
             builder.ToTable(t => t.HasTrigger("ChangeTrackingTrigger"));
 
-            // Changes relationship
+            // Configure relationship between TTracked and TChange using primary key as foreign key
             var trackedTablePrimaryKey = trackedEntityType.FindPrimaryKey();
 
             if (trackedTablePrimaryKey == null)
