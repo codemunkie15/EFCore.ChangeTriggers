@@ -35,8 +35,8 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 .AddChangeTrackingExtension<TMigrationsSqlGenerator, ChangeTrackingTriggersMigrator<TChangeSource>>(options, services =>
                 {
                     services
-                        .UseChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>()
-                        .UseChangeSource<TChangeSourceDbConnectionInterceptor, TChangeSourceProvider, TChangeSource>(options);
+                        .AddChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>()
+                        .AddChangeSource<TChangeSourceDbConnectionInterceptor, TChangeSourceProvider, TChangeSource>(options);
                 });
         }
 
@@ -68,7 +68,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 .AddChangeTrackingExtension<TMigrationsSqlGenerator, ChangeTrackingTriggersChangedByMigrator>(options, services =>
                 {
                     services
-                        .UseChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>();
+                        .AddChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>();
                 });
         }
 
@@ -89,7 +89,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 .AddChangeTrackingExtension<TMigrationsSqlGenerator, ChangeTrackingTriggersChangeSourceMigrator<TChangeSource>>(options, services =>
                 {
                     services
-                        .UseChangeSource<TChangeSourceDbConnectionInterceptor, TChangeSourceProvider, TChangeSource>(options);
+                        .AddChangeSource<TChangeSourceDbConnectionInterceptor, TChangeSourceProvider, TChangeSource>(options);
                 });
         }
 

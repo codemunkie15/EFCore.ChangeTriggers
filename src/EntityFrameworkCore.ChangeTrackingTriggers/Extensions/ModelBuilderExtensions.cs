@@ -16,6 +16,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
         private static readonly IEnumerable<MethodInfo> IsChangeTrackingTableMethods = typeof(EntityTypeBuilderExtensions).GetMethods()
             .Where(mi => mi.Name.Equals(nameof(EntityTypeBuilderExtensions.IsChangeTrackingTable)));
 
+        // TODO: Rewrite this as a source generator?
         public static ModelBuilder AutoConfigureChangeTrackingTriggers(this ModelBuilder modelBuilder)
         {
             var trackedTypesInModel = modelBuilder.Model.GetEntityTypes()

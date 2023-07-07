@@ -9,7 +9,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 {
     internal static class ServiceCollectionExtensions
     {
-        public static IServiceCollection UseChangedBy<
+        public static IServiceCollection AddChangedBy<
             TChangedByDbConnectionInterceptor,
             TChangedByProvider,
             TChangedBy>
@@ -23,7 +23,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 .AddScoped<IChangedByMigrationScriptGenerator, ChangedByMigrationScriptGenerator>();
         }
 
-        public static IServiceCollection UseChangeSource<
+        public static IServiceCollection AddChangeSource<
             TChangeSourceDbConnectionInterceptor,
             TChangeSourceProvider,
             TChangeSource>
