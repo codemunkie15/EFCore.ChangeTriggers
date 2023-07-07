@@ -13,22 +13,26 @@ The main advantage of using triggers is that any ad-hoc updates to the databases
 ```
 EntityFrameworkCore.ChangeTrackingTriggers.SqlServer
 ```
+
 2. Implement the `ITracked` interface on any entity classes that you want to track
 ```C#
 public class User : ITracked<UserChange>
 {
 ...
 ```
+
 3. Create a change entity for the tracked entity that implements the `IChange` interface
 ```C#
 public class UserChange : IChange<User, int>
 {
 ...
 ```
+
 4. Add the below assembly attribute to your `Program.cs`
 ```C#
 [assembly: DesignTimeServicesReference("EntityFrameworkCore.ChangeTrackingTriggers.ChangeTrackingDesignTimeServices, EntityFrameworkCore.ChangeTrackingTriggers")]
 ```
+
 5. Add ChangeTrackingTriggers to your `DbContext`
 ```C#
 services.AddDbContext<MyDbContext>(options =>
@@ -37,6 +41,7 @@ services.AddDbContext<MyDbContext>(options =>
         .UseSqlServerChangeTrackingTriggers();
 });
 ```
+
 6. Auto-configure your change tracking trigger entities in your `DbContext`
 ```C#
 protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -49,16 +54,63 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 
 ### Storing who changes are made by
 
+A ChangedBy column can be added and populated on change tables to store who changes are made by.
+
+1. Create a `ChangedByProvider` by implementing the `IChangedByProvider<TChangedBy>` interface.
+```C#
+public class ChangedByProvider : IChangedByProvider<int>
+{
+	public Task<int> GetChangedByAsync()
+	{
+		return Task.FromResult(1);
+	}
+}
+```
+
+2. Use the `UseSqlServerChangeTrackingTriggers<TChangedByProvider, TChangedBy>()` overload, specifying your `ChangedByProvider` and ChangedBy type.
+```C#
+services.AddDbContext<MyDbContext>(options =>
+{
+    options
+        .UseSqlServerChangeTrackingTriggers<ChangedByProvider, int>();
+});
+```
+
 ### Storing the source of changes
+
+A ChangeSource column can be added and populated on change tables to store where the change came from, i.e. if you need to distinguish between migrations, API updates etc.
+
+1. Create a `ChangeSourceProvider` by implementing the `IChangeSourceProvider<TChangeSource>` interface.
+```C#
+public class ChangeSourceProvider : IChangeSourceProvider<int>
+{
+	public Task<int> GetChangeSourceAsync()
+	{
+		return Task.FromResult((int)ChangeSourceType.Migration);
+	}
+}
+```
+
+2. Use the `UseSqlServerChangeTrackingTriggers<TChangeSourceProvider, TChangeSource>()` overload, specifying your `ChangeSourceProvider` and ChangedSource type.
+```C#
+services.AddDbContext<MyDbContext>(options =>
+{
+    options
+        .UseSqlServerChangeTrackingTriggers<ChangeSourceProvider, int>();
+});
+```
 
 ### Customising the trigger
 
-If you need to customise a trigger, for example to change the trigger name, use the `ConfigureChangeTrackingTrigger()` extension method on your `ModelBuilder`.
+Individual change tables can be configured using the `ConfigureChangeTrackingTrigger()` extension method on your `ModelBuilder`.
 
 ```C#
-e.ConfigureChangeTrackingTrigger(options =>
+modelBuilder.Entity<Permission>(e =>
 {
-    options.TriggerNameFactory = tableName => $"CustomTriggerName_{tableName}";
+    e.ConfigureChangeTrackingTrigger(options =>
+    {
+        options.TriggerNameFactory = tableName => $"CustomTriggerName_{tableName}";
+    });
 });
 ```
 
