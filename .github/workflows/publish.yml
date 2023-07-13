@@ -23,7 +23,8 @@ jobs:
       uses: actions/setup-dotnet@v3
       
     # Create the NuGet package
-    - run: dotnet pack --configuration $BUILD_CONFIG
+    - name: Run pack
+      run: dotnet pack --configuration $BUILD_CONFIG
       
     # Run tests
     - name: Run tests
