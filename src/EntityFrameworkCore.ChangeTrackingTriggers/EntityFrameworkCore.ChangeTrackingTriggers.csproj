@@ -11,6 +11,8 @@
     <Nullable>enable</Nullable>
 
 	<IncludeSymbols>true</IncludeSymbols>
+
+	<MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
 
   <ItemGroup>
