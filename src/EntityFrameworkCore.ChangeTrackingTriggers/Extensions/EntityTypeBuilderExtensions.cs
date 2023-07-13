@@ -40,7 +40,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 .HasMany(e => e.Changes)
                 .WithOne(e => e.TrackedEntity)
                 .HasForeignKey(trackedTablePrimaryKey.Properties.Select(p => p.Name).ToArray())
-                .IsRequired(false) // FK column must be nullable to force left join as source record may have been
+                .IsRequired(false) // FK column must be nullable to force left join as source record may have been deleted
                 .HasNoCheck(); // Must be NOCHECK so the FK reference can exist even if the source record is deleted
 
             return builder

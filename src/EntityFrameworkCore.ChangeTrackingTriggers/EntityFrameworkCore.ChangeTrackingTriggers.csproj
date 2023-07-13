@@ -1,15 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+	<Summary>An EF Core add-on for storing and querying changes made to SQL tables using triggers.</Summary>
+	<Description>An EF Core add-on for storing and querying changes made to SQL tables using triggers.</Description>
+	<PackageProjectUrl>https://github.com/codemunkie15/EntityFrameworkCore.ChangeTrackingTriggers</PackageProjectUrl>
+	<Authors>Callum Ellis</Authors>
+
+	<TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+	<IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1">
       <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="MinVer" Version="4.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
