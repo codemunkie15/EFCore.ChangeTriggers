@@ -1,8 +1,9 @@
 name: CI
 on:
+  workflow_dispatch: # Allow running the workflow manually from the GitHub UI
   pull_request:
     branches:
-      - 'main'
+      - 'main' # Run the workflow for pull requests to 'main'
 
 jobs:
   build:
