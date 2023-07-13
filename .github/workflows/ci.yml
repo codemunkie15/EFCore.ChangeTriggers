@@ -28,4 +28,4 @@ jobs:
       
     # Run tests
     - name: Run tests
-      run: dotnet test /p:Configuration=$env:BUILD_CONFIG --no-build
+      run: dotnet test --configuration $BUILD_CONFIG --no-build
