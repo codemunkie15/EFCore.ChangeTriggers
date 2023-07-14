@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	<Summary>An EF Core add-on for storing and querying changes made to SQL tables using triggers.</Summary>
 	<Description>An EF Core add-on for storing and querying changes made to SQL tables using triggers.</Description>
 	<PackageProjectUrl>https://github.com/codemunkie15/EntityFrameworkCore.ChangeTrackingTriggers</PackageProjectUrl>
 	<Authors>Callum Ellis</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
 	<TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -15,6 +16,7 @@
 
   <ItemGroup>
     <None Remove="Templates\CreateChangeTrackingTriggerSqlTemplate.sql" />
+	<None Include="..\..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
