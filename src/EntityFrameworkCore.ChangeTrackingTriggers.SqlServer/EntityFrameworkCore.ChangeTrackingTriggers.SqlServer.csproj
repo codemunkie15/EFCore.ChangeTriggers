@@ -10,8 +10,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-	<IncludeSymbols>true</IncludeSymbols>
-
 	<MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
 
@@ -24,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.1" />
     <PackageReference Include="MinVer" Version="4.3.0">
       <PrivateAssets>all</PrivateAssets>
