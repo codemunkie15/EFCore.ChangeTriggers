@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "01_FullyFeatured", "01_FullyFeatured\01_FullyFeatured.csproj", "{D1B246F3-D9F3-46DB-9B1B-8E7801C4F5C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01_FullyFeatured", "01_FullyFeatured\01_FullyFeatured.csproj", "{D1B246F3-D9F3-46DB-9B1B-8E7801C4F5C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.ChangeTrackingTriggers.SqlServer", "..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.csproj", "{A8D4EBE5-DBA8-4E00-8A84-E1277497FD75}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.ChangeTrackingTriggers", "..\..\src\EntityFrameworkCore.ChangeTrackingTriggers\EntityFrameworkCore.ChangeTrackingTriggers.csproj", "{4AD7220F-A9B1-412C-BA74-D262E0AADE54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{A8D4EBE5-DBA8-4E00-8A84-E1277497FD75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8D4EBE5-DBA8-4E00-8A84-E1277497FD75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8D4EBE5-DBA8-4E00-8A84-E1277497FD75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AD7220F-A9B1-412C-BA74-D262E0AADE54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AD7220F-A9B1-412C-BA74-D262E0AADE54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AD7220F-A9B1-412C-BA74-D262E0AADE54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AD7220F-A9B1-412C-BA74-D262E0AADE54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

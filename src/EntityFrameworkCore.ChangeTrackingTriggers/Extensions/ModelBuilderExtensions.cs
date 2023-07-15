@@ -16,7 +16,13 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
         private static readonly IEnumerable<MethodInfo> IsChangeTrackingTableMethods = typeof(EntityTypeBuilderExtensions).GetMethods()
             .Where(mi => mi.Name.Equals(nameof(EntityTypeBuilderExtensions.IsChangeTrackingTable)));
 
-        // TODO: Rewrite this as a source generator?
+        /// <summary>
+        /// Automatically configures any entities in the model that implement <see cref="ITracked{TChangeType}"/> or <see cref="IChange{TTracked, TChangeIdType}"/>.
+        /// </summary>
+        /// <remarks>This method uses reflection.</remarks>
+        /// <param name="modelBuilder">The model builder being used for configuration.</param>
+        /// <returns>The model builder so that further configuration can be chained.</returns>
+        /// <exception cref="ChangeTrackingTriggersAutoConfigurationException"></exception>
         public static ModelBuilder AutoConfigureChangeTrackingTriggers(this ModelBuilder modelBuilder)
         {
             var trackedTypesInModel = modelBuilder.Model.GetEntityTypes()

@@ -15,7 +15,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Interceptors
         {
         }
 
-        protected override async Task SetChangeTrackingContextAsync(
+        protected override async Task SetChangeSourceChangeTrackingContextAsync(
             ConnectionEndEventData eventData,
             TChangeSource changeSource,
             CancellationToken cancellationToken)

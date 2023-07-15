@@ -10,6 +10,16 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 {
     public static class EntityTypeBuilderExtensions
     {
+        /// <summary>
+        /// Configures the entity to use change tracking triggers.
+        /// </summary>
+        /// <typeparam name="TTrackedEntity">The <see cref="ITracked{TChangeType}"/> entity type to configure change tracking triggers for.</typeparam>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeIdType}"/> entity type that tracks the changes for the <typeparamref name="TTrackedEntity"/>.</typeparam>
+        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
+        /// <param name="builder">The entity type builder used for configuration.</param>
+        /// <param name="optionsBuilder">An optional action to configure the change tracking trigger.</param>
+        /// <returns>The same entity type builder so further calls can be chained.</returns>
+        /// <exception cref="ChangeTrackingTriggersConfigurationException"></exception>
         public static EntityTypeBuilder<TTrackedEntity> HasChangeTrackingTrigger<TTrackedEntity, TChangeEntity, TChangeId>(
             this EntityTypeBuilder<TTrackedEntity> builder,
             Action<ChangeTrackingTriggerOptions>? optionsBuilder = null)
@@ -43,13 +53,24 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 .IsRequired(false) // FK column must be nullable to force left join as source record may have been deleted
                 .HasNoCheck(); // Must be NOCHECK so the FK reference can exist even if the source record is deleted
 
-            return builder
-                .ConfigureChangeTrackingTrigger(optionsBuilder);
+            if (optionsBuilder is not null)
+            {
+                builder.ConfigureChangeTrackingTrigger(optionsBuilder);
+            }
+
+            return builder;
         }
 
+        /// <summary>
+        /// Configures the change tracking trigger for the entity.
+        /// </summary>
+        /// <typeparam name="TTrackedEntity">The tracked entity to configure.</typeparam>
+        /// <param name="builder">The entity type builder to use for configuration.</param>
+        /// <param name="optionsBuilder">An action to configure the change tracking trigger.</param>
+        /// <returns>The same entity type builder so that further calls can be chained.</returns>
         public static EntityTypeBuilder<TTrackedEntity> ConfigureChangeTrackingTrigger<TTrackedEntity>(
             this EntityTypeBuilder<TTrackedEntity> builder,
-            Action<ChangeTrackingTriggerOptions>? optionsBuilder = null)
+            Action<ChangeTrackingTriggerOptions> optionsBuilder)
             where TTrackedEntity : class
         {
             var options = ChangeTrackingTriggerOptions.Create(optionsBuilder);
@@ -122,6 +143,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             if (builder.Metadata.Model.FindEntityType(typeof(TChangedBy)) != null)
             {
                 // Configure ChangedBy as a foreign key with navigation
+                // TODO: Throw if TChangedBy has multiple primary keys - not supported
                 builder
                     .HasOne(typeof(TChangedBy), nameof(IHasChangedBy<TChangedBy>.ChangedBy)) // Can't use a navigation expression because TChangedBy isn't constrained to a class
                     .WithMany()

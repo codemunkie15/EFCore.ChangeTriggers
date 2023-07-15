@@ -18,9 +18,9 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Interceptors
         {
             var sourceType = await changeTrackingSourceTypeProvider.GetChangeSourceAsync();
 
-            await SetChangeTrackingContextAsync(eventData, sourceType, cancellationToken);
+            await SetChangeSourceChangeTrackingContextAsync(eventData, sourceType, cancellationToken);
         }
 
-        protected abstract Task SetChangeTrackingContextAsync(ConnectionEndEventData eventData, TChangeSource changeSource, CancellationToken cancellationToken);
+        protected abstract Task SetChangeSourceChangeTrackingContextAsync(ConnectionEndEventData eventData, TChangeSource changeSource, CancellationToken cancellationToken);
     }
 }

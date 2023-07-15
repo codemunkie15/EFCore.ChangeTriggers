@@ -18,9 +18,9 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Interceptors
         {
             var changedBy = await changedByProvider.GetChangedByAsync();
 
-            await SetChangeTrackingContextAsync(eventData, changedBy, cancellationToken);
+            await SetChangedByChangeTrackingContextAsync(eventData, changedBy, cancellationToken);
         }
 
-        protected abstract Task SetChangeTrackingContextAsync(ConnectionEndEventData eventData, TChangedBy changedBy, CancellationToken cancellationToken);
+        protected abstract Task SetChangedByChangeTrackingContextAsync(ConnectionEndEventData eventData, TChangedBy changedBy, CancellationToken cancellationToken);
     }
 }
