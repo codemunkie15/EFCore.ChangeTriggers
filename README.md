@@ -1,6 +1,10 @@
 # EntityFrameworkCore.ChangeTrackingTriggers
 
+![Nuget](https://img.shields.io/nuget/v/EntityFrameworkCore.ChangeTrackingTriggers)
+
 EntityFrameworkCore.ChangeTrackingTriggers is an EF Core add-on for storing and querying changes made to SQL tables using triggers. A separate table will be created for each tracked entity to store the changes with full EF Core support for querying the changes. The changes table and trigger will be automatically added and updated via migrations when the source table schema changes.
+
+**SQL Server is currently the only supported EF Core provider.**
 
 ## Why use triggers?
 
