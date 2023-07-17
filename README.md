@@ -54,6 +54,11 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 ...
 ```
 
+7. Create a migration to generate the required objects
+```
+dotnet ef migrations add ChangeTrackingTriggers
+```
+
 ## Configuration
 
 ### Storing who changes are made by
