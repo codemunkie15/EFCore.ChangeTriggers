@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 
 namespace _01_FullyFeatured
 {
-    internal class ChangeSourceProvider : IChangeSourceProvider<int>
+    internal class ChangeSourceProvider : IChangeSourceProvider<ChangeSourceType>
     {
-        public Task<int> GetChangeSourceAsync()
+        public Task<ChangeSourceType> GetChangeSourceAsync()
         {
-            return Task.FromResult((int)ChangeSourceType.ConsoleApp);
+            return Task.FromResult(ChangeSourceType.ConsoleApp);
         }
     }
 }

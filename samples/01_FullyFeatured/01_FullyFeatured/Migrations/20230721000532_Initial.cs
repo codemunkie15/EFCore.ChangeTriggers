@@ -124,7 +124,7 @@ namespace _01FullyFeatured.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "DateOfBirth", "Name" },
-                values: new object[] { 1, "01/01/2000", "Robert" });
+                values: new object[] { 1, "01/01/2000", "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PermissionChanges_Id",

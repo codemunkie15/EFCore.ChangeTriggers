@@ -1,4 +1,6 @@
-﻿namespace _01_FullyFeatured.DbModels.Users
+﻿using System;
+
+namespace _01_FullyFeatured.DbModels.Users
 {
     public abstract class UserBase
     {

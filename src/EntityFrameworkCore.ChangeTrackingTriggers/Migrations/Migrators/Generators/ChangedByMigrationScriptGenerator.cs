@@ -7,7 +7,9 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators.Genera
     {
         public void Generate(IndentedStringBuilder builder)
         {
-            builder.AppendLine($"EXEC sp_set_session_context '{ChangeTrackingContextConstants.ChangedByContextName}', ChangedBy");
+            // TODO: This needs to go in the SqlServer project
+            // TODO: Needs a value converter for enums
+            builder.AppendLine($"EXEC sp_set_session_context '{ChangeTrackingContextConstants.ChangedByContextName}', 'ChangedBy'");
         }
     }
 }

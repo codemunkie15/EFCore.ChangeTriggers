@@ -12,8 +12,8 @@ using _01_FullyFeatured;
 namespace _01FullyFeatured.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20230703165442_Initial")]
-    partial class Initial
+    [Migration("20230721001223_Permission")]
+    partial class Permission
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,9 @@ namespace _01FullyFeatured.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Permissions", null, t =>
@@ -48,6 +51,14 @@ namespace _01FullyFeatured.Migrations
                         .HasAnnotation("ChangeTrackingTriggers:ChangeEntityTypeName", "_01_FullyFeatured.DbModels.Permissions.PermissionChange")
                         .HasAnnotation("ChangeTrackingTriggers:TriggerNameFormat", "CustomTriggerName_{0}")
                         .HasAnnotation("ChangeTrackingTriggers:Use", true);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "My permission",
+                            Order = 1
+                        });
                 });
 
             modelBuilder.Entity("_01_FullyFeatured.DbModels.Permissions.PermissionChange", b =>
@@ -75,6 +86,9 @@ namespace _01FullyFeatured.Migrations
                         .HasColumnName("OperationTypeId")
                         .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
                         .HasAnnotation("ChangeTrackingTriggers:IsOperationTypeColumn", true);
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
 
                     b.HasKey("ChangeId");
 
@@ -116,7 +130,7 @@ namespace _01FullyFeatured.Migrations
                         {
                             Id = 1,
                             DateOfBirth = "01/01/2000",
-                            Name = "Robert"
+                            Name = "Admin"
                         });
                 });
 

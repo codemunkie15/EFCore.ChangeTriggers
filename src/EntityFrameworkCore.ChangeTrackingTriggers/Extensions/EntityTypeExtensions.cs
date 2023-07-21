@@ -21,5 +21,22 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             var annotation = entityType.FindAnnotation(AnnotationConstants.TriggerNameFormat);
             return annotation?.Value?.ToString();
         }
+
+        public static IProperty GetSinglePrimaryKeyProperty(this IEntityType entityType)
+        {
+            var primaryKey = entityType.FindPrimaryKey();
+
+            if (primaryKey is null)
+            {
+                // TODO: throw
+            }
+
+            if (primaryKey.Properties.Count > 1)
+            {
+                // TODO: throw
+            }
+
+            return primaryKey.Properties.Single();
+        }
     }
 }

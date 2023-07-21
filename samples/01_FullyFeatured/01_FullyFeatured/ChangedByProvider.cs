@@ -1,13 +1,15 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
+﻿using _01_FullyFeatured.DbModels.Users;
+using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
+using System;
 using System.Threading.Tasks;
 
 namespace _01_FullyFeatured
 {
-    internal class ChangedByProvider : IChangedByProvider<int>
+    internal class ChangedByProvider : IChangedByProvider<User>
     {
-        public Task<int> GetChangedByAsync()
+        public Task<User> GetChangedByAsync()
         {
-            return Task.FromResult(1);
+            return Task.FromResult(new User { Id = 1 });
         }
     }
 }

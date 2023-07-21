@@ -6,15 +6,12 @@ using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Operations;
 using EntityFrameworkCore.ChangeTrackingTriggers.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Update.Internal;
-using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations
 {
@@ -66,6 +63,13 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations
             if (firstDropTableOperationIndex > -1)
             {
                 MoveOperations(sortedOperations, sortedOperations.OfType<DropChangeTrackingTriggerOperation>().ToList(), firstDropTableOperationIndex);
+            }
+
+            // Move DropChangeTrackingTriggerOperation before CreateChangeTrackingTriggerOperation
+            var firstCreateChangeTrackingTriggerOperationIndex = sortedOperations.ToList().FindIndex(o => o.GetType() == typeof(CreateChangeTrackingTriggerOperation));
+            if (firstCreateChangeTrackingTriggerOperationIndex > -1)
+            {
+                MoveOperations(sortedOperations, sortedOperations.OfType<DropChangeTrackingTriggerOperation>().ToList(), firstCreateChangeTrackingTriggerOperationIndex);
             }
 
             return sortedOperations;

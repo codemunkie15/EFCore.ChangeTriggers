@@ -1,9 +1,9 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
 using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
 using EntityFrameworkCore.ChangeTrackingTriggers.Interceptors;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Interceptors
 {
@@ -17,16 +17,13 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Interceptors
 
         protected override async Task SetChangeSourceChangeTrackingContextAsync(
             ConnectionEndEventData eventData,
-            TChangeSource changeSource,
+            object? changeSource,
             CancellationToken cancellationToken)
         {
-            var database = eventData.Context!.Database;
+            var changeSourceSqlValue = eventData.Context?.ConvertToSqlValue<TChangeSource>(changeSource);
 
-            var changeSourceParameter = new SqlParameter("changeSource", changeSource);
-
-            await database.ExecuteSqlRawAsync(
-                $"EXEC sp_set_session_context '{ChangeTrackingContextConstants.ChangeSourceContextName}', @changeSource",
-                new[] { changeSourceParameter },
+            await eventData.Context!.Database.ExecuteSqlAsync(
+                $"EXEC sp_set_session_context {ChangeTrackingContextConstants.ChangeSourceContextName}, {changeSourceSqlValue}",
                 cancellationToken);
         }
     }

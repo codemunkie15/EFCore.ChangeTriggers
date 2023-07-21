@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _01_FullyFeatured;
 
@@ -11,9 +12,11 @@ using _01_FullyFeatured;
 namespace _01FullyFeatured.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230721000532_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,9 +37,6 @@ namespace _01FullyFeatured.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Permissions", null, t =>
@@ -48,14 +48,6 @@ namespace _01FullyFeatured.Migrations
                         .HasAnnotation("ChangeTrackingTriggers:ChangeEntityTypeName", "_01_FullyFeatured.DbModels.Permissions.PermissionChange")
                         .HasAnnotation("ChangeTrackingTriggers:TriggerNameFormat", "CustomTriggerName_{0}")
                         .HasAnnotation("ChangeTrackingTriggers:Use", true);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "My permission",
-                            Order = 1
-                        });
                 });
 
             modelBuilder.Entity("_01_FullyFeatured.DbModels.Permissions.PermissionChange", b =>
@@ -83,9 +75,6 @@ namespace _01FullyFeatured.Migrations
                         .HasColumnName("OperationTypeId")
                         .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
                         .HasAnnotation("ChangeTrackingTriggers:IsOperationTypeColumn", true);
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
 
                     b.HasKey("ChangeId");
 

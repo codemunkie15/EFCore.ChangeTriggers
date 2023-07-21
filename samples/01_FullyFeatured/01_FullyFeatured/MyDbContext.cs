@@ -1,9 +1,8 @@
-﻿using _01_FullyFeatured.DbModels;
-using _01_FullyFeatured.DbModels.Permissions;
+﻿using _01_FullyFeatured.DbModels.Permissions;
 using _01_FullyFeatured.DbModels.Users;
 using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+using System;
 
 namespace _01_FullyFeatured
 {
@@ -76,7 +75,12 @@ namespace _01_FullyFeatured
 
             modelBuilder.Entity<User>(e =>
             {
-                e.HasData(new User { Id = 1, Name = "Robert", DateOfBirth = "01/01/2000" });
+                e.HasData(new User { Id = 1, Name = "Admin", DateOfBirth = "01/01/2000" });
+            });
+
+            modelBuilder.Entity<Permission>(e =>
+            {
+                e.HasData(new Permission { Id = 1, Name = "My permission", Order = 1 });
             });
         }
     }

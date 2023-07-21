@@ -1,9 +1,9 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
 using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
 using EntityFrameworkCore.ChangeTrackingTriggers.Interceptors;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Interceptors
 {
@@ -17,16 +17,13 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Interceptors
 
         protected override async Task SetChangedByChangeTrackingContextAsync(
             ConnectionEndEventData eventData,
-            TChangedBy changedBy,
+            object? changedBy,
             CancellationToken cancellationToken)
         {
-            var database = eventData.Context!.Database;
+            var changedBySqlValue = eventData.Context?.ConvertToSqlValue<TChangedBy>(changedBy);
 
-            var changedByParameter = new SqlParameter("changedBy", changedBy);
-
-            await database.ExecuteSqlRawAsync(
-                $"EXEC sp_set_session_context '{ChangeTrackingContextConstants.ChangedByContextName}', @changedBy",
-                new[] { changedByParameter },
+            await eventData.Context!.Database.ExecuteSqlAsync(
+                $"EXEC sp_set_session_context {ChangeTrackingContextConstants.ChangedByContextName}, {changedBySqlValue}",
                 cancellationToken);
         }
     }
