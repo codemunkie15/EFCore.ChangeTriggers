@@ -32,7 +32,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             var options = ChangeTrackingTriggersOptions<TChangeSource>.Create(optionsBuilder);
 
             return builder
-                .AddChangeTrackingExtension<TMigrationsSqlGenerator, ChangeTrackingTriggersMigrator<TChangeSource>>(options, services =>
+                .AddChangeTrackingExtension<TMigrationsSqlGenerator, ChangeTrackingTriggersMigrator<TChangedBy, TChangeSource>>(options, services =>
                 {
                     services
                         .AddChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>()
@@ -65,7 +65,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             var options = ChangeTrackingTriggersOptions.Create(optionsBuilder);
 
             return builder
-                .AddChangeTrackingExtension<TMigrationsSqlGenerator, ChangeTrackingTriggersChangedByMigrator>(options, services =>
+                .AddChangeTrackingExtension<TMigrationsSqlGenerator, ChangeTrackingTriggersChangedByMigrator<TChangedBy>>(options, services =>
                 {
                     services
                         .AddChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>();

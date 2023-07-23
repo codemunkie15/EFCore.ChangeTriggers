@@ -3,13 +3,18 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Diagnostics;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
 {
     internal abstract class BaseChangeTrackingTriggersMigrator : Migrator
     {
+        private readonly IMigrationsAssembly migrationsAssembly;
+        private readonly IMigrationsSqlGenerator migrationsSqlGenerator;
         protected readonly ISqlGenerationHelper sqlGenerationHelper;
+        private readonly ICurrentDbContext currentContext;
 
         public BaseChangeTrackingTriggersMigrator(
             IMigrationsAssembly migrationsAssembly,
@@ -40,16 +45,25 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
                   commandLogger,
                   databaseProvider)
         {
+            this.migrationsAssembly = migrationsAssembly;
+            this.migrationsSqlGenerator = migrationsSqlGenerator;
             this.sqlGenerationHelper = sqlGenerationHelper;
+            this.currentContext = currentContext;
         }
 
         public override string GenerateScript(string? fromMigration = null, string? toMigration = null, MigrationsSqlGenerationOptions options = MigrationsSqlGenerationOptions.Default)
         {
             var builder = new IndentedStringBuilder();
 
-            GenerateSetContextScript(builder);
+            var setContextOperations = GetSetContextOperations();
 
-            builder.AppendLine();
+            var setContextCommands = migrationsSqlGenerator.Generate(setContextOperations.ToList(), currentContext.Context.Model);
+
+            foreach (var command in setContextCommands)
+            {
+                builder.AppendLines(command.CommandText);
+            }
+
             builder.Append(sqlGenerationHelper.BatchTerminator);
 
             builder.AppendLines(base.GenerateScript(fromMigration, toMigration, options));
@@ -57,6 +71,6 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
             return builder.ToString();
         }
 
-        protected abstract void GenerateSetContextScript(IndentedStringBuilder builder);
+        protected abstract IEnumerable<MigrationOperation> GetSetContextOperations();
     }
 }

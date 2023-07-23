@@ -18,7 +18,8 @@ namespace _01FullyFeatured.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,7 +49,8 @@ namespace _01FullyFeatured.Migrations
                     OperationTypeId = table.Column<int>(type: "int", nullable: false),
                     ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,7 +108,7 @@ namespace _01FullyFeatured.Migrations
                 changeTableName: "PermissionChanges",
                 triggerName: "CustomTriggerName_Permissions",
                 trackedTablePrimaryKeyColumns: new[] { "Id" },
-                changeTableDataColumns: new[] { "Id", "Name" },
+                changeTableDataColumns: new[] { "Id", "Name", "Order" },
                 operationTypeColumn: new ChangeContextColumn("OperationTypeId", "int"),
                 changedAtColumn: new ChangeContextColumn("ChangedAt"));
 
@@ -120,6 +122,11 @@ namespace _01FullyFeatured.Migrations
                 changedAtColumn: new ChangeContextColumn("ChangedAt"),
                 changeSourceColumn: new ChangeContextColumn("ChangeSource", "int"),
                 changedByColumn: new ChangeContextColumn("ChangedById", "int"));
+
+            migrationBuilder.InsertData(
+                table: "Permissions",
+                columns: new[] { "Id", "Name", "Order" },
+                values: new object[] { 1, "My permission", 1 });
 
             migrationBuilder.InsertData(
                 table: "Users",

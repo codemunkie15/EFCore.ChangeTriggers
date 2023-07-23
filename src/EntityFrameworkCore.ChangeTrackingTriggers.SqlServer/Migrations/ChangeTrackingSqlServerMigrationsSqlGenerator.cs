@@ -9,6 +9,13 @@ using System.Reflection;
 using EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Templates;
 using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
 using EntityFrameworkCore.ChangeTrackingTriggers.Models;
+using Azure;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Diagnostics;
+using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
+using Microsoft.EntityFrameworkCore;
+using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Migrations
 {
@@ -39,6 +46,10 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Migrations
             else if (operation is NoCheckConstraintOperation noCheckConstraintOperation)
             {
                 Generate(noCheckConstraintOperation, model, builder);
+            }
+            else if (operation is SetChangeTrackingContextOperation setChangeTrackingContextOperation)
+            {
+                Generate(setChangeTrackingContextOperation, model, builder);
             }
             else
             {
@@ -90,14 +101,36 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Migrations
 
         protected virtual void Generate(NoCheckConstraintOperation operation, IModel model, MigrationCommandListBuilder builder)
         {
-            var sqlHelper = Dependencies.SqlGenerationHelper;
-
             builder
                 .Append("ALTER TABLE ")
                 .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Table, operation.Schema))
                 .Append(" NOCHECK CONSTRAINT ")
                 .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Constraint))
-                .AppendLine(sqlHelper.StatementTerminator)
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator)
+                .EndCommand();
+        }
+
+        protected virtual void Generate(SetChangeTrackingContextOperation operation, IModel model, MigrationCommandListBuilder builder)
+        {
+            Debugger.Launch();
+
+            var rawValue = model.GetRawValue(operation.ContextValue, operation.ContextValueType);
+            var rawValueType = model.GetRawValueType(operation.ContextValueType);
+
+            var nameTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(string))!;
+            var valueTypeMapping = Dependencies.TypeMappingSource.FindMapping(rawValueType);
+
+            if (valueTypeMapping == null)
+            {
+                throw new InvalidOperationException($"The change context type {operation.ContextValueType} is not supported by the provider.");
+            }
+
+            builder
+                .Append("EXEC sp_set_session_context ")
+                .Append(nameTypeMapping.GenerateSqlLiteral(operation.ContextName))
+                .Append(", ")
+                .Append(valueTypeMapping.GenerateSqlLiteral(rawValue))
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator)
                 .EndCommand();
         }
     }

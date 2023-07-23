@@ -1,18 +1,17 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators.Generators;
+﻿using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
+using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
 {
-    internal class ChangeTrackingTriggersChangedByMigrator : BaseChangeTrackingTriggersMigrator
+    internal class ChangeTrackingTriggersChangedByMigrator<TChangedBy> : BaseChangeTrackingTriggersMigrator
     {
-        private readonly IChangedByMigrationScriptGenerator changedByMigrationScriptGenerator;
-
         public ChangeTrackingTriggersChangedByMigrator(
-            IChangedByMigrationScriptGenerator changedByMigrationScriptGenerator,
             IMigrationsAssembly migrationsAssembly,
             IHistoryRepository historyRepository,
             IDatabaseCreator databaseCreator,
@@ -41,12 +40,15 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
                   commandLogger,
                   databaseProvider)
         {
-            this.changedByMigrationScriptGenerator = changedByMigrationScriptGenerator;
         }
 
-        protected override void GenerateSetContextScript(IndentedStringBuilder builder)
+        protected override IEnumerable<MigrationOperation> GetSetContextOperations()
         {
-            changedByMigrationScriptGenerator.Generate(builder);
+            yield return new SetChangeTrackingContextOperation
+            {
+                ContextName = ChangeTrackingContextConstants.ChangedByContextName,
+                ContextValueType = typeof(TChangedBy)
+            };
         }
     }
 }

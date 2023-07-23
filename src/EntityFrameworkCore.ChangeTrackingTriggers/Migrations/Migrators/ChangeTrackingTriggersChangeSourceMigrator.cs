@@ -1,21 +1,21 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Configuration;
-using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators.Generators;
+using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
+using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
 {
-    internal class ChangeTrackingTriggersChangeSourceMigrator<TSourceType> : BaseChangeTrackingTriggersMigrator
+    internal class ChangeTrackingTriggersChangeSourceMigrator<TChangeSource> : BaseChangeTrackingTriggersMigrator
     {
-        private readonly ChangeTrackingTriggersOptions<TSourceType> changeTrackingTriggersOptions;
-        private readonly IChangeSourceMigrationScriptGenerator changeSourceTypeMigrationScriptGenerator;
+        private readonly ChangeTrackingTriggersOptions<TChangeSource> changeTrackingTriggersOptions;
 
         public ChangeTrackingTriggersChangeSourceMigrator(
-            ChangeTrackingTriggersOptions<TSourceType> changeTrackingTriggersOptions,
-            IChangeSourceMigrationScriptGenerator changeSourceTypeMigrationScriptGenerator,
+            ChangeTrackingTriggersOptions<TChangeSource> changeTrackingTriggersOptions,
             IMigrationsAssembly migrationsAssembly,
             IHistoryRepository historyRepository,
             IDatabaseCreator databaseCreator,
@@ -45,12 +45,16 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
                   databaseProvider)
         {
             this.changeTrackingTriggersOptions = changeTrackingTriggersOptions;
-            this.changeSourceTypeMigrationScriptGenerator = changeSourceTypeMigrationScriptGenerator;
         }
 
-        protected override void GenerateSetContextScript(IndentedStringBuilder builder)
+        protected override IEnumerable<MigrationOperation> GetSetContextOperations()
         {
-            changeSourceTypeMigrationScriptGenerator.Generate(builder, changeTrackingTriggersOptions.MigrationSourceType);
+            yield return new SetChangeTrackingContextOperation
+            {
+                ContextName = ChangeTrackingContextConstants.ChangeSourceContextName,
+                ContextValue = changeTrackingTriggersOptions.MigrationSourceType,
+                ContextValueType = typeof(TChangeSource)
+            };
         }
     }
 }

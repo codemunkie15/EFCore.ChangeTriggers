@@ -18,30 +18,12 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Interceptors
 
         public override async Task ConnectionOpenedAsync(DbConnection connection, ConnectionEndEventData eventData, CancellationToken cancellationToken = new())
         {
-            var changedBy = await GetChangedByAsync(eventData.Context);
-
-            await SetChangedByChangeTrackingContextAsync(eventData, changedBy, cancellationToken);
-        }
-
-        protected abstract Task SetChangedByChangeTrackingContextAsync(ConnectionEndEventData eventData, object? changedBy, CancellationToken cancellationToken);
-
-        private async Task<object?> GetChangedByAsync(DbContext context)
-        {
             var changedBy = await changedByProvider.GetChangedByAsync();
+            var changedByRawValue = eventData.Context?.Model.GetRawValue<TChangedBy>(changedBy);
 
-            var changedByEntityType = context.Model.FindEntityType(typeof(TChangedBy));
-
-            if (changedByEntityType is not null)
-            {
-                // Use the ChangedBy entity primary key
-                var primaryKeyProperty = changedByEntityType.GetSinglePrimaryKeyProperty();
-                return primaryKeyProperty.GetGetter().GetClrValue(changedBy);
-            }
-            else
-            {
-                // Use the literal value
-                return changedBy;
-            }
+            await SetChangedByChangeTrackingContextAsync(eventData, changedByRawValue, cancellationToken);
         }
+
+        protected abstract Task SetChangedByChangeTrackingContextAsync(ConnectionEndEventData eventData, object? changedByRawValue, CancellationToken cancellationToken);
     }
 }

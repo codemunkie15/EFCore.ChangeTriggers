@@ -17,13 +17,13 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Interceptors
 
         protected override async Task SetChangedByChangeTrackingContextAsync(
             ConnectionEndEventData eventData,
-            object? changedBy,
+            object? changedByRawValue,
             CancellationToken cancellationToken)
         {
-            var changedBySqlValue = eventData.Context?.ConvertToSqlValue<TChangedBy>(changedBy);
+            var changedByProviderValue = eventData.Context?.ConvertToProvider<TChangedBy>(changedByRawValue);
 
             await eventData.Context!.Database.ExecuteSqlAsync(
-                $"EXEC sp_set_session_context {ChangeTrackingContextConstants.ChangedByContextName}, {changedBySqlValue}",
+                $"EXEC sp_set_session_context {ChangeTrackingContextConstants.ChangedByContextName}, {changedByProviderValue}",
                 cancellationToken);
         }
     }

@@ -12,8 +12,8 @@ using _01_FullyFeatured;
 namespace _01FullyFeatured.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20230721001223_Permission")]
-    partial class Permission
+    [Migration("20230723132049_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

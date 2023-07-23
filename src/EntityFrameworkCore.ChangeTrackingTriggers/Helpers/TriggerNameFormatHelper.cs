@@ -14,12 +14,12 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Helpers
             {
                 if (trackedEntityType != null)
                 {
-                    throw new ChangeTrackingTriggersInvalidTriggerNameException(
+                    throw new ChangeTrackingTriggersConfigurationException(
                         $"Trigger name for tracked entity type '{trackedEntityType.Name}' cannot contain the value '{{0}}'.");
                 }
                 else
                 {
-                    throw new ChangeTrackingTriggersInvalidTriggerNameException(
+                    throw new ChangeTrackingTriggersConfigurationException(
                         $"Trigger name cannot contain the value '{{0}}'.");
                 }
             }

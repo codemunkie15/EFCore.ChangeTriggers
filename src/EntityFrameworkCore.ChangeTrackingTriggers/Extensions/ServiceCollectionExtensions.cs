@@ -1,7 +1,6 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
 using EntityFrameworkCore.ChangeTrackingTriggers.Configuration;
 using EntityFrameworkCore.ChangeTrackingTriggers.Interceptors;
-using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators.Generators;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,8 +18,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
         {
             return services
                 .AddScoped<IInterceptor, TChangedByDbConnectionInterceptor>()
-                .AddScoped<IChangedByProvider<TChangedBy>, TChangedByProvider>()
-                .AddScoped<IChangedByMigrationScriptGenerator, ChangedByMigrationScriptGenerator>();
+                .AddScoped<IChangedByProvider<TChangedBy>, TChangedByProvider>();
         }
 
         public static IServiceCollection AddChangeSource<
@@ -35,8 +33,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             return services
                 .AddSingleton(options) // Register options with TChangeSource
                 .AddScoped<IInterceptor, TChangeSourceDbConnectionInterceptor>()
-                .AddScoped<IChangeSourceProvider<TChangeSource>, TChangeSourceProvider>()
-                .AddScoped<IChangeSourceMigrationScriptGenerator, ChangeSourceMigrationScriptGenerator>();
+                .AddScoped<IChangeSourceProvider<TChangeSource>, TChangeSourceProvider>();
         }
     }
 }

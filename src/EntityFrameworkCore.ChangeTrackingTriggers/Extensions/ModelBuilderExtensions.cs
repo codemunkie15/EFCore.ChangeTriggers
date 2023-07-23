@@ -42,7 +42,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 
                 if (changeInterfaceType == null)
                 {
-                    throw new ChangeTrackingTriggersAutoConfigurationException(
+                    throw new ChangeTrackingTriggersConfigurationException(
                         $"The type '{changeType.Name}' needs to implement the IChange interface to be used as the change type for tracked type '{trackedType.Name}'.");
                 }
 

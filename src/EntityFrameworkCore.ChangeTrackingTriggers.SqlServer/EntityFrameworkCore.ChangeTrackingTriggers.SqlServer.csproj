@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <None Remove="Templates\CreateChangeTrackingTriggerSqlTemplate.sql" />
-	<None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

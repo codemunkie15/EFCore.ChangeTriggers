@@ -140,10 +140,13 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             where TTrackedEntity : class, ITracked<TChangeEntity>
             where TChangeEntity : class, IChange<TTrackedEntity, TChangeId>, IHasChangedBy<TChangedBy>
         {
-            if (builder.Metadata.Model.FindEntityType(typeof(TChangedBy)) != null)
+            var changedByEntity = builder.Metadata.Model.FindEntityType(typeof(TChangedBy));
+            if (changedByEntity != null)
             {
-                // Configure ChangedBy as a foreign key with navigation
-                // TODO: Throw if TChangedBy has multiple primary keys - not supported
+                // Configure ChangedBy as a relationship with navigation
+
+                changedByEntity.EnsureSinglePrimaryKey();
+
                 builder
                     .HasOne(typeof(TChangedBy), nameof(IHasChangedBy<TChangedBy>.ChangedBy)) // Can't use a navigation expression because TChangedBy isn't constrained to a class
                     .WithMany()

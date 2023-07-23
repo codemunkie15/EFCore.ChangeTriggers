@@ -1,11 +1,12 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
+using EntityFrameworkCore.ChangeTrackingTriggers.Exceptions;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 {
     public static class EntityTypeExtensions
     {
-        public static bool IsChangeTracked(this IEntityType entityType)
+        public static bool IsChangeTracked(this IReadOnlyEntityType entityType)
         {
             return entityType.FindAnnotation(AnnotationConstants.UseChangeTrackingTriggers) != null;
         }
@@ -16,7 +17,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             return entityType.Model.FindEntityType(changeEntityTypeName)!;
         }
 
-        public static string? GetTriggerNameFormat(this IEntityType entityType)
+        public static string? GetTriggerNameFormat(this IReadOnlyEntityType entityType)
         {
             var annotation = entityType.FindAnnotation(AnnotationConstants.TriggerNameFormat);
             return annotation?.Value?.ToString();
@@ -24,19 +25,26 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 
         public static IProperty GetSinglePrimaryKeyProperty(this IEntityType entityType)
         {
+            entityType.EnsureSinglePrimaryKey();
+
+            var primaryKey = entityType.FindPrimaryKey();
+
+            return primaryKey!.Properties.Single();
+        }
+
+        public static void EnsureSinglePrimaryKey(this IReadOnlyEntityType entityType)
+        {
             var primaryKey = entityType.FindPrimaryKey();
 
             if (primaryKey is null)
             {
-                // TODO: throw
+                throw new ChangeTrackingTriggersConfigurationException($"{entityType.Name} must have a primary key property to use change tracking triggers.");
             }
 
             if (primaryKey.Properties.Count > 1)
             {
-                // TODO: throw
+                throw new ChangeTrackingTriggersConfigurationException($"{entityType.Name} must only have one primary key property to use change tracking triggers.");
             }
-
-            return primaryKey.Properties.Single();
         }
     }
 }
