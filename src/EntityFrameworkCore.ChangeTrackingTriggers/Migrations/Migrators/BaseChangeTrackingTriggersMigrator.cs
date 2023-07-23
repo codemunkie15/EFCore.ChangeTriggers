@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EntityFrameworkCore.ChangeTrackingTriggers.Configuration;
+using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
+using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
+using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Operations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -70,5 +74,15 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
         }
 
         protected abstract IEnumerable<MigrationOperation> GetSetContextOperations();
+
+        protected SetChangeTrackingContextOperation GenerateSetChangeTrackingContextOperation<TContextValue>(string name, object? value)
+        {
+            return new SetChangeTrackingContextOperation
+            {
+                ContextName = name,
+                ContextValue = currentContext.Context.Model.GetRawValue<TContextValue>(value),
+                ContextValueType = currentContext.Context.Model.GetRawValueType(typeof(TContextValue))
+            };
+        }
     }
 }

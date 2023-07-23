@@ -52,12 +52,9 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
 
         protected override IEnumerable<MigrationOperation> GetSetContextOperations()
         {
-            yield return new SetChangeTrackingContextOperation
-            {
-                ContextName = ChangeTrackingContextConstants.ChangeSourceContextName,
-                ContextValue = currentContext.Context.Model.GetRawValue<TChangeSource>(changeTrackingTriggersOptions.MigrationSourceType),
-                ContextValueType = currentContext.Context.Model.GetRawValueType(typeof(TChangeSource))
-            };
+            yield return GenerateSetChangeTrackingContextOperation<TChangeSource>(
+                ChangeTrackingContextConstants.ChangeSourceContextName,
+                changeTrackingTriggersOptions.MigrationSourceType);
         }
     }
 }
