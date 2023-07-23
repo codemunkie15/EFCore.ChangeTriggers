@@ -1,9 +1,11 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Configuration;
 using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
+using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -13,6 +15,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
     internal class ChangeTrackingTriggersMigrator<TChangedBy, TChangeSource> : BaseChangeTrackingTriggersMigrator
     {
         private readonly ChangeTrackingTriggersOptions<TChangeSource> changeTrackingTriggersOptions;
+        private readonly ICurrentDbContext currentContext;
 
         public ChangeTrackingTriggersMigrator(
             ChangeTrackingTriggersOptions<TChangeSource> changeTrackingTriggersOptions,
@@ -45,6 +48,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
                   databaseProvider)
         {
             this.changeTrackingTriggersOptions = changeTrackingTriggersOptions;
+            this.currentContext = currentContext;
         }
 
         protected override IEnumerable<MigrationOperation> GetSetContextOperations()
@@ -52,14 +56,14 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
             yield return new SetChangeTrackingContextOperation
             { 
                 ContextName = ChangeTrackingContextConstants.ChangedByContextName,
-                ContextValueType = typeof(TChangedBy)
+                ContextValueType = currentContext.Context.Model.GetRawValueType(typeof(TChangedBy))
             };
 
             yield return new SetChangeTrackingContextOperation
             {
                 ContextName = ChangeTrackingContextConstants.ChangeSourceContextName,
-                ContextValue = changeTrackingTriggersOptions.MigrationSourceType,
-                ContextValueType = typeof(TChangeSource)
+                ContextValue = currentContext.Context.Model.GetRawValue<TChangeSource>(changeTrackingTriggersOptions.MigrationSourceType),
+                ContextValueType = currentContext.Context.Model.GetRawValueType(typeof(TChangeSource))
             };
         }
     }

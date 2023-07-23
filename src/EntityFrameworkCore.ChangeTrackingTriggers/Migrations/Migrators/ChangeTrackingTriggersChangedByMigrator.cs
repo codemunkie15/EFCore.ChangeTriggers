@@ -1,4 +1,5 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
+using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -11,6 +12,8 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
 {
     internal class ChangeTrackingTriggersChangedByMigrator<TChangedBy> : BaseChangeTrackingTriggersMigrator
     {
+        private readonly ICurrentDbContext currentContext;
+
         public ChangeTrackingTriggersChangedByMigrator(
             IMigrationsAssembly migrationsAssembly,
             IHistoryRepository historyRepository,
@@ -40,6 +43,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
                   commandLogger,
                   databaseProvider)
         {
+            this.currentContext = currentContext;
         }
 
         protected override IEnumerable<MigrationOperation> GetSetContextOperations()
@@ -47,7 +51,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
             yield return new SetChangeTrackingContextOperation
             {
                 ContextName = ChangeTrackingContextConstants.ChangedByContextName,
-                ContextValueType = typeof(TChangedBy)
+                ContextValueType = currentContext.Context.Model.GetRawValueType(typeof(TChangedBy))
             };
         }
     }

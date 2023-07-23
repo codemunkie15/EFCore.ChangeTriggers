@@ -1,5 +1,6 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Configuration;
 using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
+using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -13,6 +14,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
     internal class ChangeTrackingTriggersChangeSourceMigrator<TChangeSource> : BaseChangeTrackingTriggersMigrator
     {
         private readonly ChangeTrackingTriggersOptions<TChangeSource> changeTrackingTriggersOptions;
+        private readonly ICurrentDbContext currentContext;
 
         public ChangeTrackingTriggersChangeSourceMigrator(
             ChangeTrackingTriggersOptions<TChangeSource> changeTrackingTriggersOptions,
@@ -45,6 +47,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
                   databaseProvider)
         {
             this.changeTrackingTriggersOptions = changeTrackingTriggersOptions;
+            this.currentContext = currentContext;
         }
 
         protected override IEnumerable<MigrationOperation> GetSetContextOperations()
@@ -52,8 +55,8 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
             yield return new SetChangeTrackingContextOperation
             {
                 ContextName = ChangeTrackingContextConstants.ChangeSourceContextName,
-                ContextValue = changeTrackingTriggersOptions.MigrationSourceType,
-                ContextValueType = typeof(TChangeSource)
+                ContextValue = currentContext.Context.Model.GetRawValue<TChangeSource>(changeTrackingTriggersOptions.MigrationSourceType),
+                ContextValueType = currentContext.Context.Model.GetRawValueType(typeof(TChangeSource))
             };
         }
     }

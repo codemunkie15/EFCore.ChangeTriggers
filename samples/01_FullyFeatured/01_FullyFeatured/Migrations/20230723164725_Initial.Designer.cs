@@ -12,7 +12,7 @@ using _01_FullyFeatured;
 namespace _01FullyFeatured.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20230723132049_Initial")]
+    [Migration("20230723164725_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

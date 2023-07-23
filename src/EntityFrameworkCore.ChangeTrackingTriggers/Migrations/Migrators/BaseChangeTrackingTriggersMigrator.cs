@@ -11,7 +11,6 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
 {
     internal abstract class BaseChangeTrackingTriggersMigrator : Migrator
     {
-        private readonly IMigrationsAssembly migrationsAssembly;
         private readonly IMigrationsSqlGenerator migrationsSqlGenerator;
         protected readonly ISqlGenerationHelper sqlGenerationHelper;
         private readonly ICurrentDbContext currentContext;
@@ -45,7 +44,6 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
                   commandLogger,
                   databaseProvider)
         {
-            this.migrationsAssembly = migrationsAssembly;
             this.migrationsSqlGenerator = migrationsSqlGenerator;
             this.sqlGenerationHelper = sqlGenerationHelper;
             this.currentContext = currentContext;

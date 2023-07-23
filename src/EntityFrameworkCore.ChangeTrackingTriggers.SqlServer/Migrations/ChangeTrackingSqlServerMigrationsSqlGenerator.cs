@@ -112,13 +112,8 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Migrations
 
         protected virtual void Generate(SetChangeTrackingContextOperation operation, IModel model, MigrationCommandListBuilder builder)
         {
-            Debugger.Launch();
-
-            var rawValue = model.GetRawValue(operation.ContextValue, operation.ContextValueType);
-            var rawValueType = model.GetRawValueType(operation.ContextValueType);
-
             var nameTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(string))!;
-            var valueTypeMapping = Dependencies.TypeMappingSource.FindMapping(rawValueType);
+            var valueTypeMapping = Dependencies.TypeMappingSource.FindMapping(operation.ContextValueType);
 
             if (valueTypeMapping == null)
             {
@@ -129,7 +124,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Migrations
                 .Append("EXEC sp_set_session_context ")
                 .Append(nameTypeMapping.GenerateSqlLiteral(operation.ContextName))
                 .Append(", ")
-                .Append(valueTypeMapping.GenerateSqlLiteral(rawValue))
+                .Append(valueTypeMapping.GenerateSqlLiteral(operation.ContextValue))
                 .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator)
                 .EndCommand();
         }
