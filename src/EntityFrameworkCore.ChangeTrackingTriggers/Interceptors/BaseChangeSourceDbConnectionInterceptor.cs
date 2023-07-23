@@ -1,6 +1,5 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
 using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
 

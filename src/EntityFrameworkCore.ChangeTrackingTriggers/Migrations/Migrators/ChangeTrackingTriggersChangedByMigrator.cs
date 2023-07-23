@@ -1,6 +1,4 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
-using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
-using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;

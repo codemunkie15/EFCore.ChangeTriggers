@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
-using System;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 {

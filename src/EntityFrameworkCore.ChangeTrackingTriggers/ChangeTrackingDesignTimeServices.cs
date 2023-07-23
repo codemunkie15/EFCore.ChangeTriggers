@@ -5,7 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers
 {
-    internal class ChangeTrackingDesignTimeServices : IDesignTimeServices
+    /// <summary>
+    /// Design time services required for change tracking trigger migrations.
+    /// </summary>
+    public class ChangeTrackingDesignTimeServices : IDesignTimeServices
     {
         public void ConfigureDesignTimeServices(IServiceCollection services)
         {

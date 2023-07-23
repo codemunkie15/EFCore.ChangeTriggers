@@ -3,7 +3,6 @@ using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
 using EntityFrameworkCore.ChangeTrackingTriggers.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Interceptors
 {

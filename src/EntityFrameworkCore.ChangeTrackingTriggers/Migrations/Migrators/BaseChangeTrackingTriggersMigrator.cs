@@ -1,6 +1,4 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.Configuration;
-using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
-using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
+﻿using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 using EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -9,7 +7,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Diagnostics;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Migrations.Migrators
 {

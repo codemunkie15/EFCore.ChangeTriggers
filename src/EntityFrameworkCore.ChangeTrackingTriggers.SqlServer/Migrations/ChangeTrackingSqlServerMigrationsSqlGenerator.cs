@@ -9,13 +9,6 @@ using System.Reflection;
 using EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Templates;
 using EntityFrameworkCore.ChangeTrackingTriggers.Constants;
 using EntityFrameworkCore.ChangeTrackingTriggers.Models;
-using Azure;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Diagnostics;
-using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
-using Microsoft.EntityFrameworkCore;
-using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.Migrations
 {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 {
-    public static class EntityTypeExtensions
+    internal static class EntityTypeExtensions
     {
         public static bool IsChangeTracked(this IReadOnlyEntityType entityType)
         {
