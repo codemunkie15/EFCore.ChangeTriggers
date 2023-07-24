@@ -2,7 +2,6 @@
 using _01_FullyFeatured.DbModels.Users;
 using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace _01_FullyFeatured
 {
@@ -12,7 +11,7 @@ namespace _01_FullyFeatured
 
         public DbSet<Permission> Permissions { get; set; }
 
-        public DbSet<User> UserChanges { get; set; }
+        public DbSet<UserChange> UserChanges { get; set; }
 
         public DbSet<PermissionChange> PermissionChanges { get; set; }
 
@@ -76,11 +75,6 @@ namespace _01_FullyFeatured
             modelBuilder.Entity<User>(e =>
             {
                 e.HasData(new User { Id = 1, Name = "Admin", DateOfBirth = "01/01/2000" });
-            });
-
-            modelBuilder.Entity<Permission>(e =>
-            {
-                e.HasData(new Permission { Id = 1, Name = "My permission", Order = 1 });
             });
         }
     }

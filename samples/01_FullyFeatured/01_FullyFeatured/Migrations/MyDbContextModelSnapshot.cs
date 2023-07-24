@@ -34,9 +34,6 @@ namespace _01FullyFeatured.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Permissions", null, t =>
@@ -48,14 +45,6 @@ namespace _01FullyFeatured.Migrations
                         .HasAnnotation("ChangeTrackingTriggers:ChangeEntityTypeName", "_01_FullyFeatured.DbModels.Permissions.PermissionChange")
                         .HasAnnotation("ChangeTrackingTriggers:TriggerNameFormat", "CustomTriggerName_{0}")
                         .HasAnnotation("ChangeTrackingTriggers:Use", true);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "My permission",
-                            Order = 1
-                        });
                 });
 
             modelBuilder.Entity("_01_FullyFeatured.DbModels.Permissions.PermissionChange", b =>
@@ -83,9 +72,6 @@ namespace _01FullyFeatured.Migrations
                         .HasColumnName("OperationTypeId")
                         .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
                         .HasAnnotation("ChangeTrackingTriggers:IsOperationTypeColumn", true);
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
 
                     b.HasKey("ChangeId");
 
