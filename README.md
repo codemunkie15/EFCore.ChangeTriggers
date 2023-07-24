@@ -67,11 +67,11 @@ A ChangedBy column can be added and populated on change tables to store who chan
 
 1. Create a `ChangedByProvider` by implementing the `IChangedByProvider<TChangedBy>` interface.
 ```C#
-public class ChangedByProvider : IChangedByProvider<int>
+public class ChangedByProvider : IChangedByProvider<User>
 {
-	public Task<int> GetChangedByAsync()
+	public Task<User> GetChangedByAsync()
 	{
-		return Task.FromResult(1);
+		return Task.FromResult(new User { Id = 1});
 	}
 }
 ```
@@ -81,7 +81,7 @@ public class ChangedByProvider : IChangedByProvider<int>
 services.AddDbContext<MyDbContext>(options =>
 {
     options
-        .UseSqlServerChangeTrackingTriggers<ChangedByProvider, int>();
+        .UseSqlServerChangeTrackingTriggers<ChangedByProvider, User>();
 });
 ```
 
@@ -91,21 +91,21 @@ A ChangeSource column can be added and populated on change tables to store where
 
 1. Create a `ChangeSourceProvider` by implementing the `IChangeSourceProvider<TChangeSource>` interface.
 ```C#
-public class ChangeSourceProvider : IChangeSourceProvider<int>
+public class ChangeSourceProvider : IChangeSourceProvider<ChangeSourceType>
 {
-	public Task<int> GetChangeSourceAsync()
+	public Task<ChangeSourceType> GetChangeSourceAsync()
 	{
-		return Task.FromResult((int)ChangeSourceType.Migration);
+		return Task.FromResult(ChangeSourceType.WebApi);
 	}
 }
 ```
 
-2. Use the `UseSqlServerChangeTrackingTriggers<TChangeSourceProvider, TChangeSource>()` overload, specifying your `ChangeSourceProvider` and ChangedSource type.
+2. Use the `UseSqlServerChangeTrackingTriggers<TChangeSourceProvider, TChangeSource>()` overload, specifying your `ChangeSourceProvider` and ChangeSource type.
 ```C#
 services.AddDbContext<MyDbContext>(options =>
 {
     options
-        .UseSqlServerChangeTrackingTriggers<ChangeSourceProvider, int>();
+        .UseSqlServerChangeTrackingTriggers<ChangeSourceProvider, ChangeSourceType>();
 });
 ```
 
