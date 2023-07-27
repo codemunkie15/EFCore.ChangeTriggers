@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>TestHarness</RootNamespace>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="7.1.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <ProjectReference Include="..\..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+</Project>
