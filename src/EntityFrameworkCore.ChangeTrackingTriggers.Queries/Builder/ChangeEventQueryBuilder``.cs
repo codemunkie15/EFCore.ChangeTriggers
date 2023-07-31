@@ -23,5 +23,12 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder
 
             return this;
         }
+
+        public ChangeEventQueryBuilder<TChangedBy, TChangeSource> AddEntityQuery<TChange, TTracked, TChangeId>(
+            IQueryable<TChange> dbSet)
+            where TChange : class, IChange<TTracked, TChangeId>, IHasChangedBy<TChangedBy>, IHasChangeSource<TChangeSource>
+        {
+            return this;
+        }
     }
 }

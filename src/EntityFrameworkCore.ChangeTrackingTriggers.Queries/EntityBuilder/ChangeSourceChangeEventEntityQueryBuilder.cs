@@ -25,7 +25,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
                 OldValue = valueSelector.Invoke(jc.PreviousChangeEntity),
                 NewValue = valueSelector.Invoke(jc.ChangeEntity),
                 ChangedAt = jc.ChangeEntity.ChangedAt,
-                ChangeSource = ((IHasChangeSource<TChangeSource>)jc.ChangeEntity).ChangeSource
+                ChangeSource = jc.ChangeEntity.ChangeSource
             });
         }
     }
