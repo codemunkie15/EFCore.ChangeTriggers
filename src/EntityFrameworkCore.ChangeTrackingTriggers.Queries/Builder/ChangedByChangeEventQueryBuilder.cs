@@ -1,4 +1,5 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder;
+﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
+using EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder
@@ -10,9 +11,17 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder
         {
         }
 
-        protected override IChangeEventEntityQueryBuilder<TChange, ChangedByChangeEvent<TChangedBy>> CreateEntityBuilder<TChange, TTracked, TChangeId>(IQueryable<TChange> dbSet)
+        public ChangedByChangeEventQueryBuilder<TChangedBy> AddEntityQuery<TChange, TTracked, TChangeId>(
+            IQueryable<TChange> dbSet,
+            Action<IChangeEventEntityQueryBuilder<TChange, ChangedByChangeEvent<TChangedBy>>> entityBuilder)
+            where TChange : class, IChange<TTracked, TChangeId>, IHasChangedBy<TChangedBy>
         {
-            return new ChangedByChangeEventEntityQueryBuilder<TChange, TTracked, TChangeId, TChangedBy>(context, dbSet);
+            var entityBuilderInstance = new ChangedByChangeEventEntityQueryBuilder<TChange, TTracked, TChangeId, TChangedBy>(context, dbSet);
+            entityBuilder(entityBuilderInstance);
+
+            changeQueries.Add(entityBuilderInstance.Build());
+
+            return this;
         }
     }
 }

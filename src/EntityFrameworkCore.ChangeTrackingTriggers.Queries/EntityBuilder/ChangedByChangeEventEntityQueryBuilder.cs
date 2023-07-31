@@ -7,17 +7,11 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
 {
     public class ChangedByChangeEventEntityQueryBuilder<TChange, TTracked, TChangeId, TChangedBy>
         : BaseChangeEventEntityQueryBuilder<ChangedByChangeEvent<TChangedBy>, TChange, TTracked, TChangeId>
-        where TChange : class, IChange<TTracked, TChangeId>
+        where TChange : class, IChange<TTracked, TChangeId>, IHasChangedBy<TChangedBy>
     {
         public ChangedByChangeEventEntityQueryBuilder(DbContext context, IQueryable<TChange> dbSet)
             : base(context, dbSet)
         {
-            if (!typeof(IHasChangedBy<TChangedBy>).IsAssignableFrom(typeof(TChange)))
-            {
-                throw new ChangeTrackingTriggersQueryBuilderException(
-                    $"The change entity type {typeof(TChange).Name} must implement {typeof(IHasChangedBy<>).Name} to use this builder. " +
-                    $"Consider building a new query with the correct builder for this change entity.");
-            }
         }
 
         protected override IQueryable<ChangedByChangeEvent<TChangedBy>> ProjectToResult(
