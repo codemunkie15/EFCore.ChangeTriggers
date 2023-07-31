@@ -15,7 +15,8 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
             if (!typeof(IHasChangedBy<TChangedBy>).IsAssignableFrom(typeof(TChange)))
             {
                 throw new ChangeTrackingTriggersQueryBuilderException(
-                    $"The change entity type {typeof(TChange).Name} must implement {typeof(IHasChangedBy<>).Name} to use this builder.");
+                    $"The change entity type {typeof(TChange).Name} must implement {typeof(IHasChangedBy<>).Name} to use this builder. " +
+                    $"Consider building a new query with the correct builder for this change entity.");
             }
         }
 

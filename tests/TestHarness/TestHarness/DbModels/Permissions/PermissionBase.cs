@@ -15,5 +15,7 @@ namespace TestHarness.DbModels.Permissions
         public Guid Reference { get; set; }
 
         public bool Enabled { get; set; }
+
+        public SomeEntity? SomeEntity { get; set; }
     }
 }

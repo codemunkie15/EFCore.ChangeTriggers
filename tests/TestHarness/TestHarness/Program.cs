@@ -46,10 +46,12 @@ var query2 = dbContext
         dbContext.PermissionChanges,
         builder =>
         {
-            builder.AddProperty("Name changed", e => e.Name);
-            builder.AddProperty("Order changed", e => e.Order.ToString());
-            builder.AddProperty("Reference changed", e => e.Reference.ToString());
-            builder.AddProperty("Enabled changed", e => e.Enabled.ToString());
+            builder
+                .AddProperty("Name changed", e => e.Name)
+                .AddProperty("Order changed", e => e.Order.ToString())
+                .AddProperty("Reference changed", e => e.Reference.ToString())
+                .AddProperty("Enabled changed", e => e.Enabled.ToString());
+            //builder.AddProperty("SomeEntity changed", e => e.SomeEntity.ToString());
         })
     .Build();
 
