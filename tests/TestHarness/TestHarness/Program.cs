@@ -1,4 +1,5 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.SqlServer;
+﻿using EntityFrameworkCore.ChangeTrackingTriggers.Queries;
+using EntityFrameworkCore.ChangeTrackingTriggers.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,15 +28,20 @@ var host = builder.Build();
 
 var dbContext = host.Services.GetRequiredService<MyDbContext>();
 
-var queryBuilder = dbContext
-    .CreateChangeEventQueryBuilder()
+var query = dbContext
+    .CreateChangeEventQueryBuilder<User, ChangeSourceType>()
     .AddEntityQuery<UserChange, User, int>(
         dbContext.UserChanges.Where(uc => uc.Id == 1),
         builder =>
         {
-            builder.AddProperty("Name changed", e => e.Name);
-            builder.AddProperty("Date of birth changed", e => e.DateOfBirth);
+            builder
+                .AddProperty("Name changed", e => e.Name)
+                .AddProperty("Date of birth changed", e => e.DateOfBirth);
         })
+    .Build();
+
+var query2 = dbContext
+    .CreateChangeEventQueryBuilder()
     .AddEntityQuery<PermissionChange, Permission, int>(
         dbContext.PermissionChanges,
         builder =>
@@ -44,10 +50,11 @@ var queryBuilder = dbContext
             builder.AddProperty("Order changed", e => e.Order.ToString());
             builder.AddProperty("Reference changed", e => e.Reference.ToString());
             builder.AddProperty("Enabled changed", e => e.Enabled.ToString());
-        });
+        })
+    .Build();
 
-var query = queryBuilder.Build();
-var changes = await query.OrderBy(ce => ce.ChangedAt).ToListAsync();
+var changes1 = await query.OrderBy(ce => ce.ChangedAt).ToListAsync();
+var changes2 = await query2.OrderBy(ce => ce.ChangedAt).ToListAsync();
 
 Console.ReadLine();
 

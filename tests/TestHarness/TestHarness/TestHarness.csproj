@@ -8,7 +8,6 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="7.1.4" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,6 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+    <ProjectReference Include="..\..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.Queries\EntityFrameworkCore.ChangeTrackingTriggers.Queries.csproj" />
     <ProjectReference Include="..\..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.csproj" />
   </ItemGroup>
 

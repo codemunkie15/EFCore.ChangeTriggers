@@ -1,7 +1,6 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
 using EntityFrameworkCore.ChangeTrackingTriggers.Models;
 using System;
-using TestHarness;
 
 namespace TestHarness.DbModels.Users
 {

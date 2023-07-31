@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.ChangeT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.ChangeTrackingTriggers", "..\..\src\EntityFrameworkCore.ChangeTrackingTriggers\EntityFrameworkCore.ChangeTrackingTriggers.csproj", "{4AD7220F-A9B1-412C-BA74-D262E0AADE54}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.ChangeTrackingTriggers.Queries", "..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.Queries\EntityFrameworkCore.ChangeTrackingTriggers.Queries.csproj", "{F3623CE5-51F8-4F0C-9112-9293EA597E31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4AD7220F-A9B1-412C-BA74-D262E0AADE54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AD7220F-A9B1-412C-BA74-D262E0AADE54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AD7220F-A9B1-412C-BA74-D262E0AADE54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3623CE5-51F8-4F0C-9112-9293EA597E31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3623CE5-51F8-4F0C-9112-9293EA597E31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3623CE5-51F8-4F0C-9112-9293EA597E31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3623CE5-51F8-4F0C-9112-9293EA597E31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
