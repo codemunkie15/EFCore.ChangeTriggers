@@ -11,6 +11,12 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             return entityType.FindAnnotation(AnnotationConstants.UseChangeTrackingTriggers) != null;
         }
 
+        public static IEntityType GetTrackedEntityType(this IEntityType entityType)
+        {
+            var trackedEntityTypeName = entityType.GetAnnotation(AnnotationConstants.TrackedEntityTypeName).Value!.ToString()!;
+            return entityType.Model.FindEntityType(trackedEntityTypeName)!;
+        }
+
         public static IEntityType GetChangeEntityType(this IEntityType entityType)
         {
             var changeEntityTypeName = entityType.GetAnnotation(AnnotationConstants.ChangeEntityTypeName).Value!.ToString()!;

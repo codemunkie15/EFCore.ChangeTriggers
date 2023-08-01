@@ -11,12 +11,12 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder
         {
         }
 
-        public ChangedByChangeEventQueryBuilder<TChangedBy> AddEntityQuery<TChange, TTracked, TChangeId>(
-            IQueryable<TChange> dbSet,
+        public ChangedByChangeEventQueryBuilder<TChangedBy> AddEntityQuery<TChange>(
+            IQueryable<TChange> changes,
             Action<IChangeEventEntityQueryBuilder<TChange, ChangedByChangeEvent<TChangedBy>>> entityBuilder)
-            where TChange : class, IChange<TTracked, TChangeId>, IHasChangedBy<TChangedBy>
+            where TChange : IChange, IHasChangedBy<TChangedBy>
         {
-            var entityBuilderInstance = new ChangedByChangeEventEntityQueryBuilder<TChange, TTracked, TChangeId, TChangedBy>(context, dbSet);
+            var entityBuilderInstance = new ChangedByChangeEventEntityQueryBuilder<TChange, TChangedBy>(context, changes);
             entityBuilder(entityBuilderInstance);
 
             changeQueries.Add(entityBuilderInstance.Build());

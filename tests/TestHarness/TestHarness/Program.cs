@@ -30,7 +30,7 @@ var dbContext = host.Services.GetRequiredService<MyDbContext>();
 
 var query = dbContext
     .CreateChangeEventQueryBuilder<User, ChangeSourceType>()
-    .AddEntityQuery<UserChange, User, int>(
+    .AddEntityQuery(
         dbContext.UserChanges.Where(uc => uc.TrackedEntity.Id == 1),
         builder =>
         {
@@ -38,7 +38,7 @@ var query = dbContext
                 .AddProperty("Name changed", e => e.Name)
                 .AddProperty("Date of birth changed", e => e.DateOfBirth);
         })
-    .AddEntityQuery<UserChange, User, int>(
+    .AddEntityQuery(
         dbContext.UserChanges.Where(uc => uc.TrackedEntity.Id == 1),
         builder =>
         {
@@ -50,7 +50,7 @@ var query = dbContext
 
 var query2 = dbContext
     .CreateChangeEventQueryBuilder()
-    .AddEntityQuery<PermissionChange, Permission, int>(
+    .AddEntityQuery(
         dbContext.PermissionChanges,
         builder =>
         {

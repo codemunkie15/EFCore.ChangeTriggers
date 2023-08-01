@@ -5,6 +5,7 @@
         private const string Prefix = "ChangeTrackingTriggers";
 
         public const string UseChangeTrackingTriggers = $"{Prefix}:Use";
+        public const string TrackedEntityTypeName = $"{Prefix}:{nameof(TrackedEntityTypeName)}";
         public const string ChangeEntityTypeName = $"{Prefix}:{nameof(ChangeEntityTypeName)}";
         public const string TriggerNameFormat = $"{Prefix}:{nameof(TriggerNameFormat)}";
         public const string HasNoCheckConstraint = $"{Prefix}:{nameof(HasNoCheckConstraint)}";

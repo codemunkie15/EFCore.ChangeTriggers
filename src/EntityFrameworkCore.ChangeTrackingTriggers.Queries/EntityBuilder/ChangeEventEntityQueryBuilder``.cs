@@ -5,9 +5,9 @@ using LinqKit;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
 {
-    public class ChangeEventEntityQueryBuilder<TChange, TTracked, TChangeId, TChangedBy, TChangeSource>
-        : BaseChangeEventEntityQueryBuilder<ChangeEvent<TChangedBy, TChangeSource>, TChange, TTracked, TChangeId>
-        where TChange : class, IChange<TTracked, TChangeId>, IHasChangedBy<TChangedBy>, IHasChangeSource<TChangeSource>
+    public class ChangeEventEntityQueryBuilder<TChange, TChangedBy, TChangeSource>
+        : BaseChangeEventEntityQueryBuilder<ChangeEvent<TChangedBy, TChangeSource>, TChange>
+        where TChange : IChange, IHasChangedBy<TChangedBy>, IHasChangeSource<TChangeSource>
     {
         public ChangeEventEntityQueryBuilder(DbContext context, IQueryable<TChange> dbSet)
             : base(context, dbSet)

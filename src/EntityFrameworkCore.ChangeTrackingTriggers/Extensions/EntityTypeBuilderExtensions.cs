@@ -102,6 +102,9 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             where TTrackedEntity : class, ITracked<TChangeEntity>
             where TChangeEntity : class, IChange<TTrackedEntity, TChangeId>
         {
+            var trackedEntityType = builder.Metadata.Model.FindEntityType(typeof(TTrackedEntity))!;
+            builder.HasAnnotation(AnnotationConstants.TrackedEntityTypeName, trackedEntityType!.Name);
+
             builder.HasKey(e => e.ChangeId);
 
             builder.Property(e => e.OperationType)

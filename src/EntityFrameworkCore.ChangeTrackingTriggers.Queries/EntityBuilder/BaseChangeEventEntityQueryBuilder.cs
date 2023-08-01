@@ -2,12 +2,13 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using LinqKit;
+using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
 {
-    public abstract class BaseChangeEventEntityQueryBuilder<TChangeEvent, TChange, TTracked, TChangeId>
+    public abstract class BaseChangeEventEntityQueryBuilder<TChangeEvent, TChange>
         : IChangeEventEntityQueryBuilder<TChange, TChangeEvent>
-        where TChange : class, IChange<TTracked, TChangeId>
+        where TChange : IChange
     {
         private readonly DbContext context;
         private readonly IQueryable<TChange> dbSet;
@@ -23,12 +24,12 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
             string description,
             Expression<Func<TChange, string>> valueSelector)
         {
-            var primaryKeysAreEqual = GetPrimaryKeysAreEqualExpression();
+            var trackedTablePrimaryKeysAreEqual = GetTrackedTablePrimaryKeysAreEqualExpression();
 
             var baseQuery =
                 from uc in dbSet.AsExpandable()
                 from puc in dbSet.AsExpandable()
-                    .Where(puc => primaryKeysAreEqual.Invoke(puc, uc) && puc.ChangedAt < uc.ChangedAt)
+                    .Where(puc => trackedTablePrimaryKeysAreEqual.Invoke(puc, uc) && puc.ChangedAt < uc.ChangedAt)
                     .OrderByDescending(puc => puc.ChangedAt)
                     .Take(1)
                 where !valueSelector.Invoke(puc).Equals(valueSelector.Invoke(uc)) // TODO: Should this compare on the string value or original column value?
@@ -57,10 +58,12 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
             return changeQueries.Aggregate(Queryable.Concat);
         }
 
-        private Expression<Func<TChange, TChange, bool>> GetPrimaryKeysAreEqualExpression()
+        private Expression<Func<TChange, TChange, bool>> GetTrackedTablePrimaryKeysAreEqualExpression()
         {
-            var changeEntityType = context.Model.FindEntityType(typeof(TTracked));
-            var primaryKeyProperties = changeEntityType.FindPrimaryKey().Properties;
+            var changeEntityType = context.Model.FindEntityType(typeof(TChange))!;
+            var trackedEntityType = changeEntityType.GetTrackedEntityType();
+
+            var primaryKeyProperties = trackedEntityType.FindPrimaryKey().Properties;
 
             var currentChangeParam = Expression.Parameter(typeof(TChange));
             var previousChangeParam = Expression.Parameter(typeof(TChange));
