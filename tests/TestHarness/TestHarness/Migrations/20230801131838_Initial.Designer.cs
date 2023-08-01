@@ -12,15 +12,15 @@ using TestHarness;
 namespace TestHarness.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20230727141901_PermissionEnabled")]
-    partial class PermissionEnabled
+    [Migration("20230801131838_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.1")
+                .HasAnnotation("ProductVersion", "7.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -46,7 +46,12 @@ namespace TestHarness.Migrations
                     b.Property<Guid>("Reference")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("SomeEntityId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id", "SubId");
+
+                    b.HasIndex("SomeEntityId");
 
                     b.ToTable("Permissions", null, t =>
                         {
@@ -105,14 +110,37 @@ namespace TestHarness.Migrations
                     b.Property<Guid>("Reference")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("SomeEntityId")
+                        .HasColumnType("int");
+
                     b.Property<int>("SubId")
                         .HasColumnType("int");
 
                     b.HasKey("ChangeId");
 
+                    b.HasIndex("SomeEntityId");
+
                     b.HasIndex("Id", "SubId");
 
                     b.ToTable("PermissionChanges", (string)null);
+
+                    b.HasAnnotation("ChangeTrackingTriggers:TrackedEntityTypeName", "TestHarness.DbModels.Permissions.Permission");
+                });
+
+            modelBuilder.Entity("TestHarness.DbModels.SomeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SomeEntity");
                 });
 
             modelBuilder.Entity("TestHarness.DbModels.Users.User", b =>
@@ -197,14 +225,31 @@ namespace TestHarness.Migrations
                     b.HasIndex("Id");
 
                     b.ToTable("UserChanges", (string)null);
+
+                    b.HasAnnotation("ChangeTrackingTriggers:TrackedEntityTypeName", "TestHarness.DbModels.Users.User");
+                });
+
+            modelBuilder.Entity("TestHarness.DbModels.Permissions.Permission", b =>
+                {
+                    b.HasOne("TestHarness.DbModels.SomeEntity", "SomeEntity")
+                        .WithMany()
+                        .HasForeignKey("SomeEntityId");
+
+                    b.Navigation("SomeEntity");
                 });
 
             modelBuilder.Entity("TestHarness.DbModels.Permissions.PermissionChange", b =>
                 {
+                    b.HasOne("TestHarness.DbModels.SomeEntity", "SomeEntity")
+                        .WithMany()
+                        .HasForeignKey("SomeEntityId");
+
                     b.HasOne("TestHarness.DbModels.Permissions.Permission", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id", "SubId")
                         .HasAnnotation("ChangeTrackingTriggers:HasNoCheckConstraint", true);
+
+                    b.Navigation("SomeEntity");
 
                     b.Navigation("TrackedEntity");
                 });

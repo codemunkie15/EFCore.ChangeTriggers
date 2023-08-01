@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Linq;
 using TestHarness;
-using TestHarness.DbModels.Permissions;
 using TestHarness.DbModels.Users;
 
 [assembly: DesignTimeServicesReference("EntityFrameworkCore.ChangeTrackingTriggers.ChangeTrackingDesignTimeServices, EntityFrameworkCore.ChangeTrackingTriggers")]

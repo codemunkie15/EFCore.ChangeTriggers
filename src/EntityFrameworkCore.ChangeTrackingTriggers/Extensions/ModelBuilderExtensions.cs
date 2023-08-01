@@ -2,6 +2,7 @@
 using EntityFrameworkCore.ChangeTrackingTriggers.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 {
@@ -17,7 +18,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             .Where(mi => mi.Name.Equals(nameof(EntityTypeBuilderExtensions.IsChangeTrackingTable)));
 
         /// <summary>
-        /// Automatically configures any entities in the model that implement <see cref="ITracked{TChangeType}"/> or <see cref="IChange{TTracked, TChangeIdType}"/>.
+        /// Automatically configures any entities in the model that implement <see cref="ITracked{TChangeType}"/> or <see cref="IChange{TTracked, TChangeId}"/>.
         /// </summary>
         /// <remarks>This method uses reflection.</remarks>
         /// <param name="modelBuilder">The model builder being used for configuration.</param>
@@ -25,6 +26,8 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
         /// <exception cref="ChangeTrackingTriggersAutoConfigurationException"></exception>
         public static ModelBuilder AutoConfigureChangeTrackingTriggers(this ModelBuilder modelBuilder)
         {
+            // TODO: Rewrite this as a source generator?
+
             var trackedTypesInModel = modelBuilder.Model.GetEntityTypes()
                 .Where(e => e.ClrType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ITracked<>)))
                 .Select(e => e.ClrType)
@@ -37,52 +40,41 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                         .GetGenericArguments()
                         .First();
 
-                var changeInterfaceType = changeType.GetInterfaces()
-                    .SingleOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IChange<,>));
+                var changeIdType = GetChangeIdType(trackedType, changeType);
 
-                if (changeInterfaceType == null)
-                {
-                    throw new ChangeTrackingTriggersConfigurationException(
-                        $"The type '{changeType.Name}' needs to implement the IChange interface to be used as the change type for tracked type '{trackedType.Name}'.");
-                }
-
-                var changeIdType = changeInterfaceType.GetGenericArguments()[1];
-
-                modelBuilder.ConfigureTrackedEntity(trackedType, changeType, changeIdType);
-                modelBuilder.ConfigureChangeEntity(trackedType, changeType, changeIdType);
+                modelBuilder.ConfigureTrackedEntity(trackedType, changeType);
+                modelBuilder.ConfigureChangeEntity(changeType, changeIdType);
             }
 
             return modelBuilder;
         }
 
-        private static void ConfigureTrackedEntity(this ModelBuilder modelBuilder, Type trackedType, Type changeType, Type changeIdType)
+        private static void ConfigureTrackedEntity(this ModelBuilder modelBuilder, Type trackedType, Type changeType)
         {
-            var modelBuilderEntityGenericMethod = ModelBuilderEntityMethod.MakeGenericMethod(trackedType);
-            dynamic trackedEntityTypeBuilder = modelBuilderEntityGenericMethod.Invoke(modelBuilder, null)!;
+            dynamic trackedEntityTypeBuilder = CreateEntityTypeBuilder(modelBuilder, trackedType);
 
-            var hasChangeTrackingTriggerGenericMethod = HasChangeTrackingTriggerMethod.MakeGenericMethod(trackedType, changeType, changeIdType);
+            var hasChangeTrackingTriggerGenericMethod = HasChangeTrackingTriggerMethod.MakeGenericMethod(trackedType, changeType);
             hasChangeTrackingTriggerGenericMethod.Invoke(null, new[] { trackedEntityTypeBuilder, null });
         }
 
-        private static void ConfigureChangeEntity(this ModelBuilder modelBuilder, Type trackedType, Type changeType, Type changeIdType)
+        private static void ConfigureChangeEntity(this ModelBuilder modelBuilder, Type changeType, Type changeIdType)
         {
-            var modelBuilderEntityGenericMethod = ModelBuilderEntityMethod.MakeGenericMethod(changeType);
-            dynamic changeEntityTypeBuilder = modelBuilderEntityGenericMethod.Invoke(modelBuilder, null)!;
+            dynamic changeEntityTypeBuilder = CreateEntityTypeBuilder(modelBuilder, changeType);
 
-            var typeArguments = new List<Type> { trackedType, changeType, changeIdType };
+            var typeArguments = new List<Type> { changeType, changeIdType };
             var parameters = new List<object?> { changeEntityTypeBuilder };
 
-            var hasChangedByInterfaceType = changeType.GetInterfaces()
-                    .SingleOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasChangedBy<>));
-
+            var hasChangedByInterfaceType = changeType
+                .GetInterfaces()
+                .SingleOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasChangedBy<>));
             if (hasChangedByInterfaceType != null)
             {
                 typeArguments.Add(hasChangedByInterfaceType.GetGenericArguments()[0]);
             }
 
-            var hasChangeSourceInterfaceType = changeType.GetInterfaces()
-                    .SingleOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasChangeSource<>));
-
+            var hasChangeSourceInterfaceType = changeType
+                .GetInterfaces()
+                .SingleOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasChangeSource<>));
             if (hasChangeSourceInterfaceType != null)
             {
                 typeArguments.Add(hasChangeSourceInterfaceType.GetGenericArguments()[0]);
@@ -94,6 +86,26 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 
             var isChangeTrackingTableGenericMethod = isChangeTrackingTableMethod.MakeGenericMethod(typeArguments.ToArray());
             isChangeTrackingTableGenericMethod.Invoke(null, parameters.ToArray());
+        }
+
+        private static dynamic CreateEntityTypeBuilder(ModelBuilder modelBuilder, Type entityType)
+        {
+            var modelBuilderEntityGenericMethod = ModelBuilderEntityMethod.MakeGenericMethod(entityType);
+            return modelBuilderEntityGenericMethod.Invoke(modelBuilder, null)!;
+        }
+
+        private static Type GetChangeIdType(Type trackedType, Type changeType)
+        {
+            var changeInterfaceType = changeType.GetInterfaces()
+                    .SingleOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IChange<,>));
+
+            if (changeInterfaceType == null)
+            {
+                throw new ChangeTrackingTriggersConfigurationException(
+                    $"The type '{changeType.Name}' needs to implement the IChange interface to be used as the change type for tracked type '{trackedType.Name}'.");
+            }
+
+            return changeInterfaceType.GetGenericArguments()[1];
         }
     }
 }

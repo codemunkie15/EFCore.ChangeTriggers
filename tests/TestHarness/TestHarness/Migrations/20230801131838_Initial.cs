@@ -13,16 +13,16 @@ namespace TestHarness.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Permissions",
+                name: "SomeEntity",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    SubId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Permissions", x => new { x.Id, x.SubId });
+                    table.PrimaryKey("PK_SomeEntity", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,25 +40,25 @@ namespace TestHarness.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PermissionChanges",
+                name: "Permissions",
                 columns: table => new
                 {
-                    ChangeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OperationTypeId = table.Column<int>(type: "int", nullable: false),
-                    ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false),
                     SubId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    Reference = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false),
+                    SomeEntityId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PermissionChanges", x => x.ChangeId);
+                    table.PrimaryKey("PK_Permissions", x => new { x.Id, x.SubId });
                     table.ForeignKey(
-                        name: "FK_PermissionChanges_Permissions_Id_SubId",
-                        columns: x => new { x.Id, x.SubId },
-                        principalTable: "Permissions",
-                        principalColumns: new[] { "Id", "SubId" });
+                        name: "FK_Permissions_SomeEntity_SomeEntityId",
+                        column: x => x.SomeEntityId,
+                        principalTable: "SomeEntity",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -90,6 +90,37 @@ namespace TestHarness.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PermissionChanges",
+                columns: table => new
+                {
+                    ChangeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OperationTypeId = table.Column<int>(type: "int", nullable: false),
+                    ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    SubId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    Reference = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false),
+                    SomeEntityId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PermissionChanges", x => x.ChangeId);
+                    table.ForeignKey(
+                        name: "FK_PermissionChanges_Permissions_Id_SubId",
+                        columns: x => new { x.Id, x.SubId },
+                        principalTable: "Permissions",
+                        principalColumns: new[] { "Id", "SubId" });
+                    table.ForeignKey(
+                        name: "FK_PermissionChanges_SomeEntity_SomeEntityId",
+                        column: x => x.SomeEntityId,
+                        principalTable: "SomeEntity",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.AddNoCheckConstraint(
                 table: "PermissionChanges",
                 constraint: "FK_PermissionChanges_Permissions_Id_SubId");
@@ -107,7 +138,7 @@ namespace TestHarness.Migrations
                 changeTableName: "PermissionChanges",
                 triggerName: "CustomTriggerName_Permissions",
                 trackedTablePrimaryKeyColumns: new[] { "Id", "SubId" },
-                changeTableDataColumns: new[] { "Id", "Name", "SubId" },
+                changeTableDataColumns: new[] { "Enabled", "Id", "Name", "Order", "Reference", "SomeEntityId", "SubId" },
                 operationTypeColumn: new ChangeContextColumn("OperationTypeId", "int"),
                 changedAtColumn: new ChangeContextColumn("ChangedAt"));
 
@@ -124,8 +155,8 @@ namespace TestHarness.Migrations
 
             migrationBuilder.InsertData(
                 table: "Permissions",
-                columns: new[] { "Id", "SubId", "Name" },
-                values: new object[] { 1, 1, "Permission 1" });
+                columns: new[] { "Id", "SubId", "Enabled", "Name", "Order", "Reference", "SomeEntityId" },
+                values: new object[] { 1, 1, false, "Permission 1", 0, new Guid("00000000-0000-0000-0000-000000000000"), null });
 
             migrationBuilder.InsertData(
                 table: "Users",
@@ -136,6 +167,16 @@ namespace TestHarness.Migrations
                 name: "IX_PermissionChanges_Id_SubId",
                 table: "PermissionChanges",
                 columns: new[] { "Id", "SubId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionChanges_SomeEntityId",
+                table: "PermissionChanges",
+                column: "SomeEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Permissions_SomeEntityId",
+                table: "Permissions",
+                column: "SomeEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserChanges_ChangedById",
@@ -168,6 +209,9 @@ namespace TestHarness.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "SomeEntity");
         }
     }
 }

@@ -25,35 +25,37 @@ namespace TestHarness
         {
             modelBuilder.Entity<User>(e =>
             {
-                /*
-                Manual configuration:
-                e.HasChangeTrackingTrigger<User, UserChange, int>();
-                */
                 e.ToTable("Users");
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
+                /*
+                Manual configuration:
+                e.HasChangeTrackingTrigger<User, UserChange>();
+                */
             });
 
             modelBuilder.Entity<UserChange>(e =>
             {
-                /*
-                Manual configuration:
-                e.IsChangeTrackingTable<User, UserChange, int, User, ChangeSourceType>();
-                */
                 e.ToTable("UserChanges");
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
+
+                /*
+                Manual configuration:
+                e.IsChangeTrackingTable<UserChange, int, User, ChangeSourceType>();
+                */
             });
 
             modelBuilder.Entity<Permission>(e =>
             {
-                /*
-                Manual configuration:
-                e.HasChangeTrackingTrigger<Permission, PermissionChange, int>();
-                */
                 e.ToTable("Permissions");
                 e.HasKey(p => new { p.Id, p.SubId });
                 e.Property(u => u.Name).IsRequired();
+
+                /*
+                Manual configuration:
+                e.HasChangeTrackingTrigger<Permission, PermissionChange>();
+                */
 
                 e.ConfigureChangeTrackingTrigger(options =>
                 {
@@ -63,12 +65,13 @@ namespace TestHarness
 
             modelBuilder.Entity<PermissionChange>(e =>
             {
-                /*
-                Manual configuration:
-                e.IsChangeTrackingTable<Permission, PermissionChange, int>();
-                */
                 e.ToTable("PermissionChanges");
                 e.Property(u => u.Name).IsRequired();
+
+                /*
+                Manual configuration:
+                e.IsChangeTrackingTable<PermissionChange, int>();
+                */
             });
 
             modelBuilder.Entity<User>(e =>

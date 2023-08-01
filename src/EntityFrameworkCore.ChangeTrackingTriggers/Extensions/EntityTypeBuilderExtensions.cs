@@ -14,17 +14,17 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
         /// Configures the entity to use change tracking triggers.
         /// </summary>
         /// <typeparam name="TTrackedEntity">The <see cref="ITracked{TChangeType}"/> entity type to configure change tracking triggers for.</typeparam>
-        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeIdType}"/> entity type that tracks the changes for the <typeparamref name="TTrackedEntity"/>.</typeparam>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type that tracks the changes for the <typeparamref name="TTrackedEntity"/>.</typeparam>
         /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
         /// <param name="builder">The entity type builder used for configuration.</param>
         /// <param name="optionsBuilder">An optional action to configure the change tracking trigger.</param>
         /// <returns>The same entity type builder so further calls can be chained.</returns>
         /// <exception cref="ChangeTrackingTriggersConfigurationException"></exception>
-        public static EntityTypeBuilder<TTrackedEntity> HasChangeTrackingTrigger<TTrackedEntity, TChangeEntity, TChangeId>(
+        public static EntityTypeBuilder<TTrackedEntity> HasChangeTrackingTrigger<TTrackedEntity, TChangeEntity>(
             this EntityTypeBuilder<TTrackedEntity> builder,
             Action<ChangeTrackingTriggerOptions>? optionsBuilder = null)
             where TTrackedEntity : class, ITracked<TChangeEntity>
-            where TChangeEntity: class, IChange<TTrackedEntity, TChangeId>
+            where TChangeEntity: class, IHasTrackedEntity<TTrackedEntity>
         {
             var options = ChangeTrackingTriggerOptions.Create(optionsBuilder);
 
@@ -33,6 +33,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 
             builder.HasAnnotation(AnnotationConstants.UseChangeTrackingTriggers, true);
             builder.HasAnnotation(AnnotationConstants.ChangeEntityTypeName, changeEntityType!.Name);
+            changeEntityType.AddAnnotation(AnnotationConstants.TrackedEntityTypeName, trackedEntityType!.Name);
 
             // https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-7.0/breaking-changes#sqlserver-tables-with-triggers
             builder.ToTable(t => t.HasTrigger("ChangeTrackingTrigger"));
@@ -85,26 +86,21 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             return builder;
         }
 
-        public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TTrackedEntity, TChangeEntity, TChangeId, TChangedBy, TChangeSource>(
+        public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TChangeEntity, TChangeId, TChangedBy, TChangeSource>(
             this EntityTypeBuilder<TChangeEntity> builder,
             Action<ChangeTrackingTableOptions<TChangeSource>>? optionsBuilder = null)
-            where TTrackedEntity : class, ITracked<TChangeEntity>
-            where TChangeEntity : class, IChange<TTrackedEntity, TChangeId>, IHasChangedBy<TChangedBy>, IHasChangeSource<TChangeSource>
+            where TChangeEntity : class, IChange, IHasChangeId<TChangeId>, IHasChangedBy<TChangedBy>, IHasChangeSource<TChangeSource>
         {
             return builder
-                .IsChangeTrackingTable<TTrackedEntity, TChangeEntity, TChangeId>()
-                .HasChangedBy<TTrackedEntity, TChangeEntity, TChangeId, TChangedBy>()
-                .HasChangeSource<TTrackedEntity, TChangeEntity, TChangeId, TChangeSource>(optionsBuilder);
+                .IsChangeTrackingTable<TChangeEntity, TChangeId>()
+                .HasChangedBy<TChangeEntity, TChangedBy>()
+                .HasChangeSource(optionsBuilder);
         }
 
-        public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TTrackedEntity, TChangeEntity, TChangeId>(
+        public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TChangeEntity, TChangeId>(
             this EntityTypeBuilder<TChangeEntity> builder)
-            where TTrackedEntity : class, ITracked<TChangeEntity>
-            where TChangeEntity : class, IChange<TTrackedEntity, TChangeId>
+            where TChangeEntity : class, IChange, IHasChangeId<TChangeId>
         {
-            var trackedEntityType = builder.Metadata.Model.FindEntityType(typeof(TTrackedEntity))!;
-            builder.HasAnnotation(AnnotationConstants.TrackedEntityTypeName, trackedEntityType!.Name);
-
             builder.HasKey(e => e.ChangeId);
 
             builder.Property(e => e.OperationType)
@@ -117,31 +113,28 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             return builder;
         }
 
-        public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TTrackedEntity, TChangeEntity, TChangeId, TChangedBy>(
+        public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TChangeEntity, TChangeId, TChangedBy>(
             this EntityTypeBuilder<TChangeEntity> builder)
-            where TTrackedEntity : class, ITracked<TChangeEntity>
-            where TChangeEntity : class, IChange<TTrackedEntity, TChangeId>, IHasChangedBy<TChangedBy>
+            where TChangeEntity : class, IChange, IHasChangeId<TChangeId>, IHasChangedBy<TChangedBy>
         {
             return builder
-                .IsChangeTrackingTable<TTrackedEntity, TChangeEntity, TChangeId>()
-                .HasChangedBy<TTrackedEntity, TChangeEntity, TChangeId, TChangedBy>();
+                .IsChangeTrackingTable<TChangeEntity, TChangeId>()
+                .HasChangedBy<TChangeEntity, TChangedBy>();
         }
 
-        public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TTrackedEntity, TChangeEntity, TChangeId, TChangeSource>(
+        public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TChangeEntity, TChangeId, TChangeSource>(
             this EntityTypeBuilder<TChangeEntity> builder,
             Action<ChangeTrackingTableOptions<TChangeSource>>? optionsBuilder = null)
-            where TTrackedEntity : class, ITracked<TChangeEntity>
-            where TChangeEntity : class, IChange<TTrackedEntity, TChangeId>, IHasChangeSource<TChangeSource>
+            where TChangeEntity : class, IChange, IHasChangeId<TChangeId>, IHasChangeSource<TChangeSource>
         {
             return builder
-                .IsChangeTrackingTable<TTrackedEntity, TChangeEntity, TChangeId>()
-                .HasChangeSource<TTrackedEntity, TChangeEntity, TChangeId, TChangeSource>(optionsBuilder);
+                .IsChangeTrackingTable<TChangeEntity, TChangeId>()
+                .HasChangeSource(optionsBuilder);
         }
 
-        private static EntityTypeBuilder<TChangeEntity> HasChangedBy<TTrackedEntity, TChangeEntity, TChangeId, TChangedBy>(
+        private static EntityTypeBuilder<TChangeEntity> HasChangedBy<TChangeEntity, TChangedBy>(
             this EntityTypeBuilder<TChangeEntity> builder)
-            where TTrackedEntity : class, ITracked<TChangeEntity>
-            where TChangeEntity : class, IChange<TTrackedEntity, TChangeId>, IHasChangedBy<TChangedBy>
+            where TChangeEntity : class, IChange, IHasChangedBy<TChangedBy>
         {
             var changedByEntity = builder.Metadata.Model.FindEntityType(typeof(TChangedBy));
             if (changedByEntity != null)
@@ -151,7 +144,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 changedByEntity.EnsureSinglePrimaryKey();
 
                 builder
-                    .HasOne(typeof(TChangedBy), nameof(IHasChangedBy<TChangedBy>.ChangedBy)) // Can't use a navigation expression because TChangedBy isn't constrained to a class
+                    .HasOne(typeof(TChangedBy), nameof(IHasChangedBy<TChangedBy>.ChangedBy)) // Can't use a navigation expression because TChangedBy may not be a class
                     .WithMany()
                     .IsChangedByForeignKey() // Used to find the column type for the trigger
                     .IsRequired(false) // FK column must be nullable to force left join as ChangedBy record may have been deleted
@@ -167,17 +160,16 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             return builder;
         }
 
-        private static EntityTypeBuilder<TChangeEntity> HasChangeSource<TTrackedEntity, TChangeEntity, TChangeId, TChangeSource>(
+        private static EntityTypeBuilder<TChangeEntity> HasChangeSource<TChangeEntity, TChangeSource>(
             this EntityTypeBuilder<TChangeEntity> builder,
             Action<ChangeTrackingTableOptions<TChangeSource>>? optionsBuilder = null)
-            where TTrackedEntity : class, ITracked<TChangeEntity>
-            where TChangeEntity : class, IChange<TTrackedEntity, TChangeId>, IHasChangeSource<TChangeSource>
+            where TChangeEntity : class, IChange, IHasChangeSource<TChangeSource>
         {
             if (builder.Metadata.Model.FindEntityType(typeof(TChangeSource)) != null)
             {
                 // Configure ChangeSource as a foreign key with navigation
                 builder
-                    .HasOne(typeof(TChangeSource), nameof(IHasChangeSource<TChangeSource>.ChangeSource)) // Can't use a navigation expression because TChangeSource isn't constrained to a class
+                    .HasOne(typeof(TChangeSource), nameof(IHasChangeSource<TChangeSource>.ChangeSource)) // Can't use a navigation expression because TChangeSource may not be a class
                     .WithMany()
                     .IsChangeSourceForeignKey();
             }

@@ -3,8 +3,11 @@
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Abstractions
 {
     /// <summary>
-    /// Represents a change entity that tracks the changes of an entity.
+    /// This is an internal API and should not be used in application code.
     /// </summary>
+    /// <remarks>
+    /// <see cref="IChange{TTracked, TChangeId}"/> is the correct interface to implement for change entities.
+    /// </remarks>
     public interface IChange
     {
         /// <summary>

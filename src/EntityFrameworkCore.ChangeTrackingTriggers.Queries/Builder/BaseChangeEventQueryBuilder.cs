@@ -1,6 +1,4 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
-using EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder
 {

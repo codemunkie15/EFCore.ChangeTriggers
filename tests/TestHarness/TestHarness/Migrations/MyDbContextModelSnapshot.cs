@@ -120,6 +120,8 @@ namespace TestHarness.Migrations
                     b.HasIndex("Id", "SubId");
 
                     b.ToTable("PermissionChanges", (string)null);
+
+                    b.HasAnnotation("ChangeTrackingTriggers:TrackedEntityTypeName", "TestHarness.DbModels.Permissions.Permission");
                 });
 
             modelBuilder.Entity("TestHarness.DbModels.SomeEntity", b =>
@@ -220,6 +222,8 @@ namespace TestHarness.Migrations
                     b.HasIndex("Id");
 
                     b.ToTable("UserChanges", (string)null);
+
+                    b.HasAnnotation("ChangeTrackingTriggers:TrackedEntityTypeName", "TestHarness.DbModels.Users.User");
                 });
 
             modelBuilder.Entity("TestHarness.DbModels.Permissions.Permission", b =>
