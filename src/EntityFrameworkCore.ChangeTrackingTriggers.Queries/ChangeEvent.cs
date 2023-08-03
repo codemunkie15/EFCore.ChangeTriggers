@@ -1,4 +1,4 @@
-﻿namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries
+﻿namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries
 {
     public class ChangeEvent
     {

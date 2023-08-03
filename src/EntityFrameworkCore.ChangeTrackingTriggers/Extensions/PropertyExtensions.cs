@@ -14,8 +14,21 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 
         public static bool IsChangeContextProperty(this IProperty entityType)
         {
-            return entityType.FindAnnotation(AnnotationConstants.IsChangeContextColumn) != null ||
-                entityType.GetContainingForeignKeys().Any(fk => fk.FindAnnotation(AnnotationConstants.IsChangeContextColumn) != null);
+            return
+                entityType.IsOperationTypeProperty() ||
+                entityType.IsChangedAtProperty() ||
+                entityType.IsChangedByProperty() ||
+                entityType.IsChangeSourceProperty();
+        }
+
+        public static bool IsOperationTypeProperty(this IProperty entityType)
+        {
+            return entityType.FindAnnotation(AnnotationConstants.IsOperationTypeColumn) != null;
+        }
+
+        public static bool IsChangedAtProperty(this IProperty entityType)
+        {
+            return entityType.FindAnnotation(AnnotationConstants.IsChangedAtColumn) != null;
         }
 
         public static bool IsChangedByProperty(this IProperty entityType)
@@ -24,20 +37,10 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 entityType.GetContainingForeignKeys().Any(fk => fk.FindAnnotation(AnnotationConstants.IsChangedByColumn) != null);
         }
 
-        public static bool IsOperationTypeProperty(this IProperty entityType)
-        {
-            return entityType.FindAnnotation(AnnotationConstants.IsOperationTypeColumn) != null;
-        }
-
         public static bool IsChangeSourceProperty(this IProperty entityType)
         {
             return entityType.FindAnnotation(AnnotationConstants.IsChangeSourceColumn) != null ||
                 entityType.GetContainingForeignKeys().Any(fk => fk.FindAnnotation(AnnotationConstants.IsChangeSourceColumn) != null);
-        }
-
-        public static bool IsChangedAtProperty(this IProperty entityType)
-        {
-            return entityType.FindAnnotation(AnnotationConstants.IsChangedAtColumn) != null;
         }
     }
 }

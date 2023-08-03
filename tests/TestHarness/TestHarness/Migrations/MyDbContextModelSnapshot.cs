@@ -22,6 +22,46 @@ namespace TestHarness.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("PermissionUser", b =>
+                {
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionsSubId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UsersId", "PermissionsId", "PermissionsSubId");
+
+                    b.HasIndex("PermissionsId", "PermissionsSubId");
+
+                    b.ToTable("PermissionUser");
+                });
+
+            modelBuilder.Entity("TestHarness.DbModels.PaymentMethods.PaymentMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PaymentMethods");
+                });
+
             modelBuilder.Entity("TestHarness.DbModels.Permissions.Permission", b =>
                 {
                     b.Property<int>("Id")
@@ -43,12 +83,7 @@ namespace TestHarness.Migrations
                     b.Property<Guid>("Reference")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("SomeEntityId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id", "SubId");
-
-                    b.HasIndex("SomeEntityId");
 
                     b.ToTable("Permissions", null, t =>
                         {
@@ -82,7 +117,6 @@ namespace TestHarness.Migrations
 
                     b.Property<DateTimeOffset>("ChangedAt")
                         .HasColumnType("datetimeoffset")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
                         .HasAnnotation("ChangeTrackingTriggers:IsChangedAtColumn", true);
 
                     b.Property<bool>("Enabled")
@@ -98,7 +132,6 @@ namespace TestHarness.Migrations
                     b.Property<int>("OperationType")
                         .HasColumnType("int")
                         .HasColumnName("OperationTypeId")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
                         .HasAnnotation("ChangeTrackingTriggers:IsOperationTypeColumn", true);
 
                     b.Property<int>("Order")
@@ -107,37 +140,16 @@ namespace TestHarness.Migrations
                     b.Property<Guid>("Reference")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("SomeEntityId")
-                        .HasColumnType("int");
-
                     b.Property<int>("SubId")
                         .HasColumnType("int");
 
                     b.HasKey("ChangeId");
-
-                    b.HasIndex("SomeEntityId");
 
                     b.HasIndex("Id", "SubId");
 
                     b.ToTable("PermissionChanges", (string)null);
 
                     b.HasAnnotation("ChangeTrackingTriggers:TrackedEntityTypeName", "TestHarness.DbModels.Permissions.Permission");
-                });
-
-            modelBuilder.Entity("TestHarness.DbModels.SomeEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SomeEntity");
                 });
 
             modelBuilder.Entity("TestHarness.DbModels.Users.User", b =>
@@ -156,7 +168,12 @@ namespace TestHarness.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PrimaryPaymentMethodId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PrimaryPaymentMethodId");
 
                     b.ToTable("Users", null, t =>
                         {
@@ -187,12 +204,10 @@ namespace TestHarness.Migrations
 
                     b.Property<int>("ChangeSource")
                         .HasColumnType("int")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
                         .HasAnnotation("ChangeTrackingTriggers:IsChangeSourceColumn", true);
 
                     b.Property<DateTimeOffset>("ChangedAt")
                         .HasColumnType("datetimeoffset")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
                         .HasAnnotation("ChangeTrackingTriggers:IsChangedAtColumn", true);
 
                     b.Property<int>("ChangedById")
@@ -212,8 +227,10 @@ namespace TestHarness.Migrations
                     b.Property<int>("OperationType")
                         .HasColumnType("int")
                         .HasColumnName("OperationTypeId")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
                         .HasAnnotation("ChangeTrackingTriggers:IsOperationTypeColumn", true);
+
+                    b.Property<int?>("PrimaryPaymentMethodId")
+                        .HasColumnType("int");
 
                     b.HasKey("ChangeId");
 
@@ -221,34 +238,56 @@ namespace TestHarness.Migrations
 
                     b.HasIndex("Id");
 
+                    b.HasIndex("PrimaryPaymentMethodId");
+
                     b.ToTable("UserChanges", (string)null);
 
                     b.HasAnnotation("ChangeTrackingTriggers:TrackedEntityTypeName", "TestHarness.DbModels.Users.User");
                 });
 
-            modelBuilder.Entity("TestHarness.DbModels.Permissions.Permission", b =>
+            modelBuilder.Entity("PermissionUser", b =>
                 {
-                    b.HasOne("TestHarness.DbModels.SomeEntity", "SomeEntity")
+                    b.HasOne("TestHarness.DbModels.Users.User", null)
                         .WithMany()
-                        .HasForeignKey("SomeEntityId");
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("SomeEntity");
+                    b.HasOne("TestHarness.DbModels.Permissions.Permission", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionsId", "PermissionsSubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TestHarness.DbModels.PaymentMethods.PaymentMethod", b =>
+                {
+                    b.HasOne("TestHarness.DbModels.Users.User", "User")
+                        .WithMany("PaymentMethods")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TestHarness.DbModels.Permissions.PermissionChange", b =>
                 {
-                    b.HasOne("TestHarness.DbModels.SomeEntity", "SomeEntity")
-                        .WithMany()
-                        .HasForeignKey("SomeEntityId");
-
                     b.HasOne("TestHarness.DbModels.Permissions.Permission", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id", "SubId")
                         .HasAnnotation("ChangeTrackingTriggers:HasNoCheckConstraint", true);
 
-                    b.Navigation("SomeEntity");
-
                     b.Navigation("TrackedEntity");
+                });
+
+            modelBuilder.Entity("TestHarness.DbModels.Users.User", b =>
+                {
+                    b.HasOne("TestHarness.DbModels.PaymentMethods.PaymentMethod", "PrimaryPaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PrimaryPaymentMethodId");
+
+                    b.Navigation("PrimaryPaymentMethod");
                 });
 
             modelBuilder.Entity("TestHarness.DbModels.Users.UserChange", b =>
@@ -257,7 +296,6 @@ namespace TestHarness.Migrations
                         .WithMany()
                         .HasForeignKey("ChangedById")
                         .HasAnnotation("ChangeTrackingTriggers:HasNoCheckConstraint", true)
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
                         .HasAnnotation("ChangeTrackingTriggers:IsChangedByColumn", true);
 
                     b.HasOne("TestHarness.DbModels.Users.User", "TrackedEntity")
@@ -265,7 +303,13 @@ namespace TestHarness.Migrations
                         .HasForeignKey("Id")
                         .HasAnnotation("ChangeTrackingTriggers:HasNoCheckConstraint", true);
 
+                    b.HasOne("TestHarness.DbModels.PaymentMethods.PaymentMethod", "PrimaryPaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PrimaryPaymentMethodId");
+
                     b.Navigation("ChangedBy");
+
+                    b.Navigation("PrimaryPaymentMethod");
 
                     b.Navigation("TrackedEntity");
                 });
@@ -278,6 +322,8 @@ namespace TestHarness.Migrations
             modelBuilder.Entity("TestHarness.DbModels.Users.User", b =>
                 {
                     b.Navigation("Changes");
+
+                    b.Navigation("PaymentMethods");
                 });
 #pragma warning restore 612, 618
         }

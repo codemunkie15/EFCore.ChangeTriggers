@@ -1,4 +1,4 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.Queries;
+﻿using EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.Extensions;
 using EntityFrameworkCore.ChangeTrackingTriggers.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -13,19 +13,22 @@ using TestHarness.DbModels.Users;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.AddDbContext<MyDbContext>(options =>
-{
-    options
-        .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTrackingTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
-        .UseSqlServerChangeTrackingTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>(options =>
-        {
-            options.MigrationSourceType = ChangeSourceType.Migration;
-        });
-});
+builder.Services
+    .AddDbContext<MyDbContext>(options =>
+    {
+        options
+            .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTrackingTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
+            .UseSqlServerChangeTrackingTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>(options =>
+            {
+                options.MigrationSourceType = ChangeSourceType.Migration;
+            });
+    })
+    .AddScoped<TestData>();
 
 var host = builder.Build();
 
 var dbContext = host.Services.GetRequiredService<MyDbContext>();
+var testData = host.Services.GetRequiredService<TestData>();
 
 var query = dbContext
     .CreateChangeEventQueryBuilder<User, ChangeSourceType>()
@@ -34,18 +37,10 @@ var query = dbContext
         builder =>
         {
             builder
-                .AddProperty("Name changed", e => e.Name)
-                .AddProperty("Date of birth changed", e => e.DateOfBirth);
-        })
-    .AddEntityQuery(
-        dbContext.UserChanges.Where(uc => uc.TrackedEntity.Id == 1),
-        builder =>
-        {
-            builder
-                .AddProperty("Name changed", e => e.Name)
-                .AddProperty("Date of birth changed", e => e.DateOfBirth);
-        })
-    .Build();
+                .AddEntityProperties(prop => $"{prop} updated!")
+                .AddProperty("Primary payment method changed", e => e.PrimaryPaymentMethod.Name);
+        }
+    ).Build();
 
 var query2 = dbContext
     .CreateChangeEventQueryBuilder()
@@ -58,12 +53,13 @@ var query2 = dbContext
                 .AddProperty("Order changed", e => e.Order.ToString())
                 .AddProperty("Reference changed", e => e.Reference.ToString())
                 .AddProperty("Enabled changed", e => e.Enabled.ToString());
-                //.AddProperty("SomeEntity changed", e => e.SomeEntity.ToString());
         })
     .Build();
 
 var changes1 = await query.OrderBy(ce => ce.ChangedAt).ToListAsync();
 var changes2 = await query2.OrderBy(ce => ce.ChangedAt).ToListAsync();
+
+//await testData.CreateAsync();
 
 Console.ReadLine();
 

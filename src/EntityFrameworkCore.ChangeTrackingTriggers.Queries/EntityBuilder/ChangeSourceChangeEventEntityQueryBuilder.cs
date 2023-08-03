@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using LinqKit;
 
-namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
+namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBuilder
 {
     public class ChangeSourceChangeEventEntityQueryBuilder<TChange, TChangeSource>
         : BaseChangeEventEntityQueryBuilder<ChangeSourceChangeEvent<TChangeSource>, TChange>

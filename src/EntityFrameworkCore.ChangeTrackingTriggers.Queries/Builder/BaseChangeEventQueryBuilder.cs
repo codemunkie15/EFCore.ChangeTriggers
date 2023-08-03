@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBuilder;
+using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder
+namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.Builder
 {
     public abstract class BaseChangeEventQueryBuilder<TChangeEvent>
     {
         protected readonly DbContext context;
-        protected List<IQueryable<TChangeEvent>> changeQueries = new();
+        private List<IQueryable<TChangeEvent>> changeQueries = new();
 
         public BaseChangeEventQueryBuilder(DbContext context)
         {
@@ -20,6 +21,11 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder
             }
 
             return changeQueries.Aggregate(Queryable.Concat);
+        }
+
+        protected void AddChanges<TChange>(IChangeEventEntityQueryBuilder<TChange, TChangeEvent> entityQueryBuilder)
+        {
+            changeQueries.Add(entityQueryBuilder.Build());
         }
     }
 }

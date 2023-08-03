@@ -3,8 +3,9 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using LinqKit;
 using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
+using System.Threading.Channels;
 
-namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
+namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBuilder
 {
     public abstract class BaseChangeEventEntityQueryBuilder<TChangeEvent, TChange>
         : IChangeEventEntityQueryBuilder<TChange, TChangeEvent>
@@ -46,6 +47,22 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
             return this;
         }
 
+        public IChangeEventEntityQueryBuilder<TChange, TChangeEvent> AddEntityProperties(
+            Func<string, string>? descriptionBuilder = null)
+        {
+            var entityPropertyNames = GetEntityPropertyNames();
+
+            foreach (var propertyName in entityPropertyNames)
+            {
+                var expression = GetValueSelectorExpression(propertyName);
+                var description = descriptionBuilder is not null ? descriptionBuilder(propertyName) : $"{propertyName} changed";
+
+                AddProperty($"{description}", expression);
+            }
+
+            return this;
+        }
+
         protected abstract IQueryable<TChangeEvent> ProjectToResult(IQueryable<JoinedChanges<TChange>> query, string description, Expression<Func<TChange, string>> valueSelector);
 
         public IQueryable<TChangeEvent> Build()
@@ -82,6 +99,27 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
 
             var aggregatedExpression = expressions.Aggregate(Expression.AndAlso);
             return Expression.Lambda<Func<TChange, TChange, bool>>(aggregatedExpression, currentChangeParam, previousChangeParam);
+        }
+
+        private IEnumerable<string> GetEntityPropertyNames()
+        {
+            var changeEntity = context.Model.FindEntityType(typeof(TChange))!;
+            var trackedEntity = changeEntity.GetTrackedEntityType();
+
+            var trackedEntityPrimaryKeyNames = trackedEntity.FindPrimaryKey()!.Properties.Select(p => p.Name);
+            return changeEntity.GetProperties().Where(p =>
+                !p.IsPrimaryKey() &&
+                !p.IsShadowProperty() &&
+                !p.IsChangeContextProperty() &&
+                !trackedEntityPrimaryKeyNames.Contains(p.Name))
+                .Select(p => p.Name);
+        }
+
+        private Expression<Func<TChange, string>> GetValueSelectorExpression(string propertyName)
+        {
+            var changeParameter = Expression.Parameter(typeof(TChange));
+            var changeProperty = Expression.PropertyOrField(changeParameter, propertyName);
+            return Expression.Lambda<Func<TChange, string>>(changeProperty, changeParameter);
         }
     }
 }

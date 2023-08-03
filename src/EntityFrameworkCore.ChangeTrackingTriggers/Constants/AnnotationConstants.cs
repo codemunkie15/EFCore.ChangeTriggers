@@ -10,7 +10,6 @@
         public const string TriggerNameFormat = $"{Prefix}:{nameof(TriggerNameFormat)}";
         public const string HasNoCheckConstraint = $"{Prefix}:{nameof(HasNoCheckConstraint)}";
 
-        public const string IsChangeContextColumn = $"{Prefix}:{nameof(IsChangeContextColumn)}";
         public const string IsOperationTypeColumn = $"{Prefix}:{nameof(IsOperationTypeColumn)}";
         public const string IsChangeSourceColumn = $"{Prefix}:{nameof(IsChangeSourceColumn)}";
         public const string IsChangedAtColumn = $"{Prefix}:{nameof(IsChangedAtColumn)}";

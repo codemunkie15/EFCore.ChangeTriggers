@@ -1,5 +1,6 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
+using TestHarness.DbModels.PaymentMethods;
 using TestHarness.DbModels.Permissions;
 using TestHarness.DbModels.Users;
 
@@ -15,6 +16,8 @@ namespace TestHarness
 
         public DbSet<PermissionChange> PermissionChanges { get; set; }
 
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
+
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
@@ -28,6 +31,7 @@ namespace TestHarness
                 e.ToTable("Users");
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
+                e.HasMany(u => u.PaymentMethods).WithOne(pm => pm.User);
                 /*
                 Manual configuration:
                 e.HasChangeTrackingTrigger<User, UserChange>();

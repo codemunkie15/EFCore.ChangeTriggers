@@ -1,8 +1,8 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
-using EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder;
+using EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBuilder;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder
+namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.Builder
 {
     public class ChangeEventQueryBuilder
         : BaseChangeEventQueryBuilder<ChangeEvent>
@@ -13,13 +13,13 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder
 
         public ChangeEventQueryBuilder AddEntityQuery<TChange>(
             IQueryable<TChange> changes,
-            Action<IChangeEventEntityQueryBuilder<TChange, ChangeEvent>> entityBuilder)
+            Action<IChangeEventEntityQueryBuilder<TChange, ChangeEvent>> entityQueryBuilder)
             where TChange : IChange
         {
             var entityBuilderInstance = new ChangeEventEntityQueryBuilder<TChange>(context, changes);
-            entityBuilder(entityBuilderInstance);
+            entityQueryBuilder(entityBuilderInstance);
 
-            changeQueries.Add(entityBuilderInstance.Build());
+            AddChanges(entityBuilderInstance);
 
             return this;
         }

@@ -5,38 +5,24 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
 {
     internal static class PropertyBuilderExtensions
     {
-        public static PropertyBuilder IsChangeContextProperty(this PropertyBuilder builder)
-        {
-            builder.HasAnnotation(AnnotationConstants.IsChangeContextColumn, true);
-            return builder;
-        }
-
         public static PropertyBuilder IsOperationTypeProperty(this PropertyBuilder builder)
         {
-            return builder
-                .HasAnnotation(AnnotationConstants.IsOperationTypeColumn, true)
-                .IsChangeContextProperty();
+            return builder.HasAnnotation(AnnotationConstants.IsOperationTypeColumn, true);
         }
 
         public static PropertyBuilder IsChangeSourceProperty(this PropertyBuilder builder)
         {
-            return builder
-                .HasAnnotation(AnnotationConstants.IsChangeSourceColumn, true)
-                .IsChangeContextProperty();
+            return builder.HasAnnotation(AnnotationConstants.IsChangeSourceColumn, true);
         }
 
         public static PropertyBuilder IsChangedAtProperty(this PropertyBuilder builder)
         {
-            return builder
-                .HasAnnotation(AnnotationConstants.IsChangedAtColumn, true)
-                .IsChangeContextProperty();
+            return builder.HasAnnotation(AnnotationConstants.IsChangedAtColumn, true);
         }
 
         public static PropertyBuilder IsChangedByProperty(this PropertyBuilder builder)
         {
-            return builder
-                .HasAnnotation(AnnotationConstants.IsChangedByColumn, true)
-                .IsChangeContextProperty();
+            return builder.HasAnnotation(AnnotationConstants.IsChangedByColumn, true);
         }
     }
 }

@@ -8,15 +8,15 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.9">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.Queries\EntityFrameworkCore.ChangeTrackingTriggers.Queries.csproj" />
+    <ProjectReference Include="..\..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.Queries\EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.csproj" />
     <ProjectReference Include="..\..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.csproj" />
   </ItemGroup>
 

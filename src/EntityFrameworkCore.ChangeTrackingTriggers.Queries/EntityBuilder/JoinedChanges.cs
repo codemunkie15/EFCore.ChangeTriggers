@@ -1,4 +1,4 @@
-﻿namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries.EntityBuilder
+﻿namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBuilder
 {
     public class JoinedChanges<TChange>
     {

@@ -1,7 +1,7 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.Queries.Builder;
+﻿using EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.Builder;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.ChangeTrackingTriggers.Queries
+namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.Extensions
 {
     public static class DbContextExtensions
     {
