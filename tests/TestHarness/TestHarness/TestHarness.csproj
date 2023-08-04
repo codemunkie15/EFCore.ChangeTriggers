@@ -16,9 +16,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.Queries\EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.csproj" />
-    <ProjectReference Include="..\..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.csproj" />
-  </ItemGroup>
+	  <ProjectReference Include="..\..\..\src\EFCore.ChangeTriggers.ChangeEventQueries\EFCore.ChangeTriggers.ChangeEventQueries.csproj" />
+	  <ProjectReference Include="..\..\..\src\EFCore.ChangeTriggers.SqlServer\EFCore.ChangeTriggers.SqlServer.csproj" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <None Update="appsettings.json">

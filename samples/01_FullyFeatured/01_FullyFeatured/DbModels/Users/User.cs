@@ -1,4 +1,4 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
+﻿using EFCore.ChangeTriggers.Abstractions;
 using System.Collections.Generic;
 
 namespace _01_FullyFeatured.DbModels.Users

@@ -1,6 +1,6 @@
 ﻿using _01_FullyFeatured.DbModels.Permissions;
 using _01_FullyFeatured.DbModels.Users;
-using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
+using EFCore.ChangeTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace _01_FullyFeatured
@@ -23,13 +23,11 @@ namespace _01_FullyFeatured
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.AutoConfigureChangeTrackingTriggers();
-
             modelBuilder.Entity<User>(e =>
             {
                 /*
                 Manual configuration:
-                e.HasChangeTrackingTrigger<User, UserChange, int>();
+                e.HasChangeTrigger<User, UserChange, int>();
                 */
                 e.ToTable("Users");
                 e.Property(u => u.Name).IsRequired();
@@ -40,7 +38,7 @@ namespace _01_FullyFeatured
             {
                 /*
                 Manual configuration:
-                e.IsChangeTrackingTable<User, UserChange, int, User, ChangeSourceType>();
+                e.IsChangeTable<User, UserChange, int, User, ChangeSourceType>();
                 */
                 e.ToTable("UserChanges");
                 e.Property(u => u.Name).IsRequired();
@@ -51,12 +49,12 @@ namespace _01_FullyFeatured
             {
                 /*
                 Manual configuration:
-                e.HasChangeTrackingTrigger<Permission, PermissionChange, int>();
+                e.HasChangeTrigger<Permission, PermissionChange, int>();
                 */
                 e.ToTable("Permissions");
                 e.Property(u => u.Name).IsRequired();
 
-                e.ConfigureChangeTrackingTrigger(options =>
+                e.ConfigureChangeTrigger(options =>
                 {
                     options.TriggerNameFactory = tableName => $"CustomTriggerName_{tableName}";
                 });
@@ -66,7 +64,7 @@ namespace _01_FullyFeatured
             {
                 /*
                 Manual configuration:
-                e.IsChangeTrackingTable<Permission, PermissionChange, int>();
+                e.IsChangeTable<Permission, PermissionChange, int>();
                 */
                 e.ToTable("PermissionChanges");
                 e.Property(u => u.Name).IsRequired();
@@ -76,6 +74,8 @@ namespace _01_FullyFeatured
             {
                 e.HasData(new User { Id = 1, Name = "Admin", DateOfBirth = "01/01/2000" });
             });
+
+            modelBuilder.AutoConfigureChangeTriggers();
         }
     }
 }

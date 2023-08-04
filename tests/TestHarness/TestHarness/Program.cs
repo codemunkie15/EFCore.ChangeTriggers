@@ -1,5 +1,5 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.Extensions;
-using EntityFrameworkCore.ChangeTrackingTriggers.SqlServer;
+﻿using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
+using EFCore.ChangeTriggers.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +9,7 @@ using System.Linq;
 using TestHarness;
 using TestHarness.DbModels.Users;
 
-[assembly: DesignTimeServicesReference("EntityFrameworkCore.ChangeTrackingTriggers.ChangeTrackingDesignTimeServices, EntityFrameworkCore.ChangeTrackingTriggers")]
+[assembly: DesignTimeServicesReference("EFCore.ChangeTriggers.ChangeTriggersDesignTimeServices, EFCore.ChangeTriggers")]
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -17,8 +17,8 @@ builder.Services
     .AddDbContext<MyDbContext>(options =>
     {
         options
-            .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTrackingTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
-            .UseSqlServerChangeTrackingTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>(options =>
+            .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
+            .UseSqlServerChangeTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>(options =>
             {
                 options.MigrationSourceType = ChangeSourceType.Migration;
             });
@@ -32,7 +32,7 @@ var testData = host.Services.GetRequiredService<TestData>();
 
 var query = dbContext
     .CreateChangeEventQueryBuilder<User, ChangeSourceType>()
-    .AddEntityQuery(
+    .AddChanges(
         dbContext.UserChanges.Where(uc => uc.TrackedEntity.Id == 1),
         builder =>
         {
@@ -44,7 +44,7 @@ var query = dbContext
 
 var query2 = dbContext
     .CreateChangeEventQueryBuilder()
-    .AddEntityQuery(
+    .AddChanges(
         dbContext.PermissionChanges,
         builder =>
         {

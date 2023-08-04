@@ -2,22 +2,22 @@
 using _01_FullyFeatured.DbModels.Permissions;
 using _01_FullyFeatured.DbModels.Users;
 using ConsoleTables;
-using EntityFrameworkCore.ChangeTrackingTriggers.SqlServer;
+using EFCore.ChangeTriggers.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 
-[assembly: DesignTimeServicesReference("EntityFrameworkCore.ChangeTrackingTriggers.ChangeTrackingDesignTimeServices, EntityFrameworkCore.ChangeTrackingTriggers")]
+[assembly: DesignTimeServicesReference("EFCore.ChangeTriggers.ChangeTriggersDesignTimeServices, EFCore.ChangeTriggers")]
 
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddDbContext<MyDbContext>(options =>
 {
     options
-        .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTrackingTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
-        .UseSqlServerChangeTrackingTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>(options =>
+        .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
+        .UseSqlServerChangeTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>(options =>
         {
             options.MigrationSourceType = ChangeSourceType.Migration;
         });

@@ -5,11 +5,11 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness", "TestHarness\TestHarness.csproj", "{D1B246F3-D9F3-46DB-9B1B-8E7801C4F5C5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.ChangeTrackingTriggers.SqlServer", "..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.csproj", "{A8D4EBE5-DBA8-4E00-8A84-E1277497FD75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.SqlServer", "..\..\src\EFCore.ChangeTriggers.SqlServer\EFCore.ChangeTriggers.SqlServer.csproj", "{A8D4EBE5-DBA8-4E00-8A84-E1277497FD75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.ChangeTrackingTriggers", "..\..\src\EntityFrameworkCore.ChangeTrackingTriggers\EntityFrameworkCore.ChangeTrackingTriggers.csproj", "{4AD7220F-A9B1-412C-BA74-D262E0AADE54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers", "..\..\src\EFCore.ChangeTriggers\EFCore.ChangeTriggers.csproj", "{4AD7220F-A9B1-412C-BA74-D262E0AADE54}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries", "..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.Queries\EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.csproj", "{F3623CE5-51F8-4F0C-9112-9293EA597E31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.ChangeEventQueries", "..\..\src\EFCore.ChangeTriggers.ChangeEventQueries\EFCore.ChangeTriggers.ChangeEventQueries.csproj", "{F3623CE5-51F8-4F0C-9112-9293EA597E31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

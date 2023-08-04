@@ -17,8 +17,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\..\..\src\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer\EntityFrameworkCore.ChangeTrackingTriggers.SqlServer.csproj" />
-  </ItemGroup>
+	  <ProjectReference Include="..\..\..\src\EFCore.ChangeTriggers.SqlServer\EFCore.ChangeTriggers.SqlServer.csproj" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <None Update="appsettings.json">

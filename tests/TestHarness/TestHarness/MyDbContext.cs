@@ -1,4 +1,4 @@
-﻿using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
+﻿using EFCore.ChangeTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
 using TestHarness.DbModels.PaymentMethods;
 using TestHarness.DbModels.Permissions;
@@ -32,10 +32,6 @@ namespace TestHarness
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
                 e.HasMany(u => u.PaymentMethods).WithOne(pm => pm.User);
-                /*
-                Manual configuration:
-                e.HasChangeTrackingTrigger<User, UserChange>();
-                */
             });
 
             modelBuilder.Entity<UserChange>(e =>
@@ -43,11 +39,6 @@ namespace TestHarness
                 e.ToTable("UserChanges");
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
-
-                /*
-                Manual configuration:
-                e.IsChangeTrackingTable<UserChange, int, User, ChangeSourceType>();
-                */
             });
 
             modelBuilder.Entity<Permission>(e =>
@@ -55,27 +46,12 @@ namespace TestHarness
                 e.ToTable("Permissions");
                 e.HasKey(p => new { p.Id, p.SubId });
                 e.Property(u => u.Name).IsRequired();
-
-                /*
-                Manual configuration:
-                e.HasChangeTrackingTrigger<Permission, PermissionChange>();
-                */
-
-                e.ConfigureChangeTrackingTrigger(options =>
-                {
-                    options.TriggerNameFactory = tableName => $"CustomTriggerName_{tableName}";
-                });
             });
 
             modelBuilder.Entity<PermissionChange>(e =>
             {
                 e.ToTable("PermissionChanges");
                 e.Property(u => u.Name).IsRequired();
-
-                /*
-                Manual configuration:
-                e.IsChangeTrackingTable<PermissionChange, int>();
-                */
             });
 
             modelBuilder.Entity<User>(e =>
@@ -88,7 +64,7 @@ namespace TestHarness
                 p.HasData(new Permission { Id = 1, SubId = 1, Name = "Permission 1" });
             });
 
-            modelBuilder.AutoConfigureChangeTrackingTriggers();
+            modelBuilder.AutoConfigureChangeTriggers();
         }
     }
 }
