@@ -15,7 +15,6 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
         /// </summary>
         /// <typeparam name="TTrackedEntity">The <see cref="ITracked{TChangeType}"/> entity type to configure change tracking triggers for.</typeparam>
         /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type that tracks the changes for the <typeparamref name="TTrackedEntity"/>.</typeparam>
-        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
         /// <param name="builder">The entity type builder used for configuration.</param>
         /// <param name="optionsBuilder">An optional action to configure the change tracking trigger.</param>
         /// <returns>The same entity type builder so further calls can be chained.</returns>
@@ -86,6 +85,16 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             return builder;
         }
 
+        /// <summary>
+        /// Configures the entity as a change tracking table.
+        /// </summary>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type to configure.</typeparam>
+        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
+        /// <typeparam name="TChangedBy">The type that represents who a change was made by.</typeparam>
+        /// <typeparam name="TChangeSource">The type that represents where a change originated from.</typeparam>
+        /// <param name="builder">The entity type builder to use for configuration.</param>
+        /// <param name="optionsBuilder">An optional action to configure the change tracking table.</param>
+        /// <returns>The same entity type builder so that further calls can be chained.</returns>
         public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TChangeEntity, TChangeId, TChangedBy, TChangeSource>(
             this EntityTypeBuilder<TChangeEntity> builder,
             Action<ChangeTrackingTableOptions<TChangeSource>>? optionsBuilder = null)
@@ -97,6 +106,13 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 .HasChangeSource(optionsBuilder);
         }
 
+        /// <summary>
+        /// Configures the entity as a change tracking table.
+        /// </summary>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type to configure.</typeparam>
+        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
+        /// <param name="builder">The entity type builder to use for configuration.</param>
+        /// <returns>The same entity type builder so that further calls can be chained.</returns>
         public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TChangeEntity, TChangeId>(
             this EntityTypeBuilder<TChangeEntity> builder)
             where TChangeEntity : class, IChange, IHasChangeId<TChangeId>
@@ -113,6 +129,14 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
             return builder;
         }
 
+        /// <summary>
+        /// Configures the entity as a change tracking table.
+        /// </summary>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type to configure.</typeparam>
+        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
+        /// <typeparam name="TChangedBy">The type that represents who a change was made by.</typeparam>
+        /// <param name="builder">The entity type builder to use for configuration.</param>
+        /// <returns>The same entity type builder so that further calls can be chained.</returns>
         public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TChangeEntity, TChangeId, TChangedBy>(
             this EntityTypeBuilder<TChangeEntity> builder)
             where TChangeEntity : class, IChange, IHasChangeId<TChangeId>, IHasChangedBy<TChangedBy>
@@ -122,6 +146,15 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.Extensions
                 .HasChangedBy<TChangeEntity, TChangedBy>();
         }
 
+        /// <summary>
+        /// Configures the entity as a change tracking table.
+        /// </summary>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type to configure.</typeparam>
+        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
+        /// <typeparam name="TChangeSource">The type that represents where a change originated from.</typeparam>
+        /// <param name="builder">The entity type builder to use for configuration.</param>
+        /// <param name="optionsBuilder">An optional action to configure the change tracking table.</param>
+        /// <returns>The same entity type builder so that further calls can be chained.</returns>
         public static EntityTypeBuilder<TChangeEntity> IsChangeTrackingTable<TChangeEntity, TChangeId, TChangeSource>(
             this EntityTypeBuilder<TChangeEntity> builder,
             Action<ChangeTrackingTableOptions<TChangeSource>>? optionsBuilder = null)

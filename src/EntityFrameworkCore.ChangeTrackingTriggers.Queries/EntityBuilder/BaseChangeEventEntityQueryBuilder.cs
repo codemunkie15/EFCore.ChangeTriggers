@@ -3,11 +3,15 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using LinqKit;
 using EntityFrameworkCore.ChangeTrackingTriggers.Extensions;
-using System.Threading.Channels;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBuilder
 {
-    public abstract class BaseChangeEventEntityQueryBuilder<TChangeEvent, TChange>
+    /// <summary>
+    /// A query builder that queries <seealso cref="IChange"/> entities and transforms them into human readable change events.
+    /// </summary>
+    /// <typeparam name="TChangeEvent">The change event that will be built.</typeparam>
+    /// <typeparam name="TChange">The change entity type.</typeparam>
+    public abstract class BaseChangeEventEntityQueryBuilder<TChange, TChangeEvent>
         : IChangeEventEntityQueryBuilder<TChange, TChangeEvent>
         where TChange : IChange
     {
@@ -21,6 +25,12 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBu
             this.dbSet = dbSet;
         }
 
+        /// <summary>
+        /// Adds a change entity property to the builder.
+        /// </summary>
+        /// <param name="description">A human readable description of the property.</param>
+        /// <param name="valueSelector">A function to select the property value as a string.</param>
+        /// <returns>The same entity query builder so further calls can be chained.</returns>
         public IChangeEventEntityQueryBuilder<TChange, TChangeEvent> AddProperty(
             string description,
             Expression<Func<TChange, string>> valueSelector)
@@ -47,6 +57,12 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBu
             return this;
         }
 
+        /// <summary>
+        /// Adds all the properties on the change entity to the builder.
+        /// </summary>
+        /// <remarks>Excludes primary keys, shadow properties and navigation properties.</remarks>
+        /// <param name="descriptionBuilder">An optional function to format the description of properties.</param>
+        /// <returns>The same entity query builder so further calls can be chained.</returns>
         public IChangeEventEntityQueryBuilder<TChange, TChangeEvent> AddEntityProperties(
             Func<string, string>? descriptionBuilder = null)
         {
@@ -63,8 +79,20 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBu
             return this;
         }
 
+        /// <summary>
+        /// Projects the current and previous change entities into a property change event with an old and new value.
+        /// </summary>
+        /// <param name="query">The query to project.</param>
+        /// <param name="description">The description to set for the property.</param>
+        /// <param name="valueSelector">A function to select the property value as a string.</param>
+        /// <returns>The change event query.</returns>
         protected abstract IQueryable<TChangeEvent> ProjectToResult(IQueryable<JoinedChanges<TChange>> query, string description, Expression<Func<TChange, string>> valueSelector);
 
+        /// <summary>
+        /// Builds the query and returns an <see cref="IQueryable{T}"/>.
+        /// </summary>
+        /// <returns>The built <see cref="IQueryable{T}"/>.</returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public IQueryable<TChangeEvent> Build()
         {
             if (!changeQueries.Any())

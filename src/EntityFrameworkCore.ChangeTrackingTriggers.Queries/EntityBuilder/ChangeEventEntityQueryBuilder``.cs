@@ -5,8 +5,11 @@ using LinqKit;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBuilder
 {
+    /// <inheritdoc/>
+    /// <typeparam name="TChangedBy">The type that represents who a change was made by.</typeparam>
+    /// <typeparam name="TChangeSource">The type that represents where a change originated from.</typeparam>
     public class ChangeEventEntityQueryBuilder<TChange, TChangedBy, TChangeSource>
-        : BaseChangeEventEntityQueryBuilder<ChangeEvent<TChangedBy, TChangeSource>, TChange>
+        : BaseChangeEventEntityQueryBuilder<TChange, ChangeEvent<TChangedBy, TChangeSource>>
         where TChange : IChange, IHasChangedBy<TChangedBy>, IHasChangeSource<TChangeSource>
     {
         public ChangeEventEntityQueryBuilder(DbContext context, IQueryable<TChange> dbSet)
@@ -14,6 +17,7 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBu
         {
         }
 
+        /// <inheritdoc/>
         protected override IQueryable<ChangeEvent<TChangedBy, TChangeSource>> ProjectToResult(
             IQueryable<JoinedChanges<TChange>> query,
             string description,

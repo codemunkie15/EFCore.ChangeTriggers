@@ -1,8 +1,13 @@
 ﻿using EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.EntityBuilder;
 using Microsoft.EntityFrameworkCore;
+using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
 
 namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.Builder
 {
+    /// <summary>
+    /// A query builder that queries <seealso cref="IChange"/> entities and transforms them into human readable change events.
+    /// </summary>
+    /// <typeparam name="TChangeEvent">The change event that will be built.</typeparam>
     public abstract class BaseChangeEventQueryBuilder<TChangeEvent>
     {
         protected readonly DbContext context;
@@ -13,6 +18,11 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.Builder
             this.context = context;
         }
 
+        /// <summary>
+        /// Builds the query and returns an <see cref="IQueryable{T}"/>.
+        /// </summary>
+        /// <returns>The built <see cref="IQueryable{T}"/>.</returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public IQueryable<TChangeEvent> Build()
         {
             if (!changeQueries.Any())
@@ -23,6 +33,11 @@ namespace EntityFrameworkCore.ChangeTrackingTriggers.ChangeEventQueries.Builder
             return changeQueries.Aggregate(Queryable.Concat);
         }
 
+        /// <summary>
+        /// Builds the <paramref name="entityQueryBuilder"/> and adds the <see cref="IQueryable{T}"/> to this query builder.
+        /// </summary>
+        /// <typeparam name="TChange">The change entity to add to the builder.</typeparam>
+        /// <param name="entityQueryBuilder">The entity query builder to build and add to this query builder.</param>
         protected void AddChanges<TChange>(IChangeEventEntityQueryBuilder<TChange, TChangeEvent> entityQueryBuilder)
         {
             changeQueries.Add(entityQueryBuilder.Build());
