@@ -1,7 +1,7 @@
 ﻿using _01_FullyFeatured;
-using _01_FullyFeatured.DbModels.Permissions;
+using _01_FullyFeatured.DbModels.Orders;
+using _01_FullyFeatured.DbModels.Products;
 using _01_FullyFeatured.DbModels.Users;
-using ConsoleTables;
 using EFCore.ChangeTriggers.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -27,55 +27,38 @@ var host = builder.Build();
 
 var dbContext = host.Services.GetRequiredService<MyDbContext>();
 
-// Examples
+Console.WriteLine("Writing sample data...");
 
-var user2 = new User
-{
-    Name = "My user 2",
-    DateOfBirth = "01/01/1990"
-};
+var user2 = new User { Name = "Bob", DateOfBirth = "01/01/2000" };
+var product1 = new Product { Name = "Product 1" };
+var product2 = new Product { Name = "Product 2" };
+
 dbContext.Users.Add(user2);
+dbContext.Products.Add(product1);
+dbContext.Products.Add(product2);
+
 await dbContext.SaveChangesAsync();
-Console.WriteLine("Added new user: My user 2");
 
-dbContext.Users.Remove(user2);
+product1.Name = "New product 1";
+
 await dbContext.SaveChangesAsync();
-Console.WriteLine("Deleted new user: My user 2");
-Console.WriteLine();
 
-var permission = new Permission
-{
-    Name = "My permission",
-};
-dbContext.Permissions.Add(permission);
+var order1 = new Order { Status = "New", Product = product1, User = user2 };
+var order2 = new Order { Status = "New", Product = product2, User = user2 };
+
+dbContext.Orders.Add(order1);
+dbContext.Orders.Add(order2);
+
 await dbContext.SaveChangesAsync();
-Console.WriteLine("Added new permission: My permission");
 
-permission.Name = "My updated permission";
+order1.Status = "Completed";
+
 await dbContext.SaveChangesAsync();
-Console.WriteLine("Updated permission name 'My permission' to 'My updated permission'");
-Console.WriteLine();
 
-Console.WriteLine("User changes:");
-var userChanges = await dbContext.UserChanges.Include(uc => uc.ChangedBy).ToListAsync();
-var userChangesTable = new ConsoleTable("Change Id", "Operation Type", "Change Source", "Changed At", "Changed By", "Id", "Name", "Date of Birth");
-foreach (var userChange in userChanges)
-{
-    userChangesTable.AddRow(userChange.ChangeId, userChange.OperationType, userChange.ChangeSource, userChange.ChangedAt,
-        userChange.ChangedBy.Name, userChange.Id, userChange.Name, userChange.DateOfBirth);
-}
-userChangesTable.Write();
-Console.WriteLine();
+dbContext.Products.Remove(product2);
+await dbContext.SaveChangesAsync();
 
-Console.WriteLine("Permission changes:");
-var permissionChanges = await dbContext.PermissionChanges.ToListAsync();
-var permissionChangesTable = new ConsoleTable("Change Id", "Operation Type", "Changed At", "Id", "Name");
-foreach (var permissionChange in permissionChanges)
-{
-    permissionChangesTable.AddRow(permissionChange.ChangeId, permissionChange.OperationType, permissionChange.ChangedAt, permissionChange.Id, permissionChange.Name);
-}
-permissionChangesTable.Write();
-
+Console.WriteLine("Sample data added. Check the database to view the change tables.");
 Console.ReadLine();
 
 await host.RunAsync();

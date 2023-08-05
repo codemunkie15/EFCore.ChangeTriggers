@@ -1,10 +1,11 @@
-﻿using EFCore.ChangeTriggers.Abstractions;
+﻿using _01_FullyFeatured.DbModels.Users;
+using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.Models;
 using System;
 
-namespace _01_FullyFeatured.DbModels.Users
+namespace _01_FullyFeatured.DbModels.Orders
 {
-    public class UserChange : UserBase, IChange<User, int>, IHasChangedBy<User>, IHasChangeSource<ChangeSourceType>
+    public class OrderChange : OrderBase, IChange<Order, int>, IHasChangedBy<User>, IHasChangeSource<ChangeSourceType>
     {
         public int ChangeId { get; set; }
 
@@ -12,10 +13,10 @@ namespace _01_FullyFeatured.DbModels.Users
 
         public DateTimeOffset ChangedAt { get; set; }
 
+        public Order TrackedEntity { get; set; }
+
         public User ChangedBy { get; set; }
 
         public ChangeSourceType ChangeSource { get; set; }
-
-        public User TrackedEntity { get; set; }
     }
 }

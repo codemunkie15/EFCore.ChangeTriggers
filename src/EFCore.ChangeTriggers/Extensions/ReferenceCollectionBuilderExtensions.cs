@@ -1,4 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Constants;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EFCore.ChangeTriggers.Extensions

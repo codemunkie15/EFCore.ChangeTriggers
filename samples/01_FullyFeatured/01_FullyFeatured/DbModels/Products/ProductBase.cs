@@ -1,6 +1,6 @@
-﻿namespace _01_FullyFeatured.DbModels.Permissions
+﻿namespace _01_FullyFeatured.DbModels.Products
 {
-    public abstract class PermissionBase
+    public class ProductBase
     {
         public int Id { get; set; }
 

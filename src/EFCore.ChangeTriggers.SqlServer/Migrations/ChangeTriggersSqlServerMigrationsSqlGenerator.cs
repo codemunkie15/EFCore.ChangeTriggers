@@ -52,7 +52,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Migrations
 
         protected virtual void Generate(CreateChangeTriggerOperation operation, MigrationCommandListBuilder builder)
         {
-            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("EntityFrameworkCore.ChangeTriggers.SqlServer.Templates.CreateChangeTriggerSqlTemplate.sql");
+            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("EFCore.ChangeTriggers.SqlServer.Templates.CreateChangeTriggerSqlTemplate.sql");
             using var reader = new StreamReader(stream);
             var sqlTemplate = reader.ReadToEnd();
 

@@ -1,4 +1,5 @@
-﻿using _01_FullyFeatured.DbModels.Permissions;
+﻿using _01_FullyFeatured.DbModels.Orders;
+using _01_FullyFeatured.DbModels.Products;
 using _01_FullyFeatured.DbModels.Users;
 using EFCore.ChangeTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +10,15 @@ namespace _01_FullyFeatured
     {
         public DbSet<User> Users { get; set; }
 
-        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<Product> Products { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
 
         public DbSet<UserChange> UserChanges { get; set; }
 
-        public DbSet<PermissionChange> PermissionChanges { get; set; }
+        public DbSet<OrderChange> OrderChanges { get; set; }
+
+        public DbSet<ProductChange> ProductChanges { get; set; }
 
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
@@ -23,36 +28,46 @@ namespace _01_FullyFeatured
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.AutoConfigureChangeTriggers();
+
             modelBuilder.Entity<User>(e =>
             {
                 /*
                 Manual configuration:
-                e.HasChangeTrigger<User, UserChange, int>();
+                e.HasChangeTrigger<User, UserChange>();
                 */
-                e.ToTable("Users");
-                e.Property(u => u.Name).IsRequired();
-                e.Property(u => u.DateOfBirth).IsRequired();
             });
 
             modelBuilder.Entity<UserChange>(e =>
             {
                 /*
                 Manual configuration:
-                e.IsChangeTable<User, UserChange, int, User, ChangeSourceType>();
+                e.IsChangeTable<UserChange, int, User, ChangeSourceType>();
                 */
-                e.ToTable("UserChanges");
-                e.Property(u => u.Name).IsRequired();
-                e.Property(u => u.DateOfBirth).IsRequired();
             });
 
-            modelBuilder.Entity<Permission>(e =>
+            modelBuilder.Entity<Product>(e =>
             {
                 /*
                 Manual configuration:
-                e.HasChangeTrigger<Permission, PermissionChange, int>();
+                e.HasChangeTrigger<Product, ProductChange,>();
                 */
-                e.ToTable("Permissions");
-                e.Property(u => u.Name).IsRequired();
+            });
+
+            modelBuilder.Entity<ProductChange>(e =>
+            {
+                /*
+                Manual configuration:
+                e.IsChangeTable<ProductChange, int>();
+                */
+            });
+
+            modelBuilder.Entity<Order>(e =>
+            {
+                /*
+                Manual configuration:
+                e.HasChangeTrigger<Order, OrderChange>();
+                */
 
                 e.ConfigureChangeTrigger(options =>
                 {
@@ -60,22 +75,18 @@ namespace _01_FullyFeatured
                 });
             });
 
-            modelBuilder.Entity<PermissionChange>(e =>
+            modelBuilder.Entity<OrderChange>(e =>
             {
                 /*
                 Manual configuration:
-                e.IsChangeTable<Permission, PermissionChange, int>();
+                e.IsChangeTable<OrderChange, int, User, ChangeSourceType>();
                 */
-                e.ToTable("PermissionChanges");
-                e.Property(u => u.Name).IsRequired();
             });
 
             modelBuilder.Entity<User>(e =>
             {
                 e.HasData(new User { Id = 1, Name = "Admin", DateOfBirth = "01/01/2000" });
             });
-
-            modelBuilder.AutoConfigureChangeTriggers();
         }
     }
 }

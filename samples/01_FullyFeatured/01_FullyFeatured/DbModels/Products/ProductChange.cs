@@ -2,9 +2,9 @@
 using EFCore.ChangeTriggers.Models;
 using System;
 
-namespace _01_FullyFeatured.DbModels.Permissions
+namespace _01_FullyFeatured.DbModels.Products
 {
-    public class PermissionChange : PermissionBase, IChange<Permission, int>
+    public class ProductChange : ProductBase, IChange<Product, int>
     {
         public int ChangeId { get; set; }
 
@@ -12,6 +12,6 @@ namespace _01_FullyFeatured.DbModels.Permissions
 
         public DateTimeOffset ChangedAt { get; set; }
 
-        public Permission TrackedEntity { get; set; }
+        public Product TrackedEntity { get; set; }
     }
 }

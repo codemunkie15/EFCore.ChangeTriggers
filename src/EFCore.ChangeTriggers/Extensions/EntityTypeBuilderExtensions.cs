@@ -27,7 +27,7 @@ namespace EFCore.ChangeTriggers.Extensions
         {
             var options = ChangeTriggerOptions.Create(optionsBuilder);
 
-            var trackedEntityType = builder.Metadata.Model.FindEntityType(typeof(TTrackedEntity))!;
+            var trackedEntityType = builder.Metadata;
             var changeEntityType = builder.Metadata.Model.FindEntityType(typeof(TChangeEntity))!;
 
             builder.HasAnnotation(AnnotationConstants.UseChangeTriggers, true);
@@ -49,9 +49,7 @@ namespace EFCore.ChangeTriggers.Extensions
             builder
                 .HasMany(e => e.Changes)
                 .WithOne(e => e.TrackedEntity)
-                .HasForeignKey(trackedTablePrimaryKey.Properties.Select(p => p.Name).ToArray())
-                .IsRequired(false) // FK column must be nullable to force left join as source record may have been deleted
-                .HasNoCheck(); // Must be NOCHECK so the FK reference can exist even if the source record is deleted
+                .HasForeignKey(trackedTablePrimaryKey.Properties.Select(p => p.Name).ToArray());
 
             if (optionsBuilder is not null)
             {
@@ -126,6 +124,12 @@ namespace EFCore.ChangeTriggers.Extensions
             builder.Property(e => e.ChangedAt)
                 .IsChangedAtProperty();
 
+            foreach (var foreignKey in builder.Metadata.GetForeignKeys())
+            {
+                foreignKey.HasNoCheck(); // Stops cascade delete from removing the change entities if the source entity is deleted
+                foreignKey.IsRequired = false; // Forces a LEFT JOIN so change entities can still be queried if the source entity is deleted
+            }
+
             return builder;
         }
 
@@ -179,9 +183,7 @@ namespace EFCore.ChangeTriggers.Extensions
                 builder
                     .HasOne(typeof(TChangedBy), nameof(IHasChangedBy<TChangedBy>.ChangedBy)) // Can't use a navigation expression because TChangedBy may not be a class
                     .WithMany()
-                    .IsChangedByForeignKey() // Used to find the column type for the trigger
-                    .IsRequired(false) // FK column must be nullable to force left join as ChangedBy record may have been deleted
-                    .HasNoCheck(); // Must be NOCHECK so the FK reference can exist even if the ChangedBy record has been deleted
+                    .IsChangedByForeignKey(); // Used to find the column type for the trigger
             }
             else
             {

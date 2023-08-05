@@ -1,18 +1,21 @@
 # EFCore.ChangeTriggers
 
-[![Nuget](https://img.shields.io/nuget/v/EntityFrameworkCore.ChangeTriggers.SqlServer)](https://www.nuget.org/packages/EntityFrameworkCore.ChangeTriggers.SqlServer)
+[![Nuget](https://img.shields.io/nuget/v/EFCore.ChangeTriggers)](https://www.nuget.org/packages/EFCore.ChangeTriggers)
 
-EFCore.ChangeTriggers is an EF Core add-on for storing and querying changes made to SQL tables using triggers. A separate table will be created for each tracked entity to store the changes with full EF Core support for querying the changes. The changes table and trigger will be automatically added and updated via migrations when the source table schema changes.
+EFCore.ChangeTriggers is an Entity Framework Core add-on for storing and querying changes made to SQL tables using triggers. A separate table will be created for each tracked entity to store the changes with full EF Core support for querying the changes. The changes table and trigger will be automatically added and updated via migrations when the source table schema changes.
 
 **SQL Server is currently the only supported EF Core provider.**
 
-## Why use triggers?
+## Features
 
-The main advantage of using triggers is that any ad-hoc updates to the databases (not using EF Core) are included in change tracking. This can be important if your database often requires manual intervention outside of EF Core and you don't want to miss these changes in your change tracking.
+* Auto-generates SQL triggers to track changes for entities in a separate table.
+* Captures changes from EF Core and raw SQL queries executed on the database.
+* Optional configuration to store who made the change (ChangedBy) and where the change originated from (ChangeSource).
+* Ability to query the changes using your DbContext to see previous values. See [EFCore.ChangeTriggers.ChangeEventQueries](https://github.com/codemunkie15/EFCore.ChangeTriggers/tree/main/src/EFCore.ChangeTriggers.ChangeEventQueries) if you need to project change entities into human-readable change events.
 
 ## Getting started
 
-**NOTE: As your tracked entity and change entity will require most of the same properties, it is recommended to create a base class that both will extend. See the samples for an implementation of this.**
+**NOTE: As your tracked entity and change entity will require most of the same properties, it is recommended to create a base class that both will extend. See the [samples](https://github.com/codemunkie15/EFCore.ChangeTriggers/tree/main/samples) for an implementation of this.**
 1. Add the below nuget package to your project
 ```
 EFCore.ChangeTriggers.SqlServer
@@ -109,6 +112,10 @@ services.AddDbContext<MyDbContext>(options =>
 });
 ```
 
+### Using migrations
+
+
+
 ### Customising the trigger
 
 Individual change tables can be configured using the `ConfigureChangeTrigger()` extension method on your `ModelBuilder`.
@@ -123,7 +130,7 @@ modelBuilder.Entity<Permission>(e =>
 });
 ```
 
-## Sample generated table and trigger
+## Sample generated tables and trigger
 ```SQL
 CREATE TABLE [Users] (
     [Id] int NOT NULL IDENTITY,
