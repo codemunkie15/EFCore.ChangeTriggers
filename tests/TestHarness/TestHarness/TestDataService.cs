@@ -17,7 +17,7 @@ namespace TestHarness
         {
             var user = new User
             {
-                Name = "Some user",
+                Name = "Billy Bob",
                 DateOfBirth = "01/01/2000"
             };
             dbContext.Users.Add(user);
@@ -32,6 +32,10 @@ namespace TestHarness
             await dbContext.SaveChangesAsync();
 
             user.PrimaryPaymentMethod = pm;
+
+            await dbContext.SaveChangesAsync();
+
+            user.Name = "Billy James Bob";
 
             await dbContext.SaveChangesAsync();
         }

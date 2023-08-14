@@ -9,8 +9,8 @@ EFCore.ChangeTriggers is an Entity Framework Core add-on for storing and queryin
 ## Features
 
 * Auto-generates SQL triggers to track changes for entities in a separate table.
-* Captures changes from EF Core and raw SQL queries executed on the database.
-* Optional configuration to store who made the change (ChangedBy) and where the change originated from (ChangeSource).
+* Captures changes from EF Core (including migrations) and raw SQL queries executed on the database.
+* Optional configuration to store who made the change (ChangedBy) and where the change originated from (ChangeSource). 
 * Ability to query the changes using your DbContext to see previous values. See [EFCore.ChangeTriggers.ChangeEventQueries](https://github.com/codemunkie15/EFCore.ChangeTriggers/tree/main/src/EFCore.ChangeTriggers.ChangeEventQueries) if you need to project change entities into human-readable change events.
 
 ## Getting started
@@ -68,11 +68,11 @@ dotnet ef migrations add ChangeTriggers
 
 A ChangedBy column can be added and populated on change tables to store who changes are made by.
 
-1. Create a `ChangedByProvider` by implementing the `IChangedByProvider<TChangedBy>` interface.
+1. Create a `ChangedByProvider` by inheriting the `ChangedByProvider<TChangedBy>` class and overriding the required method(s).
 ```C#
-public class ChangedByProvider : IChangedByProvider<User>
+public class ChangedByProvider : ChangedByProvider<User>
 {
-	public Task<User> GetChangedByAsync()
+	public override Task<User> GetChangedByAsync()
 	{
 		return Task.FromResult(new User { Id = 1});
 	}
@@ -92,11 +92,11 @@ services.AddDbContext<MyDbContext>(options =>
 
 A ChangeSource column can be added and populated on change tables to store where the change came from, i.e. if you need to distinguish between migrations, API updates etc.
 
-1. Create a `ChangeSourceProvider` by implementing the `IChangeSourceProvider<TChangeSource>` interface.
+1. Create a `ChangeSourceProvider` by inheriting `ChangeSourceProvider<TChangeSource>` class and overriding the required method(s).
 ```C#
-public class ChangeSourceProvider : IChangeSourceProvider<ChangeSourceType>
+public class ChangeSourceProvider : ChangeSourceProvider<ChangeSourceType>
 {
-	public Task<ChangeSourceType> GetChangeSourceAsync()
+	public override Task<ChangeSourceType> GetChangeSourceAsync()
 	{
 		return Task.FromResult(ChangeSourceType.WebApi);
 	}
@@ -114,7 +114,17 @@ services.AddDbContext<MyDbContext>(options =>
 
 ### Using migrations
 
+If you are modifying data through migrations, you might want to have different values for ChangedBy and ChangeSource specifically for migration changes. You can override the below methods in your providers to achieve this.
 
+```C#
+public override User GetMigrationChangedBy()
+{
+}
+
+public override ChangeSourceType GetMigrationChangeSource()
+{
+}
+```
 
 ### Customising the trigger
 
