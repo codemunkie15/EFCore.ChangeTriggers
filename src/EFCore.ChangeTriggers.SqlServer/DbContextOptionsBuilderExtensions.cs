@@ -1,5 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Configuration;
+using EFCore.ChangeTriggers.Configuration.ChangeTriggers;
 using EFCore.ChangeTriggers.Extensions;
 using EFCore.ChangeTriggers.SqlServer.Interceptors;
 using EFCore.ChangeTriggers.SqlServer.Migrations;
@@ -25,7 +25,7 @@ namespace EFCore.ChangeTriggers.SqlServer
             TChangeSourceProvider,
             TChangeSource>(
             this DbContextOptionsBuilder optionsBuilder,
-            Action<ChangeTriggersOptions<TChangeSource>>? ChangeTriggersOptionsBuilder = null)
+            Action<ChangeTriggersOptions<TChangedBy, TChangeSource>>? ChangeTriggersOptionsBuilder = null)
             where TChangedByProvider : class, IChangedByProvider<TChangedBy>
             where TChangeSourceProvider : class, IChangeSourceProvider<TChangeSource>
         {
@@ -60,7 +60,8 @@ namespace EFCore.ChangeTriggers.SqlServer
         /// <returns>The options builder so that further configuration can be chained.</returns>
         public static DbContextOptionsBuilder UseSqlServerChangeTriggers<
             TChangedByProvider,
-            TChangedBy>(this DbContextOptionsBuilder optionsBuilder)
+            TChangedBy>(this DbContextOptionsBuilder optionsBuilder,
+            Action<ChangedByChangeTriggersOptions<TChangedBy>>? ChangeTriggersOptionsBuilder = null)
             where TChangedByProvider : class, IChangedByProvider<TChangedBy>
         {
             return optionsBuilder
@@ -83,7 +84,7 @@ namespace EFCore.ChangeTriggers.SqlServer
             TChangeSourceProvider,
             TChangeSource>(
             this DbContextOptionsBuilder optionsBuilder,
-            Action<ChangeTriggersOptions<TChangeSource>>? ChangeTriggersOptionsBuilder = null)
+            Action<ChangeSourceChangeTriggersOptions<TChangeSource>>? ChangeTriggersOptionsBuilder = null)
             where TChangeSourceProvider : class, IChangeSourceProvider<TChangeSource>
         {
             return optionsBuilder

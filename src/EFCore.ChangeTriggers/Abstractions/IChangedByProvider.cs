@@ -7,9 +7,27 @@
     public interface IChangedByProvider<TChangedBy>
     {
         /// <summary>
-        /// Gets the value of who changes are made by.
+        /// Gets the value of who changes are made by. Implement this method if you are using EF Core synchronously.
+        /// </summary>
+        /// <returns>Either a static value e.g. a username string, or an EF Core entity.</returns>
+        TChangedBy GetChangedBy();
+
+        /// <summary>
+        /// Gets the value of who changes are made by. Implement this method if you are using EF Core asynchronously.
         /// </summary>
         /// <returns>Either a static value e.g. a username string, or an EF Core entity.</returns>
         Task<TChangedBy> GetChangedByAsync();
+
+        /// <summary>
+        /// Gets the value of who changes are made by when running migrations. Implement this method if you are using EF Core synchronously.
+        /// </summary>
+        /// <returns>Either a static value e.g. a username string, or an EF Core entity.</returns>
+        TChangedBy GetMigrationChangedBy();
+
+        /// <summary>
+        /// Gets the value of who changes are made by when running migrations. Implement this method if you are using EF Core asynchronously.
+        /// </summary>
+        /// <returns>Either a static value e.g. a username string, or an EF Core entity.</returns>
+        Task<TChangedBy> GetMigrationChangedByAsync();
     }
 }

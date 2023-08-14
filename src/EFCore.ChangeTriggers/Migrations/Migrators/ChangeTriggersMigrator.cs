@@ -1,5 +1,7 @@
-﻿using EFCore.ChangeTriggers.Configuration;
+﻿using EFCore.ChangeTriggers.Abstractions;
+using EFCore.ChangeTriggers.Configuration.ChangeTriggers;
 using EFCore.ChangeTriggers.Constants;
+using EFCore.ChangeTriggers.EfCoreExtension;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -11,11 +13,13 @@ namespace EFCore.ChangeTriggers.Migrations.Migrators
 {
     internal class ChangeTriggersMigrator<TChangedBy, TChangeSource> : BaseChangeTriggersMigrator
     {
-        private readonly ChangeTriggersOptions<TChangeSource> changeTriggersOptions;
-        private readonly ICurrentDbContext currentContext;
+        private readonly IChangedByProvider<TChangedBy> changedByProvider;
+        private readonly IChangeSourceProvider<TChangeSource> changeSourceProvider;
 
         public ChangeTriggersMigrator(
-            ChangeTriggersOptions<TChangeSource> changeTriggersOptions,
+            ChangeTriggersExtensionContext changeTriggersExtensionContext,
+            IChangedByProvider<TChangedBy> changedByProvider,
+            IChangeSourceProvider<TChangeSource> changeSourceProvider,
             IMigrationsAssembly migrationsAssembly,
             IHistoryRepository historyRepository,
             IDatabaseCreator databaseCreator,
@@ -30,6 +34,7 @@ namespace EFCore.ChangeTriggers.Migrations.Migrators
             IRelationalCommandDiagnosticsLogger commandLogger,
             IDatabaseProvider databaseProvider)
             : base(
+                  changeTriggersExtensionContext,
                   migrationsAssembly,
                   historyRepository,
                   databaseCreator,
@@ -44,17 +49,19 @@ namespace EFCore.ChangeTriggers.Migrations.Migrators
                   commandLogger,
                   databaseProvider)
         {
-            this.changeTriggersOptions = changeTriggersOptions;
-            this.currentContext = currentContext;
+            this.changedByProvider = changedByProvider;
+            this.changeSourceProvider = changeSourceProvider;
         }
 
-        protected override IEnumerable<MigrationOperation> GetSetContextOperations()
+        protected override IEnumerable<MigrationOperation> GetScriptSetContextOperations()
         {
-            yield return GenerateSetChangeContextOperation<TChangedBy>(ChangeContextConstants.ChangedByContextName, null);
+            yield return GenerateSetChangeContextOperation<TChangedBy>(
+                ChangeContextConstants.ChangedByContextName,
+                changedByProvider.GetMigrationChangedBy());
 
             yield return GenerateSetChangeContextOperation<TChangeSource>(
                 ChangeContextConstants.ChangeSourceContextName,
-                changeTriggersOptions.MigrationSourceType);
+                changeSourceProvider.GetMigrationChangeSource());
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using EFCore.ChangeTriggers.Configuration;
+﻿using EFCore.ChangeTriggers.Abstractions;
+using EFCore.ChangeTriggers.Configuration.ChangeTriggers;
 using EFCore.ChangeTriggers.Constants;
+using EFCore.ChangeTriggers.EfCoreExtension;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -11,11 +13,11 @@ namespace EFCore.ChangeTriggers.Migrations.Migrators
 {
     internal class ChangeTriggersChangeSourceMigrator<TChangeSource> : BaseChangeTriggersMigrator
     {
-        private readonly ChangeTriggersOptions<TChangeSource> changeTriggersOptions;
-        private readonly ICurrentDbContext currentContext;
+        private readonly IChangeSourceProvider<TChangeSource> changeSourceProvider;
 
         public ChangeTriggersChangeSourceMigrator(
-            ChangeTriggersOptions<TChangeSource> changeTriggersOptions,
+            ChangeTriggersExtensionContext changeTriggersExtensionContext,
+            IChangeSourceProvider<TChangeSource> changeSourceProvider,
             IMigrationsAssembly migrationsAssembly,
             IHistoryRepository historyRepository,
             IDatabaseCreator databaseCreator,
@@ -30,6 +32,7 @@ namespace EFCore.ChangeTriggers.Migrations.Migrators
             IRelationalCommandDiagnosticsLogger commandLogger,
             IDatabaseProvider databaseProvider)
             : base(
+                  changeTriggersExtensionContext,
                   migrationsAssembly,
                   historyRepository,
                   databaseCreator,
@@ -44,15 +47,14 @@ namespace EFCore.ChangeTriggers.Migrations.Migrators
                   commandLogger,
                   databaseProvider)
         {
-            this.changeTriggersOptions = changeTriggersOptions;
-            this.currentContext = currentContext;
+            this.changeSourceProvider = changeSourceProvider;
         }
 
-        protected override IEnumerable<MigrationOperation> GetSetContextOperations()
+        protected override IEnumerable<MigrationOperation> GetScriptSetContextOperations()
         {
             yield return GenerateSetChangeContextOperation<TChangeSource>(
                 ChangeContextConstants.ChangeSourceContextName,
-                changeTriggersOptions.MigrationSourceType);
+                changeSourceProvider.GetMigrationChangeSource());
         }
     }
 }

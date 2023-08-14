@@ -18,48 +18,20 @@ builder.Services
     {
         options
             .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
-            .UseSqlServerChangeTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>(options =>
-            {
-                options.MigrationSourceType = ChangeSourceType.Migration;
-            });
+            .UseSqlServerChangeTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>();
     })
-    .AddScoped<TestData>();
+    .AddScoped<TestDataService>()
+    .AddScoped<TestChangeQueriesService>();
 
 var host = builder.Build();
 
 var dbContext = host.Services.GetRequiredService<MyDbContext>();
-var testData = host.Services.GetRequiredService<TestData>();
+var testDataService = host.Services.GetRequiredService<TestDataService>();
+var testChangeQueriesService = host.Services.GetRequiredService<TestChangeQueriesService>();
 
-var query = dbContext
-    .CreateChangeEventQueryBuilder<User, ChangeSourceType>()
-    .AddChanges(
-        dbContext.UserChanges.Where(uc => uc.TrackedEntity.Id == 1),
-        builder =>
-        {
-            builder
-                .AddEntityProperties(prop => $"{prop} updated!")
-                .AddProperty("Primary payment method changed", e => e.PrimaryPaymentMethod.Name);
-        }
-    ).Build();
+await testDataService.CreateAsync();
 
-var query2 = dbContext
-    .CreateChangeEventQueryBuilder()
-    .AddChanges(
-        dbContext.PermissionChanges,
-        builder =>
-        {
-            builder
-                .AddProperty("Name changed", e => e.Name)
-                .AddProperty("Order changed", e => e.Order.ToString())
-                .AddProperty("Reference changed", e => e.Reference.ToString())
-                .AddProperty("Enabled changed", e => e.Enabled.ToString());
-        })
-    .Build();
-
-var changes1 = await query.OrderBy(ce => ce.ChangedAt).ToListAsync();
-var changes2 = await query2.OrderBy(ce => ce.ChangedAt).ToListAsync();
-
-//await testData.CreateAsync();
+//await testChangeQueriesService.RunAsync();
 
 Console.ReadLine();
 

@@ -1,4 +1,4 @@
-﻿namespace EFCore.ChangeTriggers.Configuration
+﻿namespace EFCore.ChangeTriggers.Configuration.ChangeTriggers
 {
     /// <summary>
     /// Provides an API for configuring change triggers.

@@ -1,4 +1,5 @@
-﻿using EFCore.ChangeTriggers.Extensions;
+﻿using EFCore.ChangeTriggers.EfCoreExtension;
+using EFCore.ChangeTriggers.Extensions;
 using EFCore.ChangeTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -12,11 +13,13 @@ namespace EFCore.ChangeTriggers.Migrations.Migrators
 {
     internal abstract class BaseChangeTriggersMigrator : Migrator
     {
+        private readonly ChangeTriggersExtensionContext changeTriggersExtensionContext;
         private readonly IMigrationsSqlGenerator migrationsSqlGenerator;
         protected readonly ISqlGenerationHelper sqlGenerationHelper;
         private readonly ICurrentDbContext currentContext;
 
         public BaseChangeTriggersMigrator(
+            ChangeTriggersExtensionContext changeTriggersExtensionContext,
             IMigrationsAssembly migrationsAssembly,
             IHistoryRepository historyRepository,
             IDatabaseCreator databaseCreator,
@@ -45,18 +48,31 @@ namespace EFCore.ChangeTriggers.Migrations.Migrators
                   commandLogger,
                   databaseProvider)
         {
+            this.changeTriggersExtensionContext = changeTriggersExtensionContext;
             this.migrationsSqlGenerator = migrationsSqlGenerator;
             this.sqlGenerationHelper = sqlGenerationHelper;
             this.currentContext = currentContext;
         }
 
+        public override void Migrate(string? targetMigration = null)
+        {
+            changeTriggersExtensionContext.StartMigration();
+            base.Migrate(targetMigration);
+            changeTriggersExtensionContext.EndMigration();
+        }
+
+        public override async Task MigrateAsync(string? targetMigration = null, CancellationToken cancellationToken = default)
+        {
+            changeTriggersExtensionContext.StartMigration();
+            await base.MigrateAsync(targetMigration, cancellationToken);
+            changeTriggersExtensionContext.EndMigration();
+        }
+
         public override string GenerateScript(string? fromMigration = null, string? toMigration = null, MigrationsSqlGenerationOptions options = MigrationsSqlGenerationOptions.Default)
         {
-            var builder = new IndentedStringBuilder();
-
-            var setContextOperations = GetSetContextOperations();
-
+            var setContextOperations = GetScriptSetContextOperations();
             var setContextCommands = migrationsSqlGenerator.Generate(setContextOperations.ToList(), currentContext.Context.Model);
+            var builder = new IndentedStringBuilder();
 
             foreach (var command in setContextCommands)
             {
@@ -64,13 +80,12 @@ namespace EFCore.ChangeTriggers.Migrations.Migrators
             }
 
             builder.Append(sqlGenerationHelper.BatchTerminator);
-
             builder.AppendLines(base.GenerateScript(fromMigration, toMigration, options));
 
             return builder.ToString();
         }
 
-        protected abstract IEnumerable<MigrationOperation> GetSetContextOperations();
+        protected abstract IEnumerable<MigrationOperation> GetScriptSetContextOperations();
 
         protected SetChangeContextOperation GenerateSetChangeContextOperation<TContextValue>(string name, object? value)
         {

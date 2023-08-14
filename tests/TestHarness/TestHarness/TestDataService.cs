@@ -4,11 +4,11 @@ using TestHarness.DbModels.Users;
 
 namespace TestHarness
 {
-    internal class TestData
+    internal class TestDataService
     {
         private readonly MyDbContext dbContext;
 
-        public TestData(MyDbContext dbContext)
+        public TestDataService(MyDbContext dbContext)
         {
             this.dbContext = dbContext;
         }

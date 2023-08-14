@@ -1,4 +1,4 @@
-﻿using EFCore.ChangeTriggers.Configuration;
+﻿using EFCore.ChangeTriggers.Configuration.ChangeTriggers;
 using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Extensions;
 using EFCore.ChangeTriggers.Helpers;

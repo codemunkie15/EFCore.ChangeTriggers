@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 using EFCore.ChangeTriggers.Migrations.Migrators;
 using EFCore.ChangeTriggers.Interceptors;
-using EFCore.ChangeTriggers.Configuration;
 using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.Migrations;
 using EFCore.ChangeTriggers.EfCoreExtension;
+using EFCore.ChangeTriggers.Configuration.ChangeTriggers;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Extensions
 {
@@ -22,20 +23,20 @@ namespace EFCore.ChangeTriggers.Extensions
             TChangeSourceProvider,
             TChangeSource>(
             this DbContextOptionsBuilder builder,
-            Action<ChangeTriggersOptions<TChangeSource>>? optionsBuilder = null)
+            Action<ChangeTriggersOptions<TChangedBy, TChangeSource>>? optionsBuilder = null)
             where TMigrationsSqlGenerator : IMigrationsSqlGenerator
             where TChangedByDbConnectionInterceptor : BaseChangedByDbConnectionInterceptor<TChangedBy>
             where TChangeSourceDbConnectionInterceptor : BaseChangeSourceDbConnectionInterceptor<TChangeSource>
             where TChangedByProvider : class, IChangedByProvider<TChangedBy>
             where TChangeSourceProvider : class, IChangeSourceProvider<TChangeSource>
         {
-            var options = ChangeTriggersOptions<TChangeSource>.Create(optionsBuilder);
+            var options = ChangeTriggersOptions<TChangedBy, TChangeSource>.Create(optionsBuilder);
 
             return builder
                 .AddChangeTriggersExtension<TMigrationsSqlGenerator, ChangeTriggersMigrator<TChangedBy, TChangeSource>>(options, services =>
                 {
                     services
-                        .AddChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>()
+                        .AddChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>(options)
                         .AddChangeSource<TChangeSourceDbConnectionInterceptor, TChangeSourceProvider, TChangeSource>(options);
                 });
         }
@@ -57,18 +58,18 @@ namespace EFCore.ChangeTriggers.Extensions
             TChangedByProvider,
             TChangedBy>(
             this DbContextOptionsBuilder builder,
-            Action<ChangeTriggersOptions>? optionsBuilder = null)
+            Action<ChangedByChangeTriggersOptions<TChangedBy>>? optionsBuilder = null)
             where TMigrationsSqlGenerator : IMigrationsSqlGenerator
             where TChangedByDbConnectionInterceptor : BaseChangedByDbConnectionInterceptor<TChangedBy>
             where TChangedByProvider : class, IChangedByProvider<TChangedBy>
         {
-            var options = ChangeTriggersOptions.Create(optionsBuilder);
+            var options = ChangedByChangeTriggersOptions<TChangedBy>.Create(optionsBuilder);
 
             return builder
                 .AddChangeTriggersExtension<TMigrationsSqlGenerator, ChangeTriggersChangedByMigrator<TChangedBy>>(options, services =>
                 {
                     services
-                        .AddChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>();
+                        .AddChangedBy<TChangedByDbConnectionInterceptor, TChangedByProvider, TChangedBy>(options);
                 });
         }
 
@@ -78,12 +79,12 @@ namespace EFCore.ChangeTriggers.Extensions
             TChangeSourceProvider,
             TChangeSource>(
             this DbContextOptionsBuilder builder,
-            Action<ChangeTriggersOptions<TChangeSource>>? optionsBuilder = null)
+            Action<ChangeSourceChangeTriggersOptions<TChangeSource>>? optionsBuilder = null)
             where TMigrationsSqlGenerator : IMigrationsSqlGenerator
             where TChangeSourceDbConnectionInterceptor : BaseChangeSourceDbConnectionInterceptor<TChangeSource>
             where TChangeSourceProvider : class, IChangeSourceProvider<TChangeSource>
         {
-            var options = ChangeTriggersOptions<TChangeSource>.Create(optionsBuilder);
+            var options = ChangeSourceChangeTriggersOptions<TChangeSource>.Create(optionsBuilder);
 
             return builder
                 .AddChangeTriggersExtension<TMigrationsSqlGenerator, ChangeTriggersChangeSourceMigrator<TChangeSource>>(options, services =>
@@ -104,6 +105,7 @@ namespace EFCore.ChangeTriggers.Extensions
             builderInfrastructure
                 .AddOrUpdateExtension(new ChangeTriggersExtension(services =>
                 {
+                    services.AddSingleton(new ChangeTriggersExtensionContext());
                     services.AddSingleton(options);
 
                     servicesBuilder?.Invoke(services);

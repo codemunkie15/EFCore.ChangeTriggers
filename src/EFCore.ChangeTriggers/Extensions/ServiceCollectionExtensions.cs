@@ -1,8 +1,9 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Configuration;
+using EFCore.ChangeTriggers.Configuration.ChangeTriggers;
 using EFCore.ChangeTriggers.Interceptors;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Extensions
 {
@@ -12,11 +13,13 @@ namespace EFCore.ChangeTriggers.Extensions
             TChangedByDbConnectionInterceptor,
             TChangedByProvider,
             TChangedBy>
-            (this IServiceCollection services)
+            (this IServiceCollection services,
+            IChangedByChangeTriggersOptions<TChangedBy> options)
             where TChangedByDbConnectionInterceptor : BaseChangedByDbConnectionInterceptor<TChangedBy>
             where TChangedByProvider : class, IChangedByProvider<TChangedBy>
         {
             return services
+                .AddSingleton<IChangedByChangeTriggersOptions<TChangedBy>>(options)
                 .AddScoped<IInterceptor, TChangedByDbConnectionInterceptor>()
                 .AddScoped<IChangedByProvider<TChangedBy>, TChangedByProvider>();
         }
@@ -26,12 +29,12 @@ namespace EFCore.ChangeTriggers.Extensions
             TChangeSourceProvider,
             TChangeSource>
             (this IServiceCollection services,
-            ChangeTriggersOptions<TChangeSource> options)
+            IChangeSourceChangeTriggersOptions<TChangeSource> options)
             where TChangeSourceDbConnectionInterceptor : BaseChangeSourceDbConnectionInterceptor<TChangeSource>
             where TChangeSourceProvider : class, IChangeSourceProvider<TChangeSource>
         {
             return services
-                .AddSingleton(options) // Register options with TChangeSource
+                .AddSingleton<IChangeSourceChangeTriggersOptions<TChangeSource>>(options)
                 .AddScoped<IInterceptor, TChangeSourceDbConnectionInterceptor>()
                 .AddScoped<IChangeSourceProvider<TChangeSource>, TChangeSourceProvider>();
         }
