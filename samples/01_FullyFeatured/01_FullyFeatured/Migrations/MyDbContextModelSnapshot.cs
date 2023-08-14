@@ -8,7 +8,7 @@ using _01_FullyFeatured;
 
 #nullable disable
 
-namespace _01FullyFeatured.Migrations
+namespace _01_FullyFeatured.Migrations
 {
     [DbContext(typeof(MyDbContext))]
     partial class MyDbContextModelSnapshot : ModelSnapshot
@@ -17,12 +17,99 @@ namespace _01FullyFeatured.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.1")
+                .HasAnnotation("ProductVersion", "7.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("_01_FullyFeatured.DbModels.Permissions.Permission", b =>
+            modelBuilder.Entity("_01_FullyFeatured.DbModels.Orders.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders", t =>
+                        {
+                            t.HasTrigger("ChangeTrigger");
+                        });
+
+                    b
+                        .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "_01_FullyFeatured.DbModels.Orders.OrderChange")
+                        .HasAnnotation("ChangeTriggers:TriggerNameFormat", "CustomTriggerName_{0}")
+                        .HasAnnotation("ChangeTriggers:Use", true);
+                });
+
+            modelBuilder.Entity("_01_FullyFeatured.DbModels.Orders.OrderChange", b =>
+                {
+                    b.Property<int>("ChangeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChangeId"));
+
+                    b.Property<int>("ChangeSource")
+                        .HasColumnType("int")
+                        .HasAnnotation("ChangeTriggers:IsChangeSourceColumn", true);
+
+                    b.Property<DateTimeOffset>("ChangedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasAnnotation("ChangeTriggers:IsChangedAtColumn", true);
+
+                    b.Property<int>("ChangedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OperationType")
+                        .HasColumnType("int")
+                        .HasColumnName("OperationTypeId")
+                        .HasAnnotation("ChangeTriggers:IsOperationTypeColumn", true);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ChangeId");
+
+                    b.HasIndex("ChangedById");
+
+                    b.HasIndex("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OrderChanges");
+
+                    b.HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "_01_FullyFeatured.DbModels.Orders.Order");
+                });
+
+            modelBuilder.Entity("_01_FullyFeatured.DbModels.Products.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -36,18 +123,18 @@ namespace _01FullyFeatured.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions", null, t =>
+                    b.ToTable("Products", t =>
                         {
-                            t.HasTrigger("ChangeTrackingTrigger");
+                            t.HasTrigger("ChangeTrigger")
+                                .HasDatabaseName("ChangeTrigger1");
                         });
 
                     b
-                        .HasAnnotation("ChangeTrackingTriggers:ChangeEntityTypeName", "_01_FullyFeatured.DbModels.Permissions.PermissionChange")
-                        .HasAnnotation("ChangeTrackingTriggers:TriggerNameFormat", "CustomTriggerName_{0}")
-                        .HasAnnotation("ChangeTrackingTriggers:Use", true);
+                        .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "_01_FullyFeatured.DbModels.Products.ProductChange")
+                        .HasAnnotation("ChangeTriggers:Use", true);
                 });
 
-            modelBuilder.Entity("_01_FullyFeatured.DbModels.Permissions.PermissionChange", b =>
+            modelBuilder.Entity("_01_FullyFeatured.DbModels.Products.ProductChange", b =>
                 {
                     b.Property<int>("ChangeId")
                         .ValueGeneratedOnAdd()
@@ -57,8 +144,7 @@ namespace _01FullyFeatured.Migrations
 
                     b.Property<DateTimeOffset>("ChangedAt")
                         .HasColumnType("datetimeoffset")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangedAtColumn", true);
+                        .HasAnnotation("ChangeTriggers:IsChangedAtColumn", true);
 
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -70,14 +156,15 @@ namespace _01FullyFeatured.Migrations
                     b.Property<int>("OperationType")
                         .HasColumnType("int")
                         .HasColumnName("OperationTypeId")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
-                        .HasAnnotation("ChangeTrackingTriggers:IsOperationTypeColumn", true);
+                        .HasAnnotation("ChangeTriggers:IsOperationTypeColumn", true);
 
                     b.HasKey("ChangeId");
 
                     b.HasIndex("Id");
 
-                    b.ToTable("PermissionChanges", (string)null);
+                    b.ToTable("ProductChanges");
+
+                    b.HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "_01_FullyFeatured.DbModels.Products.Product");
                 });
 
             modelBuilder.Entity("_01_FullyFeatured.DbModels.Users.User", b =>
@@ -98,15 +185,15 @@ namespace _01FullyFeatured.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", null, t =>
+                    b.ToTable("Users", t =>
                         {
-                            t.HasTrigger("ChangeTrackingTrigger")
-                                .HasDatabaseName("ChangeTrackingTrigger1");
+                            t.HasTrigger("ChangeTrigger")
+                                .HasDatabaseName("ChangeTrigger2");
                         });
 
                     b
-                        .HasAnnotation("ChangeTrackingTriggers:ChangeEntityTypeName", "_01_FullyFeatured.DbModels.Users.UserChange")
-                        .HasAnnotation("ChangeTrackingTriggers:Use", true);
+                        .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "_01_FullyFeatured.DbModels.Users.UserChange")
+                        .HasAnnotation("ChangeTriggers:Use", true);
 
                     b.HasData(
                         new
@@ -127,13 +214,11 @@ namespace _01FullyFeatured.Migrations
 
                     b.Property<int>("ChangeSource")
                         .HasColumnType("int")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeSourceColumn", true);
+                        .HasAnnotation("ChangeTriggers:IsChangeSourceColumn", true);
 
                     b.Property<DateTimeOffset>("ChangedAt")
                         .HasColumnType("datetimeoffset")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangedAtColumn", true);
+                        .HasAnnotation("ChangeTriggers:IsChangedAtColumn", true);
 
                     b.Property<int>("ChangedById")
                         .HasColumnType("int");
@@ -152,8 +237,7 @@ namespace _01FullyFeatured.Migrations
                     b.Property<int>("OperationType")
                         .HasColumnType("int")
                         .HasColumnName("OperationTypeId")
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
-                        .HasAnnotation("ChangeTrackingTriggers:IsOperationTypeColumn", true);
+                        .HasAnnotation("ChangeTriggers:IsOperationTypeColumn", true);
 
                     b.HasKey("ChangeId");
 
@@ -161,15 +245,72 @@ namespace _01FullyFeatured.Migrations
 
                     b.HasIndex("Id");
 
-                    b.ToTable("UserChanges", (string)null);
+                    b.ToTable("UserChanges");
+
+                    b.HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "_01_FullyFeatured.DbModels.Users.User");
                 });
 
-            modelBuilder.Entity("_01_FullyFeatured.DbModels.Permissions.PermissionChange", b =>
+            modelBuilder.Entity("_01_FullyFeatured.DbModels.Orders.Order", b =>
                 {
-                    b.HasOne("_01_FullyFeatured.DbModels.Permissions.Permission", "TrackedEntity")
+                    b.HasOne("_01_FullyFeatured.DbModels.Products.Product", "Product")
+                        .WithMany("Orders")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("_01_FullyFeatured.DbModels.Users.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("_01_FullyFeatured.DbModels.Orders.OrderChange", b =>
+                {
+                    b.HasOne("_01_FullyFeatured.DbModels.Users.User", "ChangedBy")
+                        .WithMany()
+                        .HasForeignKey("ChangedById")
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true)
+                        .HasAnnotation("ChangeTriggers:IsChangedByColumn", true);
+
+                    b.HasOne("_01_FullyFeatured.DbModels.Orders.Order", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id")
-                        .HasAnnotation("ChangeTrackingTriggers:HasNoCheckConstraint", true);
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
+
+                    b.HasOne("_01_FullyFeatured.DbModels.Products.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
+
+                    b.HasOne("_01_FullyFeatured.DbModels.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
+
+                    b.Navigation("ChangedBy");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("TrackedEntity");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("_01_FullyFeatured.DbModels.Products.ProductChange", b =>
+                {
+                    b.HasOne("_01_FullyFeatured.DbModels.Products.Product", "TrackedEntity")
+                        .WithMany("Changes")
+                        .HasForeignKey("Id")
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
 
                     b.Navigation("TrackedEntity");
                 });
@@ -179,28 +320,36 @@ namespace _01FullyFeatured.Migrations
                     b.HasOne("_01_FullyFeatured.DbModels.Users.User", "ChangedBy")
                         .WithMany()
                         .HasForeignKey("ChangedById")
-                        .HasAnnotation("ChangeTrackingTriggers:HasNoCheckConstraint", true)
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangeContextColumn", true)
-                        .HasAnnotation("ChangeTrackingTriggers:IsChangedByColumn", true);
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true)
+                        .HasAnnotation("ChangeTriggers:IsChangedByColumn", true);
 
                     b.HasOne("_01_FullyFeatured.DbModels.Users.User", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id")
-                        .HasAnnotation("ChangeTrackingTriggers:HasNoCheckConstraint", true);
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
 
                     b.Navigation("ChangedBy");
 
                     b.Navigation("TrackedEntity");
                 });
 
-            modelBuilder.Entity("_01_FullyFeatured.DbModels.Permissions.Permission", b =>
+            modelBuilder.Entity("_01_FullyFeatured.DbModels.Orders.Order", b =>
                 {
                     b.Navigation("Changes");
+                });
+
+            modelBuilder.Entity("_01_FullyFeatured.DbModels.Products.Product", b =>
+                {
+                    b.Navigation("Changes");
+
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("_01_FullyFeatured.DbModels.Users.User", b =>
                 {
                     b.Navigation("Changes");
+
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

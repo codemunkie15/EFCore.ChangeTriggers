@@ -1,21 +1,24 @@
-# EntityFrameworkCore.ChangeTrackingTriggers
+# EFCore.ChangeTriggers
 
-[![Nuget](https://img.shields.io/nuget/v/EntityFrameworkCore.ChangeTrackingTriggers.SqlServer)](https://www.nuget.org/packages/EntityFrameworkCore.ChangeTrackingTriggers.SqlServer)
+[![Nuget](https://img.shields.io/nuget/v/EFCore.ChangeTriggers)](https://www.nuget.org/packages/EFCore.ChangeTriggers)
 
-EntityFrameworkCore.ChangeTrackingTriggers is an EF Core add-on for storing and querying changes made to SQL tables using triggers. A separate table will be created for each tracked entity to store the changes with full EF Core support for querying the changes. The changes table and trigger will be automatically added and updated via migrations when the source table schema changes.
+EFCore.ChangeTriggers is an Entity Framework Core add-on for storing and querying changes made to SQL tables using triggers. A separate table will be created for each tracked entity to store the changes with full EF Core support for querying the changes. The changes table and trigger will be automatically added and updated via migrations when the source table schema changes.
 
 **SQL Server is currently the only supported EF Core provider.**
 
-## Why use triggers?
+## Features
 
-The main advantage of using triggers is that any ad-hoc updates to the databases (not using EF Core) are included in change tracking. This can be important if your database often requires manual intervention outside of EF Core and you don't want to miss these changes in your change tracking.
+* Auto-generates SQL triggers to track changes for entities in a separate table.
+* Captures changes from EF Core and raw SQL queries executed on the database.
+* Optional configuration to store who made the change (ChangedBy) and where the change originated from (ChangeSource).
+* Ability to query the changes using your DbContext to see previous values. See [EFCore.ChangeTriggers.ChangeEventQueries](https://github.com/codemunkie15/EFCore.ChangeTriggers/tree/main/src/EFCore.ChangeTriggers.ChangeEventQueries) if you need to project change entities into human-readable change events.
 
 ## Getting started
 
-**NOTE: As your tracked entity and change entity will require most of the same properties, it is recommended to create a base class that both will extend. See the samples for an implementation of this.**
+**NOTE: As your tracked entity and change entity will require most of the same properties, it is recommended to create a base class that both will extend. See the [samples](https://github.com/codemunkie15/EFCore.ChangeTriggers/tree/main/samples) for an implementation of this.**
 1. Add the below nuget package to your project
 ```
-EntityFrameworkCore.ChangeTrackingTriggers.SqlServer
+EFCore.ChangeTriggers.SqlServer
 ```
 
 2. Implement the `ITracked` interface on any entity classes that you want to track
@@ -34,29 +37,29 @@ public class UserChange : IChange<User, int>
 
 4. Add the below assembly attribute to your `Program.cs`
 ```C#
-[assembly: DesignTimeServicesReference("EntityFrameworkCore.ChangeTrackingTriggers.ChangeTrackingDesignTimeServices, EntityFrameworkCore.ChangeTrackingTriggers")]
+[assembly: DesignTimeServicesReference("EFCore.ChangeTriggers.ChangeDesignTimeServices, EFCore.ChangeTriggers")]
 ```
 
-5. Add ChangeTrackingTriggers to your `DbContext`
+5. Add ChangeTriggers to your `DbContext`
 ```C#
 services.AddDbContext<MyDbContext>(options =>
 {
     options
-        .UseSqlServerChangeTrackingTriggers();
+        .UseSqlServerChangeTriggers();
 });
 ```
 
-6. Auto-configure your change tracking trigger entities in your `DbContext`
+6. Auto-configure your change trigger entities in your `DbContext`
 ```C#
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
-    modelBuilder.AutoConfigureChangeTrackingTriggers();
+    modelBuilder.AutoConfigureChangeTriggers();
 ...
 ```
 
 7. Create a migration to generate the required objects
 ```
-dotnet ef migrations add ChangeTrackingTriggers
+dotnet ef migrations add ChangeTriggers
 ```
 
 ## Configuration
@@ -76,12 +79,12 @@ public class ChangedByProvider : IChangedByProvider<User>
 }
 ```
 
-2. Use the `UseSqlServerChangeTrackingTriggers<TChangedByProvider, TChangedBy>()` overload, specifying your `ChangedByProvider` and ChangedBy type.
+2. Use the `UseSqlServerChangeTriggers<TChangedByProvider, TChangedBy>()` overload, specifying your `ChangedByProvider` and ChangedBy type.
 ```C#
 services.AddDbContext<MyDbContext>(options =>
 {
     options
-        .UseSqlServerChangeTrackingTriggers<ChangedByProvider, User>();
+        .UseSqlServerChangeTriggers<ChangedByProvider, User>();
 });
 ```
 
@@ -100,30 +103,34 @@ public class ChangeSourceProvider : IChangeSourceProvider<ChangeSourceType>
 }
 ```
 
-2. Use the `UseSqlServerChangeTrackingTriggers<TChangeSourceProvider, TChangeSource>()` overload, specifying your `ChangeSourceProvider` and ChangeSource type.
+2. Use the `UseSqlServerChangeTriggers<TChangeSourceProvider, TChangeSource>()` overload, specifying your `ChangeSourceProvider` and ChangeSource type.
 ```C#
 services.AddDbContext<MyDbContext>(options =>
 {
     options
-        .UseSqlServerChangeTrackingTriggers<ChangeSourceProvider, ChangeSourceType>();
+        .UseSqlServerChangeTriggers<ChangeSourceProvider, ChangeSourceType>();
 });
 ```
 
+### Using migrations
+
+
+
 ### Customising the trigger
 
-Individual change tables can be configured using the `ConfigureChangeTrackingTrigger()` extension method on your `ModelBuilder`.
+Individual change tables can be configured using the `ConfigureChangeTrigger()` extension method on your `ModelBuilder`.
 
 ```C#
 modelBuilder.Entity<Permission>(e =>
 {
-    e.ConfigureChangeTrackingTrigger(options =>
+    e.ConfigureChangeTrigger(options =>
     {
         options.TriggerNameFactory = tableName => $"CustomTriggerName_{tableName}";
     });
 });
 ```
 
-## Sample generated table and trigger
+## Sample generated tables and trigger
 ```SQL
 CREATE TABLE [Users] (
     [Id] int NOT NULL IDENTITY,
@@ -149,11 +156,11 @@ CREATE TABLE [UserChanges] (
 ```
 ```SQL
 /*
-Auto-generated trigger by EntityFrameworkCore.ChangeTrackingTriggers
-https://github.com/codemunkie15/EntityFrameworkCore.ChangeTrackingTriggers
+Auto-generated trigger by EFCore.ChangeTriggers
+https://github.com/codemunkie15/EFCore.ChangeTriggers
 */
 
-CREATE TRIGGER [dbo].[Users_ChangeTracking]
+CREATE TRIGGER [dbo].[Users_Change]
 ON [dbo].[Users]
 FOR INSERT, UPDATE, DELETE
 NOT FOR REPLICATION
@@ -175,16 +182,16 @@ BEGIN
 				THEN 3  -- DELETE
 		END)
 
-	SET @ChangeSource = CAST(SESSION_CONTEXT(N'ChangeTrackingContext.ChangeSource') AS INT)
+	SET @ChangeSource = CAST(SESSION_CONTEXT(N'ChangeContext.ChangeSource') AS INT)
 	IF @ChangeSource IS NULL
 	BEGIN
-		;THROW 130101, 'ChangeTrackingContext.ChangeSource must be set in session context for change tracking. Transaction was not commited.', 1
+		;THROW 130101, 'ChangeContext.ChangeSource must be set in session context for change tracking. Transaction was not commited.', 1
 	END
 
-	SET @ChangedBy = CAST(SESSION_CONTEXT(N'ChangeTrackingContext.ChangedBy') AS INT)
+	SET @ChangedBy = CAST(SESSION_CONTEXT(N'ChangeContext.ChangedBy') AS INT)
 	IF @ChangedBy IS NULL
 	BEGIN
-		;THROW 130101, 'ChangeTrackingContext.ChangedBy must be set in session context for change tracking. Transaction was not commited.', 1
+		;THROW 130101, 'ChangeContext.ChangedBy must be set in session context for change tracking. Transaction was not commited.', 1
 	END
 
 	IF @OperationTypeId = 1

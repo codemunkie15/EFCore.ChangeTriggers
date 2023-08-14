@@ -1,5 +1,5 @@
 ﻿using _01_FullyFeatured.DbModels.Users;
-using EntityFrameworkCore.ChangeTrackingTriggers.Abstractions;
+using EFCore.ChangeTriggers.Abstractions;
 using System.Threading.Tasks;
 
 namespace _01_FullyFeatured
