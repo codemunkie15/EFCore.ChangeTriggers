@@ -2,13 +2,13 @@
 
 [![Nuget](https://img.shields.io/nuget/v/EFCore.ChangeTriggers.ChangeEventQueries)](https://www.nuget.org/packages/EFCore.ChangeTriggers.ChangeEventQueries)
 
-EFCore.ChangeTriggers.ChangeEventQueries is an add-on for querying change tables in a human-readable format.
+EFCore.ChangeTriggers.ChangeEventQueries is an EFCore.ChangeTriggers add-on for querying change tables in a human-readable format.
 
 ## Example
 
 ### Change table data (UserChanges)
 
-![Screenshot](../../docs/images/Example1.png)
+![Example](https://raw.githubusercontent.com/codemunkie15/EFCore.ChangeTriggers/main/docs/images/Example1.png)
 
 ### Query
 
@@ -16,7 +16,7 @@ EFCore.ChangeTriggers.ChangeEventQueries is an add-on for querying change tables
 var query = dbContext
 	.CreateChangeEventQueryBuilder<User, ChangeSourceType>()
 	.AddChanges( // AddChanges returns the builder so multiple calls can be chained for different change entities
-		dbContext.UserChanges.Where(uc => uc.Id == 2),
+		dbContext.UserChanges.Where(uc => uc.Id == 2), // Add any where clauses to your query here
 		builder =>
 		{
 			builder
