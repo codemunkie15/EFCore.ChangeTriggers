@@ -2,7 +2,7 @@
 
 [![Nuget](https://img.shields.io/nuget/v/EFCore.ChangeTriggers)](https://www.nuget.org/packages/EFCore.ChangeTriggers)
 
-EFCore.ChangeTriggers is an Entity Framework Core extension for storing and querying changes made to SQL tables using triggers. A separate table will be created for each tracked entity to store the changes with full EF Core support for querying the changes. The changes table and trigger will be automatically added and updated via migrations when the source table schema changes.
+EFCore.ChangeTriggers is an Entity Framework Core extension for storing and querying changes made to entities using SQL triggers. A separate table will be created for each tracked entity to store the changes with full EF Core support for querying the changes. The changes table and trigger will be automatically added and updated via migrations when the source table schema changes.
 
 **SQL Server is currently the only supported EF Core provider.**
 

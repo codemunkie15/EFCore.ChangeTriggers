@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<Summary>An EF Core add-on for storing and querying changes made to SQL tables using triggers.</Summary>
-	<Description>An EF Core add-on for storing and querying changes made to SQL tables using triggers.</Description>
+	<Summary>An Entity Framework Core extension for storing and querying changes made to entities using SQL triggers.</Summary>
+	<Description>An Entity Framework Core extension for storing and querying changes made to entities using SQL triggers.</Description>
 	<PackageProjectUrl>https://github.com/codemunkie15/EFCore.ChangeTriggers</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
