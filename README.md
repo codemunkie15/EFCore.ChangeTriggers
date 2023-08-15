@@ -13,6 +13,10 @@ EFCore.ChangeTriggers is an Entity Framework Core add-on for storing and queryin
 * Optional configuration to store who made the change (ChangedBy) and where the change originated from (ChangeSource). 
 * Ability to query the changes using your DbContext to see previous values. See [EFCore.ChangeTriggers.ChangeEventQueries](https://github.com/codemunkie15/EFCore.ChangeTriggers/tree/main/src/EFCore.ChangeTriggers.ChangeEventQueries) if you need to project change entities into human-readable change events.
 
+## Example populated change table
+
+![Screenshot](docs/images/Example1.png)
+
 ## Getting started
 
 **NOTE: As your tracked entity and change entity will require most of the same properties, it is recommended to create a base class that both will extend. See the [samples](https://github.com/codemunkie15/EFCore.ChangeTriggers/tree/main/samples) for an implementation of this.**
@@ -37,7 +41,7 @@ public class UserChange : IChange<User, int>
 
 4. Add the below assembly attribute to your `Program.cs`
 ```C#
-[assembly: DesignTimeServicesReference("EFCore.ChangeTriggers.ChangeDesignTimeServices, EFCore.ChangeTriggers")]
+[assembly: DesignTimeServicesReference("EFCore.ChangeTriggers.ChangeTriggersDesignTimeServices, EFCore.ChangeTriggers")]
 ```
 
 5. Add ChangeTriggers to your `DbContext`

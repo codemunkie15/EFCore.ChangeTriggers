@@ -8,7 +8,7 @@ EFCore.ChangeTriggers.ChangeEventQueries is an add-on for querying change tables
 
 ### Change table data (UserChanges)
 
-![Screenshot](docs/images/Example1.png)
+![Screenshot](../../docs/images/Example1.png)
 
 ### Query
 
