@@ -1,5 +1,6 @@
 ﻿using EFCore.ChangeTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using TestHarness.DbModels.PaymentMethods;
 using TestHarness.DbModels.Permissions;
 using TestHarness.DbModels.Users;
@@ -26,6 +27,8 @@ namespace TestHarness
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            Debugger.Launch();
+
             modelBuilder.Entity<User>(e =>
             {
                 e.ToTable("Users");
@@ -37,6 +40,7 @@ namespace TestHarness
             modelBuilder.Entity<UserChange>(e =>
             {
                 e.ToTable("UserChanges");
+                e.HasKey(u => u.ChangeId);
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
             });
@@ -51,6 +55,7 @@ namespace TestHarness
             modelBuilder.Entity<PermissionChange>(e =>
             {
                 e.ToTable("PermissionChanges");
+                e.HasKey(p => p.ChangeId);
                 e.Property(u => u.Name).IsRequired();
             });
 
