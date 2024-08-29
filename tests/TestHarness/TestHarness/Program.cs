@@ -17,7 +17,7 @@ builder.Services
     .AddDbContext<MyDbContext>(options =>
     {
         options
-            .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
+            .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Database=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
             .UseSqlServerChangeTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>();
     })
     .AddScoped<TestDataService>()
@@ -29,9 +29,9 @@ var dbContext = host.Services.GetRequiredService<MyDbContext>();
 var testDataService = host.Services.GetRequiredService<TestDataService>();
 var testChangeQueriesService = host.Services.GetRequiredService<TestChangeQueriesService>();
 
-//await testDataService.CreateAsync();
+await testDataService.CreateAsync();
 
-await testChangeQueriesService.RunAsync();
+//await testChangeQueriesService.RunAsync();
 
 Console.ReadLine();
 

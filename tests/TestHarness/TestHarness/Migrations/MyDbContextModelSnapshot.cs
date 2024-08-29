@@ -17,7 +17,7 @@ namespace TestHarness.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -304,7 +304,8 @@ namespace TestHarness.Migrations
 
                     b.HasOne("TestHarness.DbModels.PaymentMethods.PaymentMethod", "PrimaryPaymentMethod")
                         .WithMany()
-                        .HasForeignKey("PrimaryPaymentMethodId");
+                        .HasForeignKey("PrimaryPaymentMethodId")
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
 
                     b.Navigation("ChangedBy");
 

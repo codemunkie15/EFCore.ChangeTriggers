@@ -4,7 +4,7 @@ using System;
 
 namespace TestHarness.DbModels.Permissions
 {
-    public class PermissionChange : PermissionBase, IChange<Permission, int>
+    public class PermissionChange : PermissionBase, IChange<Permission>
     {
         public int ChangeId { get; set; }
 
