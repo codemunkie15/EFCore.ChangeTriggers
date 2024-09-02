@@ -12,7 +12,7 @@ using TestHarness;
 namespace TestHarness.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20240827224611_Initial")]
+    [Migration("20240902202500_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace TestHarness.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.10")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -95,7 +95,8 @@ namespace TestHarness.Migrations
 
                     b
                         .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "TestHarness.DbModels.Permissions.PermissionChange")
-                        .HasAnnotation("ChangeTriggers:Use", true);
+                        .HasAnnotation("ChangeTriggers:Use", true)
+                        .HasAnnotation("SqlServer:UseSqlOutputClause", false);
 
                     b.HasData(
                         new
@@ -185,7 +186,8 @@ namespace TestHarness.Migrations
 
                     b
                         .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "TestHarness.DbModels.Users.UserChange")
-                        .HasAnnotation("ChangeTriggers:Use", true);
+                        .HasAnnotation("ChangeTriggers:Use", true)
+                        .HasAnnotation("SqlServer:UseSqlOutputClause", false);
 
                     b.HasData(
                         new

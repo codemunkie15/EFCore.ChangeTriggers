@@ -27,8 +27,6 @@ namespace TestHarness
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Debugger.Launch();
-
             modelBuilder.Entity<User>(e =>
             {
                 e.ToTable("Users");

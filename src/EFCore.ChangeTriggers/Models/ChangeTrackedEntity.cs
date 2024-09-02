@@ -4,10 +4,10 @@ namespace EFCore.ChangeTriggers.Models
 {
     internal class ChangeTrackedEntity
     {
-        public IEntityType TrackedEntityType { get; set; }
+        public required IEntityType TrackedEntityType { get; set; }
 
-        public IEntityType ChangeEntityType { get; set; }
+        public required IEntityType ChangeEntityType { get; set; }
 
-        public ChangeTrigger Trigger { get; set; }
+        public required ChangeTrigger Trigger { get; set; }
     }
 }
