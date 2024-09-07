@@ -1,11 +1,8 @@
-﻿using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
-using EFCore.ChangeTriggers.SqlServer;
+﻿using EFCore.ChangeTriggers.SqlServer.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Linq;
 using TestHarness;
 using TestHarness.DbModels.Users;
 
@@ -17,9 +14,18 @@ builder.Services
     .AddDbContext<MyDbContext>(options =>
     {
         options
-            .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Database=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
-            .UseSqlServerChangeTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>();
+            .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Database=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False", options =>
+            {
+            })
+            .UseSqlServerChangeTriggers(options =>
+            {
+                options
+                    .UseTriggerNameFactory(name => $"CustomChangeTriggerName_{name}")
+                    .UseChangedBy<ChangedByProvider, User>()
+                    .UseChangeSource<ChangeSourceProvider, ChangeSourceType>();
+            });
     })
+    .AddScoped(services => new CurrentUserProvider(new User { Id = 1 }))
     .AddScoped<TestDataService>()
     .AddScoped<TestChangeQueriesService>();
 

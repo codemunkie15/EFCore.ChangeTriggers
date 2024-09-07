@@ -30,6 +30,7 @@ namespace TestHarness
             var changes = await query.ToListAsync();
 
             var markdown = changes.ToMarkdownTable();
+            Console.WriteLine(markdown);
 
             var query2 = dbContext
                 .CreateChangeEventQueryBuilder()

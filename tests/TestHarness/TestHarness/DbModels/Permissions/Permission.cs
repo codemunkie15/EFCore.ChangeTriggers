@@ -1,5 +1,4 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using System.Collections.Generic;
 using TestHarness.DbModels.Users;
 
 namespace TestHarness.DbModels.Permissions

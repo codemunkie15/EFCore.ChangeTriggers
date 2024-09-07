@@ -166,7 +166,7 @@ namespace TestHarness.Migrations
             migrationBuilder.CreateChangeTrigger(
                 trackedTableName: "Permissions",
                 changeTableName: "PermissionChanges",
-                triggerName: "Permissions_ChangeTrigger",
+                triggerName: "CustomChangeTriggerName_Permissions",
                 trackedTablePrimaryKeyColumns: new[] { "Id", "SubId" },
                 changeTableDataColumns: new[] { "Enabled", "Id", "Name", "Order", "Reference", "SubId" },
                 operationTypeColumn: new ChangeContextColumn("OperationTypeId", "int"),
@@ -175,7 +175,7 @@ namespace TestHarness.Migrations
             migrationBuilder.CreateChangeTrigger(
                 trackedTableName: "Users",
                 changeTableName: "UserChanges",
-                triggerName: "Users_ChangeTrigger",
+                triggerName: "CustomChangeTriggerName_Users",
                 trackedTablePrimaryKeyColumns: new[] { "Id" },
                 changeTableDataColumns: new[] { "DateOfBirth", "Id", "Name", "PrimaryPaymentMethodId" },
                 operationTypeColumn: new ChangeContextColumn("OperationTypeId", "int"),
@@ -245,10 +245,10 @@ namespace TestHarness.Migrations
                 table: "PaymentMethods");
 
             migrationBuilder.DropChangeTrigger(
-                triggerName: "Permissions_ChangeTrigger");
+                triggerName: "CustomChangeTriggerName_Permissions");
 
             migrationBuilder.DropChangeTrigger(
-                triggerName: "Users_ChangeTrigger");
+                triggerName: "CustomChangeTriggerName_Users");
 
             migrationBuilder.DropTable(
                 name: "PermissionChanges");

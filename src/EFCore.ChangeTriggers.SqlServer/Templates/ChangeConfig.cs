@@ -1,4 +1,4 @@
 ﻿namespace EFCore.ChangeTriggers.SqlServer.Templates
 {
-    internal record ChangeConfig(int operationTypeId, string tableName, string tableAlias);
+    internal record ChangeConfig(int OperationTypeId, string tableName, string TableAlias);
 }

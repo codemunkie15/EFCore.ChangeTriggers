@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.ChangeTriggers.SqlServer
+namespace EFCore.ChangeTriggers.SqlServer.Extensions
 {
     internal static class DbContextExtensions
     {

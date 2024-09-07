@@ -1,4 +1,4 @@
-﻿namespace EFCore.ChangeTriggers.EfCoreExtension
+﻿namespace EFCore.ChangeTriggers.Infrastructure
 {
     internal class ChangeTriggersExtensionContext
     {

@@ -1,15 +1,16 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.Constants;
-using EFCore.ChangeTriggers.EfCoreExtension;
+using EFCore.ChangeTriggers.Infrastructure;
 using EFCore.ChangeTriggers.Interceptors;
+using EFCore.ChangeTriggers.SqlServer.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace EFCore.ChangeTriggers.SqlServer.Interceptors
 {
-    internal class ChangeSourceDbConnectionInterceptor<TChangeSource> : BaseChangeSourceDbConnectionInterceptor<TChangeSource>
+    internal class ChangeSourceSqlServerDbConnectionInterceptor<TChangeSource> : BaseChangeSourceDbConnectionInterceptor<TChangeSource>
     {
-        public ChangeSourceDbConnectionInterceptor(
+        public ChangeSourceSqlServerDbConnectionInterceptor(
             ChangeTriggersExtensionContext changeTriggersExtensionContext,
             IChangeSourceProvider<TChangeSource> changeSourceProvider)
             : base(

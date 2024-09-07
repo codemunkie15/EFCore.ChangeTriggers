@@ -1,18 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace EFCore.ChangeTriggers.EfCoreExtension
+namespace EFCore.ChangeTriggers.Infrastructure
 {
-    internal class ChangeTriggersExtensionInfo : DbContextOptionsExtensionInfo
+    public abstract class ChangeTriggersDbContextOptionsExtensionInfo : DbContextOptionsExtensionInfo
     {
-        public ChangeTriggersExtensionInfo(IDbContextOptionsExtension extension)
+        public ChangeTriggersDbContextOptionsExtensionInfo(IDbContextOptionsExtension extension)
             : base(extension)
         {
         }
 
-        public override int GetServiceProviderHashCode()
-        {
-            return 0;
-        }
+        public override int GetServiceProviderHashCode() => 0;
 
         public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
         {
@@ -24,7 +21,5 @@ namespace EFCore.ChangeTriggers.EfCoreExtension
         }
 
         public override bool IsDatabaseProvider => false;
-
-        public override string LogFragment => "ChangeTriggersExtension";
     }
 }

@@ -1,6 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.Models;
-using System;
 
 namespace TestHarness.DbModels.Permissions
 {

@@ -1,10 +1,11 @@
-﻿using EFCore.ChangeTriggers.Configuration.ChangeTriggers;
-using EFCore.ChangeTriggers.Constants;
+﻿using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Extensions;
 using EFCore.ChangeTriggers.Helpers;
+using EFCore.ChangeTriggers.Infrastructure;
 using EFCore.ChangeTriggers.Migrations.Operations;
 using EFCore.ChangeTriggers.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
@@ -12,22 +13,23 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Migrations
 {
     public class ChangeTriggersMigrationsModelDiffer : MigrationsModelDiffer
     {
-        private readonly ChangeTriggersOptions changeTriggersOptions;
+        private readonly IDbContextOptions dbContextOptions;
 
         public ChangeTriggersMigrationsModelDiffer(
-            ChangeTriggersOptions changeTriggersOptions,
+            IDbContextOptions dbContextOptions,
             IRelationalTypeMappingSource typeMappingSource,
             IMigrationsAnnotationProvider migrationsAnnotationProvider,
             IRowIdentityMapFactory rowIdentityMapFactory,
             CommandBatchPreparerDependencies commandBatchPreparerDependencies)
             : base(typeMappingSource, migrationsAnnotationProvider, rowIdentityMapFactory, commandBatchPreparerDependencies)
         {
-            this.changeTriggersOptions = changeTriggersOptions;
+            this.dbContextOptions = dbContextOptions;
         }
 
         protected override IEnumerable<MigrationOperation> Diff(IRelationalModel? source, IRelationalModel? target, DiffContext diffContext)
@@ -219,6 +221,7 @@ namespace EFCore.ChangeTriggers.Migrations
 
             var triggerNameFormat = ChangeTriggerDefaults.TriggerNameFormat;
 
+            var changeTriggersOptions = dbContextOptions.Extensions.OfType<ChangeTriggersDbContextOptionsExtension>().First();
             if (changeTriggersOptions.TriggerNameFactory != null)
             {
                 triggerNameFormat = TriggerNameFormatHelper.GetTriggerNameFormat(changeTriggersOptions.TriggerNameFactory);
