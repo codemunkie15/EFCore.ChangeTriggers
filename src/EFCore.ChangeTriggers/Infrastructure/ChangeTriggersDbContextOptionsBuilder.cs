@@ -1,5 +1,8 @@
-﻿using EFCore.ChangeTriggers.Extensions;
+﻿using EFCore.ChangeTriggers.Abstractions;
+using EFCore.ChangeTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Infrastructure
 {
@@ -18,10 +21,18 @@ namespace EFCore.ChangeTriggers.Infrastructure
             => WithOption(e => (TExtension)e.WithTriggerNameFactory(triggerNameFactory));
 
         public TBuilder UseChangedBy<TChangedByProvider, TChangedBy>()
-            => WithOption(e => (TExtension)e.WithChangedBy<TChangedByProvider, TChangedBy>());
+            where TChangedByProvider : class, IChangedByProvider<TChangedBy>
+        {
+            var applicationServiceProvider = optionsBuilder.Options.FindExtension<CoreOptionsExtension>()?.ApplicationServiceProvider;
+            return WithOption(e => (TExtension)e.WithChangedBy<TChangedByProvider, TChangedBy>(applicationServiceProvider));
+        }
 
         public TBuilder UseChangeSource<TChangeSourceProvider, TChangeSource>()
-            => WithOption(e => (TExtension)e.WithChangeSource<TChangeSourceProvider, TChangeSource>());
+            where TChangeSourceProvider : class, IChangeSourceProvider<TChangeSource>
+        {
+            var applicationServiceProvider = optionsBuilder.Options.FindExtension<CoreOptionsExtension>()?.ApplicationServiceProvider;
+            return WithOption(e => (TExtension)e.WithChangeSource<TChangeSourceProvider, TChangeSource>(applicationServiceProvider));
+        }
 
         protected virtual TBuilder WithOption(Func<TExtension, TExtension> setAction)
         {

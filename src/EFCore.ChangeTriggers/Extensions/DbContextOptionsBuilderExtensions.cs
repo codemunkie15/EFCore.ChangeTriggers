@@ -3,6 +3,7 @@ using EFCore.ChangeTriggers.Migrations.Migrators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Extensions
 {

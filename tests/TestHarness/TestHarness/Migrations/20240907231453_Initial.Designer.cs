@@ -12,7 +12,7 @@ using TestHarness;
 namespace TestHarness.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20240907222306_Initial")]
+    [Migration("20240907231453_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

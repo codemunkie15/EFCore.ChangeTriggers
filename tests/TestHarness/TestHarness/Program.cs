@@ -25,7 +25,7 @@ builder.Services
                     .UseChangeSource<ChangeSourceProvider, ChangeSourceType>();
             });
     })
-    .AddScoped(services => new CurrentUserProvider(new User { Id = 1 }))
+    .AddScoped(services => new CurrentUserProvider(new User { Id = 7 }))
     .AddScoped<TestDataService>()
     .AddScoped<TestChangeQueriesService>();
 
