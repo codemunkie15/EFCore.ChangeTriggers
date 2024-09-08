@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using TestHarness.DbModels.Users;
-
-namespace TestHarness.DbModels.Permissions
+﻿namespace TestHarness.DbModels.Permissions
 {
     public abstract class PermissionBase
     {

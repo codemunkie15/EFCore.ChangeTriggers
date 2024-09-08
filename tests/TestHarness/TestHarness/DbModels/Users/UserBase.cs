@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using TestHarness.DbModels.PaymentMethods;
-using TestHarness.DbModels.Permissions;
+﻿using TestHarness.DbModels.PaymentMethods;
 
 namespace TestHarness.DbModels.Users
 {
