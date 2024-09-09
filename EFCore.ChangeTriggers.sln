@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.Chang
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{163D18F2-0582-4FDC-BDF5-F424389F7154}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.SqlServer.Tests.Integration", "tests\EFCore.ChangeTriggers.Tests.Integration\EFCore.ChangeTriggers.SqlServer.Tests.Integration.csproj", "{13B0C4F0-A80C-4CF9-AF3B-F33243958492}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.SqlServer.Tests.Integration", "tests\EFCore.ChangeTriggers.SqlServer.Tests.Integration\EFCore.ChangeTriggers.SqlServer.Tests.Integration.csproj", "{13B0C4F0-A80C-4CF9-AF3B-F33243958492}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

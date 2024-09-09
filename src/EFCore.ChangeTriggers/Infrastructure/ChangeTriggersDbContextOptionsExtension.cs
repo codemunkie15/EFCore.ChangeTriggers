@@ -2,6 +2,7 @@
 using EFCore.ChangeTriggers.Migrations.Migrators;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Infrastructure
 {
