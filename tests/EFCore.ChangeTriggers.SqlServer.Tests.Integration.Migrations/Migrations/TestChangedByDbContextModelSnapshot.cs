@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations
+namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Migrations
 {
     [DbContext(typeof(TestChangedByDbContext))]
     partial class TestChangedByDbContextModelSnapshot : ModelSnapshot

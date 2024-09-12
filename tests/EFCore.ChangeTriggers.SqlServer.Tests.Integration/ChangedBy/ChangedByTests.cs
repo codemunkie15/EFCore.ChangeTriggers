@@ -1,13 +1,7 @@
 using EFCore.ChangeTriggers.SqlServer.Extensions;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedBy.Persistence;
-using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Design.Internal;
-using Microsoft.EntityFrameworkCore.Migrations.Design;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
-using System.Reflection;
 using Testcontainers.MsSql;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedBy;
@@ -29,17 +23,13 @@ public class ChangedByTests : IAsyncLifetime
     }
 
     [Fact]
-    public async void MultipleCalls_SetsCorrectChangedBy()
+    public async void MultipleScopes_SetsCorrectChangedBy()
     {
-        ScaffoldMigration();
-
-        Debugger.Launch();
-
         var services = BuildServiceProvider();
 
         var dbContext = services.GetRequiredService<TestChangedByDbContext>();
 
-        var migrations = dbContext.Database.GetMigrations();
+        var migrations = dbContext.Database.GetPendingMigrations();
         await dbContext.Database.MigrateAsync();
 
         await CreateUsersAsync(services);
@@ -55,7 +45,10 @@ public class ChangedByTests : IAsyncLifetime
             .AddDbContext<TestChangedByDbContext>(options =>
             {
                 options
-                    .UseSqlServer(msSqlContainer.GetConnectionString())
+                    .UseSqlServer(msSqlContainer.GetConnectionString(), options =>
+                    {
+                        options.MigrationsAssembly("EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations");
+                    })
                     .UseSqlServerChangeTriggers(options =>
                     {
                         options.UseChangedBy<TestChangedByProvider, TestUser>();
@@ -65,22 +58,22 @@ public class ChangedByTests : IAsyncLifetime
             .BuildServiceProvider();
     }
 
-    private void ScaffoldMigration()
-    {
-        var services = BuildServiceProvider();
-        var dbContext = services.GetRequiredService<TestChangedByDbContext>();
+    //private void ScaffoldMigration()
+    //{
+    //    var services = BuildServiceProvider();
+    //    var dbContext = services.GetRequiredService<TestChangedByDbContext>();
 
-        var designTimeServices = new DesignTimeServicesBuilder(
-            typeof(TestChangedByDbContext).Assembly,
-            typeof(TestChangedByDbContext).Assembly,
-            new OperationReporter(null), [])
-                .Build(dbContext);
+    //    var designTimeServices = new DesignTimeServicesBuilder(
+    //        typeof(TestChangedByDbContext).Assembly,
+    //        typeof(TestChangedByDbContext).Assembly,
+    //        new OperationReporter(null), [])
+    //            .Build(dbContext);
 
-        var migrationsScaffolder = designTimeServices.GetRequiredService<IMigrationsScaffolder>();
-        var migration = migrationsScaffolder.ScaffoldMigration("Initial", GetType().Assembly.GetName().Name);
-        var migrationsDirectory = Path.GetDirectoryName(TestChangedByDbContext.GetFilePath());
-        var result = migrationsScaffolder.Save(migrationsDirectory, migration, null);
-    }
+    //    var migrationsScaffolder = designTimeServices.GetRequiredService<IMigrationsScaffolder>();
+    //    var migration = migrationsScaffolder.ScaffoldMigration("Initial", GetType().Assembly.GetName().Name);
+    //    var migrationsDirectory = Path.GetDirectoryName(TestChangedByDbContext.GetFilePath());
+    //    var result = migrationsScaffolder.Save(migrationsDirectory, migration, null);
+    //}
 
     private async Task CreateUsersAsync(IServiceProvider serviceProvider)
     {

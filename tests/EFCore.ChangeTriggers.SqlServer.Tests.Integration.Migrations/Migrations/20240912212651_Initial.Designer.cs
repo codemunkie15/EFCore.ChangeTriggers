@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations
+namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Migrations
 {
     [DbContext(typeof(TestChangedByDbContext))]
-    [Migration("20240909214428_Initial")]
+    [Migration("20240912212651_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
