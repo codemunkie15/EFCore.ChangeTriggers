@@ -22,17 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EFCore.ChangeTriggers.SqlServer.Tests.Integration.DbContext\EFCore.ChangeTriggers.SqlServer.Tests.Integration.DbContext.csproj" />
-    <ProjectReference Include="..\EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations\EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.csproj" />
+    <ProjectReference Include="..\..\src\EFCore.ChangeTriggers.SqlServer\EFCore.ChangeTriggers.SqlServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
-
-  <Target Name="AddMigration" BeforeTargets="BeforeBuild">
-	<Exec Command="dotnet ef migrations add Initial --project ..\EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations --startup-project ..\EFCore.ChangeTriggers.SqlServer.Tests.Integration.DbContext --verbose" StandardOutputImportance="high" StandardErrorImportance="high" />
-	<MSBuild Projects="..\EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations\EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.csproj" Targets="Build" />
-  </Target>
 	
 </Project>

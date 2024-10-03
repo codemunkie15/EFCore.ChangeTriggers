@@ -11,11 +11,6 @@ namespace EFCore.ChangeTriggers.Infrastructure
 
         public override int GetServiceProviderHashCode() => 0;
 
-        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
-        {
-            return string.Equals(LogFragment, other.LogFragment, StringComparison.Ordinal);
-        }
-
         public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
         {
         }

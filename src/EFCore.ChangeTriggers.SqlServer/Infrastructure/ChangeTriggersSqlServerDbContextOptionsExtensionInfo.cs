@@ -11,5 +11,10 @@ namespace EFCore.ChangeTriggers.SqlServer.Infrastructure
         }
 
         public override string LogFragment => "EFCore.ChangeTriggers.SqlServer";
+
+        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
+        {
+            return other is ChangeTriggersSqlServerDbContextOptionsExtensionInfo;
+        }
     }
 }

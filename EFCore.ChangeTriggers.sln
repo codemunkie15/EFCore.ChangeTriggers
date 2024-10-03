@@ -20,10 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{163D18F2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.SqlServer.Tests.Integration", "tests\EFCore.ChangeTriggers.SqlServer.Tests.Integration\EFCore.ChangeTriggers.SqlServer.Tests.Integration.csproj", "{13B0C4F0-A80C-4CF9-AF3B-F33243958492}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.SqlServer.Tests.Integration.DbContext", "tests\EFCore.ChangeTriggers.SqlServer.Tests.Integration.DbContext\EFCore.ChangeTriggers.SqlServer.Tests.Integration.DbContext.csproj", "{6F349CE7-3B57-4A7D-AE5D-D3407DEDD773}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations", "tests\EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations\EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.csproj", "{BDDD5435-536E-4778-ABAD-D5E58164E6F9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,22 +42,12 @@ Global
 		{13B0C4F0-A80C-4CF9-AF3B-F33243958492}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13B0C4F0-A80C-4CF9-AF3B-F33243958492}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13B0C4F0-A80C-4CF9-AF3B-F33243958492}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F349CE7-3B57-4A7D-AE5D-D3407DEDD773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F349CE7-3B57-4A7D-AE5D-D3407DEDD773}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F349CE7-3B57-4A7D-AE5D-D3407DEDD773}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F349CE7-3B57-4A7D-AE5D-D3407DEDD773}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BDDD5435-536E-4778-ABAD-D5E58164E6F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDDD5435-536E-4778-ABAD-D5E58164E6F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDDD5435-536E-4778-ABAD-D5E58164E6F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDDD5435-536E-4778-ABAD-D5E58164E6F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{13B0C4F0-A80C-4CF9-AF3B-F33243958492} = {163D18F2-0582-4FDC-BDF5-F424389F7154}
-		{6F349CE7-3B57-4A7D-AE5D-D3407DEDD773} = {163D18F2-0582-4FDC-BDF5-F424389F7154}
-		{BDDD5435-536E-4778-ABAD-D5E58164E6F9} = {163D18F2-0582-4FDC-BDF5-F424389F7154}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9BE8BE84-B419-4B5B-BD62-A97FE7E5DF36}

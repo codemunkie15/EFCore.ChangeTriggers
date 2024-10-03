@@ -1,18 +1,21 @@
 ﻿using EFCore.ChangeTriggers.Extensions;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System.Runtime.CompilerServices;
 
 [assembly: DesignTimeServicesReference("EFCore.ChangeTriggers.ChangeTriggersDesignTimeServices, EFCore.ChangeTriggers")]
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedBy.Persistence;
+namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Persistence;
 
-public class TestChangedByDbContext : DbContext
+public class ChangedByEntityDbContext : DbContext
 {
-    public DbSet<TestUser> TestUsers { get; set; }
+    public Guid InstanceId = Guid.NewGuid();
 
-    public DbSet<TestUserChange> TestUserChanges { get; set; }
+    public DbSet<EntityUser> TestUsers { get; set; }
 
-    public TestChangedByDbContext(DbContextOptions<TestChangedByDbContext> options)
+    public DbSet<EntityUserChange> TestUserChanges { get; set; }
+
+    public ChangedByEntityDbContext(DbContextOptions<ChangedByEntityDbContext> options)
         : base(options)
     {
     }
@@ -29,7 +32,7 @@ public class TestChangedByDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TestUserChange>(uc =>
+        modelBuilder.Entity<EntityUserChange>(uc =>
         {
             uc.HasKey(uc => uc.ChangeId);
         });

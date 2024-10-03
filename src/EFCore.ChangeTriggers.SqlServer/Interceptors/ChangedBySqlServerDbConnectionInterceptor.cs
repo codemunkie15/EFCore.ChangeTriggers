@@ -23,10 +23,17 @@ namespace EFCore.ChangeTriggers.SqlServer.Interceptors
             ConnectionEndEventData eventData,
             object? changedByRawValue)
         {
-            var changedByProviderValue = eventData.Context?.ConvertToProvider<TChangedBy>(changedByRawValue);
+            try
+            {
+                var changedByProviderValue = eventData.Context?.ConvertToProvider<TChangedBy>(changedByRawValue);
 
-            eventData.Context!.Database.ExecuteSql(
-                $"EXEC sp_set_session_context {ChangeContextConstants.ChangedByContextName}, {changedByProviderValue}");
+                eventData.Context!.Database.ExecuteSql(
+                    $"EXEC sp_set_session_context {ChangeContextConstants.ChangedByContextName}, {changedByProviderValue}");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         protected override async Task SetChangedByChangeContextAsync(
@@ -34,11 +41,18 @@ namespace EFCore.ChangeTriggers.SqlServer.Interceptors
             object? changedByRawValue,
             CancellationToken cancellationToken)
         {
-            var changedByProviderValue = eventData.Context?.ConvertToProvider<TChangedBy>(changedByRawValue);
+            try
+            {
+                var changedByProviderValue = eventData.Context?.ConvertToProvider<TChangedBy>(changedByRawValue);
 
-            await eventData.Context!.Database.ExecuteSqlAsync(
-                $"EXEC sp_set_session_context {ChangeContextConstants.ChangedByContextName}, {changedByProviderValue}",
-                cancellationToken);
+                await eventData.Context!.Database.ExecuteSqlAsync(
+                    $"EXEC sp_set_session_context {ChangeContextConstants.ChangedByContextName}, {changedByProviderValue}",
+                    cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

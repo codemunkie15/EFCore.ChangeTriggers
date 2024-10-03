@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Migrations
+namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
