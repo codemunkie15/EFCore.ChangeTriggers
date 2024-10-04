@@ -2,11 +2,11 @@
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain;
 
-public class ScalarUser : ITracked<ScalarUserChange>
+public class ChangedByScalarUser : ITracked<ChangedByScalarUserChange>
 {
     public int Id { get; set; }
 
     public string Username { get; set; }
 
-    public ICollection<ScalarUserChange> Changes { get; set; }
+    public ICollection<ChangedByScalarUserChange> Changes { get; set; }
 }

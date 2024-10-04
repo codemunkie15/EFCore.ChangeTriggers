@@ -2,11 +2,11 @@
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Infrastructure;
 
-internal class ChangedByProvider : ChangedByProvider<string>
+internal class ChangedByScalarProvider : ChangedByProvider<string>
 {
-    private readonly CurrentUserProvider currentUserProvider;
+    private readonly ChangedByScalarCurrentUserProvider currentUserProvider;
 
-    public ChangedByProvider(CurrentUserProvider currentUserProvider)
+    public ChangedByScalarProvider(ChangedByScalarCurrentUserProvider currentUserProvider)
     {
         this.currentUserProvider = currentUserProvider;
     }

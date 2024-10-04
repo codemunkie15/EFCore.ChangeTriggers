@@ -4,11 +4,11 @@ using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infrastr
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Persistence
 {
-    public class TestDbContextFactory : IDesignTimeDbContextFactory<ChangedByEntityDbContext>
+    public class ChangedByEntityDbContextFactory : IDesignTimeDbContextFactory<ChangedByEntityDbContext>
     {
         public ChangedByEntityDbContext CreateDbContext(string[] args)
         {
-            var serviceProvider = ServiceProviderBuilder.Build("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;");
+            var serviceProvider = ChangedByEntityServiceProviderBuilder.Build("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;");
 
             return serviceProvider.GetRequiredService<ChangedByEntityDbContext>();
         }

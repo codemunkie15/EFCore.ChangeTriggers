@@ -1,9 +1,9 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.Models;
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain;
+namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
 
-public class ScalarUserChange : IChange<ScalarUser>, IHasChangedBy<string>
+public class ChangedByEntityUserChange : IChange<ChangedByEntityUser>, IHasChangedBy<ChangedByEntityUser>
 {
     public int ChangeId { get; set; }
 
@@ -15,7 +15,7 @@ public class ScalarUserChange : IChange<ScalarUser>, IHasChangedBy<string>
 
     public DateTimeOffset ChangedAt { get; set; }
 
-    public ScalarUser TrackedEntity { get; set; }
+    public ChangedByEntityUser TrackedEntity { get; set; }
 
-    public string ChangedBy { get; set; }
+    public ChangedByEntityUser ChangedBy { get; set; }
 }

@@ -18,7 +18,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity
 
             await msSqlContainer.StartAsync();
 
-            Services = ServiceProviderBuilder.Build(msSqlContainer.GetConnectionString());
+            Services = ChangedByEntityServiceProviderBuilder.Build(msSqlContainer.GetConnectionString());
             var dbContext = Services.GetRequiredService<ChangedByEntityDbContext>();
             await dbContext.Database.MigrateAsync();
         }

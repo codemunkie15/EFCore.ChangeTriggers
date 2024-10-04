@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Persistence.Migrations
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -34,11 +36,17 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OperationTypeId = table.Column<int>(type: "int", nullable: false),
                     ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ChangedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ChangedById = table.Column<int>(type: "int", nullable: false),
+                    ChangeSource = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TestUserChanges", x => x.ChangeId);
+                    table.ForeignKey(
+                        name: "FK_TestUserChanges_TestUsers_ChangedById",
+                        column: x => x.ChangedById,
+                        principalTable: "TestUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TestUserChanges_TestUsers_Id",
                         column: x => x.Id,
@@ -46,10 +54,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_TestUserChanges_Id",
+            migrationBuilder.AddNoCheckConstraint(
                 table: "TestUserChanges",
-                column: "Id");
+                constraint: "FK_TestUserChanges_TestUsers_ChangedById");
 
             migrationBuilder.AddNoCheckConstraint(
                 table: "TestUserChanges",
@@ -63,7 +70,27 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
                 changeTableDataColumns: new[] { "Id", "Username" },
                 operationTypeColumn: new ChangeContextColumn("OperationTypeId", "int"),
                 changedAtColumn: new ChangeContextColumn("ChangedAt"),
-                changedByColumn: new ChangeContextColumn("ChangedBy", "nvarchar(max)"));
+                changeSourceColumn: new ChangeContextColumn("ChangeSource", "int"),
+                changedByColumn: new ChangeContextColumn("ChangedById", "int"));
+
+            migrationBuilder.InsertData(
+                table: "TestUsers",
+                columns: new[] { "Id", "Username" },
+                values: new object[,]
+                {
+                    { 1, "Admin 1" },
+                    { 2, "Admin 2" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestUserChanges_ChangedById",
+                table: "TestUserChanges",
+                column: "ChangedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestUserChanges_Id",
+                table: "TestUserChanges",
+                column: "Id");
         }
 
         /// <inheritdoc />

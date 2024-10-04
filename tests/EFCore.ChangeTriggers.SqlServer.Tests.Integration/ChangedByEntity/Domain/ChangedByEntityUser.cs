@@ -2,11 +2,11 @@
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
 
-public class EntityUser : ITracked<EntityUserChange>
+public class ChangedByEntityUser : ITracked<ChangedByEntityUserChange>
 {
     public int Id { get; set; }
 
     public string Username { get; set; }
 
-    public ICollection<EntityUserChange> Changes { get; set; }
+    public ICollection<ChangedByEntityUserChange> Changes { get; set; }
 }

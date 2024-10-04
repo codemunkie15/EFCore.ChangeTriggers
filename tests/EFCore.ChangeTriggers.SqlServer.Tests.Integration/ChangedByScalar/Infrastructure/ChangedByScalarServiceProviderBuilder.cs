@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Infrastructure
 {
-    internal static class ServiceProviderBuilder
+    internal static class ChangedByScalarServiceProviderBuilder
     {
         public static ServiceProvider Build(string connectionString)
         {
@@ -16,10 +16,10 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Infr
                         .UseSqlServer(connectionString)
                         .UseSqlServerChangeTriggers(options =>
                         {
-                            options.UseChangedBy<ChangedByProvider, string>();
+                            options.UseChangedBy<ChangedByScalarProvider, string>();
                         });
                 })
-                .AddSingleton(new CurrentUserProvider())
+                .AddSingleton(new ChangedByScalarCurrentUserProvider())
                 .BuildServiceProvider();
         }
     }

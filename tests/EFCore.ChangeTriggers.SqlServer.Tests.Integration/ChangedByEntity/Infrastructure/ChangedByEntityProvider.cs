@@ -3,21 +3,21 @@ using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infrastructure;
 
-internal class ChangedByProvider : ChangedByProvider<EntityUser>
+internal class ChangedByEntityProvider : ChangedByProvider<ChangedByEntityUser>
 {
-    private readonly CurrentUserProvider currentUserProvider;
+    private readonly ChangedByEntityCurrentUserProvider currentUserProvider;
 
-    public ChangedByProvider(CurrentUserProvider currentUserProvider)
+    public ChangedByEntityProvider(ChangedByEntityCurrentUserProvider currentUserProvider)
     {
         this.currentUserProvider = currentUserProvider;
     }
 
-    public override Task<EntityUser> GetChangedByAsync()
+    public override Task<ChangedByEntityUser> GetChangedByAsync()
     {
         return Task.FromResult(currentUserProvider.CurrentUser);
     }
 
-    public override EntityUser GetChangedBy()
+    public override ChangedByEntityUser GetChangedBy()
     {
         return currentUserProvider.CurrentUser;
     }

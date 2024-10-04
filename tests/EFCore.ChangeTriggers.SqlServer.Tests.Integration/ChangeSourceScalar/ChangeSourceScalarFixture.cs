@@ -1,12 +1,12 @@
-﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Infrastructure;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Persistence;
+﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Infrastructure;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.MsSql;
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar
+namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar
 {
-    public class ChangedByScalarFixture : IAsyncLifetime
+    public class ChangeSourceScalarFixture : IAsyncLifetime
     {
         public IServiceProvider Services { get; private set; }
 
@@ -18,8 +18,8 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar
 
             await msSqlContainer.StartAsync();
 
-            Services = ChangedByScalarServiceProviderBuilder.Build(msSqlContainer.GetConnectionString());
-            var dbContext = Services.GetRequiredService<ChangedByScalarDbContext>();
+            Services = ChangeSourceScalarServiceProviderBuilder.Build(msSqlContainer.GetConnectionString());
+            var dbContext = Services.GetRequiredService<ChangeSourceScalarDbContext>();
             await dbContext.Database.MigrateAsync();
         }
 

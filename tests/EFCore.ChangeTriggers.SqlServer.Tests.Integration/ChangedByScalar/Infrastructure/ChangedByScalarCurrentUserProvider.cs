@@ -1,8 +1,6 @@
 ﻿namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Infrastructure;
 
-internal class CurrentUserProvider
+internal class ChangedByScalarCurrentUserProvider
 {
-    public Guid InstanceId = Guid.NewGuid();
-
     public string CurrentUser { get; set; }
 }

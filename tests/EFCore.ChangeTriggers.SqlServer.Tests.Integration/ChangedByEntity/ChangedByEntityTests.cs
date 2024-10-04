@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity;
 
-public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>
+public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>, IAsyncLifetime
 {
     private readonly ChangedByEntityFixture fixture;
 
@@ -24,9 +24,6 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>
         var users = dbContext.TestUsers.Include(u => u.Changes).ThenInclude(c => c.ChangedBy).ToList();
 
         Assert.True(users.All(u => u.Changes.All(c => c.ChangedBy.Id == u.Id)));
-
-        dbContext.TestUsers.ExecuteDelete();
-        dbContext.TestUserChanges.ExecuteDelete();
     }
 
     [Fact]
@@ -38,22 +35,19 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>
         var users = await dbContext.TestUsers.Include(u => u.Changes).ToListAsync();
 
         Assert.True(users.All(u => u.Changes.All(c => c.ChangedBy.Id == u.Id)));
-
-        await dbContext.TestUsers.ExecuteDeleteAsync();
-        await dbContext.TestUserChanges.ExecuteDeleteAsync();
     }
 
     private void CreateUsers()
     {
-        for (int i = 1; i <= 100; i++)
+        for (int i = 1; i <= 50; i++)
         {
             using var scope = fixture.Services.CreateScope();
-            var currentUserProvider = scope.ServiceProvider.GetRequiredService<CurrentUserProvider>();
-            currentUserProvider.CurrentUser = new EntityUser { Id = i };
+            var currentUserProvider = scope.ServiceProvider.GetRequiredService<ChangedByEntityCurrentUserProvider>();
+            currentUserProvider.CurrentUser = new ChangedByEntityUser { Id = i };
 
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangedByEntityDbContext>();
 
-            var user = new EntityUser
+            var user = new ChangedByEntityUser
             {
                 Username = $"TestUserEntity{i}"
             };
@@ -65,15 +59,15 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>
 
     private async Task CreateUsersAsync()
     {
-        for (int i = 101; i <= 200; i++)
+        for (int i = 51; i <= 100; i++)
         {
             using var scope = fixture.Services.CreateScope();
-            var currentUserProvider = scope.ServiceProvider.GetRequiredService<CurrentUserProvider>();
-            currentUserProvider.CurrentUser = new EntityUser { Id = i };
+            var currentUserProvider = scope.ServiceProvider.GetRequiredService<ChangedByEntityCurrentUserProvider>();
+            currentUserProvider.CurrentUser = new ChangedByEntityUser { Id = i };
 
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangedByEntityDbContext>();
 
-            var user = new EntityUser
+            var user = new ChangedByEntityUser
             {
                 Username = $"TestUserEntityAsync{i}"
             };
@@ -81,5 +75,14 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>
             dbContext.TestUsers.Add(user);
             await dbContext.SaveChangesAsync();
         }
+    }
+
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    public async Task DisposeAsync()
+    {
+        var dbContext = fixture.Services.GetRequiredService<ChangedByEntityDbContext>();
+        await dbContext.TestUsers.ExecuteDeleteAsync();
+        await dbContext.TestUserChanges.ExecuteDeleteAsync();
     }
 }

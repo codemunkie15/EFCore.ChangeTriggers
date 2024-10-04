@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infrastructure
 {
-    internal static class ServiceProviderBuilder
+    internal static class ChangedByEntityServiceProviderBuilder
     {
         public static ServiceProvider Build(string connectionString)
         {
@@ -17,10 +17,10 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infr
                         .UseSqlServer(connectionString)
                         .UseSqlServerChangeTriggers(options =>
                         {
-                            options.UseChangedBy<ChangedByProvider, EntityUser>();
+                            options.UseChangedBy<ChangedByEntityProvider, ChangedByEntityUser>();
                         });
                 })
-                .AddSingleton(new CurrentUserProvider(new EntityUser { Id = 1 }))
+                .AddSingleton(new ChangedByEntityCurrentUserProvider())
                 .BuildServiceProvider();
         }
     }

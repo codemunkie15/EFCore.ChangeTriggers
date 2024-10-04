@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Persistence.Migrations
+namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -34,7 +34,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OperationTypeId = table.Column<int>(type: "int", nullable: false),
                     ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ChangedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ChangeSource = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -63,7 +63,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
                 changeTableDataColumns: new[] { "Id", "Username" },
                 operationTypeColumn: new ChangeContextColumn("OperationTypeId", "int"),
                 changedAtColumn: new ChangeContextColumn("ChangedAt"),
-                changedByColumn: new ChangeContextColumn("ChangedBy", "nvarchar(max)"));
+                changeSourceColumn: new ChangeContextColumn("ChangeSource", "int"));
         }
 
         /// <inheritdoc />

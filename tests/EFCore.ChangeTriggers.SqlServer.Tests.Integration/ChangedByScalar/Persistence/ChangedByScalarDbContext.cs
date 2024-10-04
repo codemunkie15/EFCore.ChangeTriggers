@@ -8,11 +8,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
 
 public class ChangedByScalarDbContext : DbContext
 {
-    public Guid InstanceId = Guid.NewGuid();
+    public DbSet<ChangedByScalarUser> TestUsers { get; set; }
 
-    public DbSet<ScalarUser> TestUsers { get; set; }
-
-    public DbSet<ScalarUserChange> TestUserChanges { get; set; }
+    public DbSet<ChangedByScalarUserChange> TestUserChanges { get; set; }
 
     public ChangedByScalarDbContext(DbContextOptions<ChangedByScalarDbContext> options)
         : base(options)
@@ -21,7 +19,7 @@ public class ChangedByScalarDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ScalarUserChange>(uc =>
+        modelBuilder.Entity<ChangedByScalarUserChange>(uc =>
         {
             uc.HasKey(uc => uc.ChangeId);
         });
