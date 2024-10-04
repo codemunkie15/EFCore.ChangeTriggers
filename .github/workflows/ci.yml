@@ -23,10 +23,7 @@ jobs:
     # Build solution
     - name: Build solution
       run: dotnet build --configuration $BUILD_CONFIG
-
-    - name: Check Docker status
-      run: docker info
       
     # Run tests
     - name: Run tests
-      run: dotnet test --configuration $BUILD_CONFIG --no-build
+      run: dotnet test --configuration $BUILD_CONFIG --no-build --logger "console;verbosity=detailed"
