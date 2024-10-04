@@ -1,4 +1,5 @@
-﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infrastructure;
+﻿using DotNet.Testcontainers.Builders;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infrastructure;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity
 
         public async Task InitializeAsync()
         {
-            msSqlContainer = new MsSqlBuilder().Build();
+            msSqlContainer = new MsSqlBuilder()
+                .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1433))
+                .Build();
 
             await msSqlContainer.StartAsync();
 
