@@ -5,9 +5,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infr
 
 internal class ChangedByEntityProvider : ChangedByProvider<ChangedByEntityUser>
 {
-    private readonly ChangedByEntityCurrentUserProvider currentUserProvider;
+    private readonly EntityCurrentUserProvider currentUserProvider;
 
-    public ChangedByEntityProvider(ChangedByEntityCurrentUserProvider currentUserProvider)
+    public ChangedByEntityProvider(EntityCurrentUserProvider currentUserProvider)
     {
         this.currentUserProvider = currentUserProvider;
     }

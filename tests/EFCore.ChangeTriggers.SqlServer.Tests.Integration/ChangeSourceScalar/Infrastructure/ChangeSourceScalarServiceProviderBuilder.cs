@@ -20,7 +20,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.I
                             options.UseChangeSource<ChangeSourceScalarProvider, ChangeSource>();
                         });
                 })
-                .AddSingleton(new ChangeSourceScalarChangeSourceProvider())
+                .AddSingleton(new ScalarChangeSourceProvider())
                 .BuildServiceProvider();
         }
     }

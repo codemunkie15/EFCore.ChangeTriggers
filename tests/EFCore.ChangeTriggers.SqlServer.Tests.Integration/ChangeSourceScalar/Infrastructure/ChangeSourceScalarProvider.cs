@@ -5,9 +5,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.I
 
 internal class ChangeSourceScalarProvider : ChangeSourceProvider<ChangeSource>
 {
-    private readonly ChangeSourceScalarChangeSourceProvider changeSourceProvider;
+    private readonly ScalarChangeSourceProvider changeSourceProvider;
 
-    public ChangeSourceScalarProvider(ChangeSourceScalarChangeSourceProvider changeSourceProvider)
+    public ChangeSourceScalarProvider(ScalarChangeSourceProvider changeSourceProvider)
     {
         this.changeSourceProvider = changeSourceProvider;
     }

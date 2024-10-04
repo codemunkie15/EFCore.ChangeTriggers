@@ -19,34 +19,38 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>, IAsyn
     [Fact]
     public void MultipleScopes_SetsCorrectChangedBy()
     {
-        CreateUsers();
+        const int numberOfUsers = 50;
+        CreateUsers(numberOfUsers);
 
         var dbContext = fixture.Services.GetRequiredService<ChangedByScalarDbContext>();
-        var users = dbContext.TestUsers.Include(u => u.Changes).ToList();
+        var testUsers = dbContext.TestUsers.Include(u => u.Changes).ToList();
 
-        Assert.True(users.All(u => u.Changes.All(c => c.ChangedBy == u.Username)));
+        Assert.Equal(numberOfUsers, testUsers.Count);
+        Assert.True(testUsers.All(u => u.Changes.All(c => c.ChangedBy == u.Username)));
     }
 
     [Fact]
     public async Task MultipleScopes_SetsCorrectChangedBy_Async()
     {
-        await CreateUsersAsync();
+        const int numberOfUsers = 50;
+        await CreateUsersAsync(numberOfUsers);
 
         var dbContext = fixture.Services.GetRequiredService<ChangedByScalarDbContext>();
-        var users = await dbContext.TestUsers.Include(u => u.Changes).ToListAsync();
+        var testUsers = await dbContext.TestUsers.Include(u => u.Changes).ToListAsync();
 
         var instance = ServiceProviderCache.Instance;
 
-        Assert.True(users.All(u => u.Changes.All(c => c.ChangedBy == u.Username)));
+        Assert.Equal(numberOfUsers, testUsers.Count);
+        Assert.True(testUsers.All(u => u.Changes.All(c => c.ChangedBy == u.Username)));
     }
 
-    private void CreateUsers()
+    private void CreateUsers(int numberOfUsers)
     {
-        for (int i = 1; i <= 50; i++)
+        for (int i = 1; i <= numberOfUsers; i++)
         {
             using var scope = fixture.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangedByScalarDbContext>();
-            var currentUserProvider = scope.ServiceProvider.GetRequiredService<ChangedByScalarCurrentUserProvider>();
+            var currentUserProvider = scope.ServiceProvider.GetRequiredService<ScalarCurrentUserProvider>();
 
             var username = $"TestUserScalar{i}";
             currentUserProvider.CurrentUser = username;
@@ -61,13 +65,13 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>, IAsyn
         }
     }
 
-    private async Task CreateUsersAsync()
+    private async Task CreateUsersAsync(int numberOfUsers)
     {
-        for (int i = 51; i <= 100; i++)
+        for (int i = 1; i <= numberOfUsers; i++)
         {
             using var scope = fixture.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangedByScalarDbContext>();
-            var currentUserProvider = scope.ServiceProvider.GetRequiredService<ChangedByScalarCurrentUserProvider>();
+            var currentUserProvider = scope.ServiceProvider.GetRequiredService<ScalarCurrentUserProvider>();
 
             var username = $"TestUserScalarAsync{i}";
             currentUserProvider.CurrentUser = username;

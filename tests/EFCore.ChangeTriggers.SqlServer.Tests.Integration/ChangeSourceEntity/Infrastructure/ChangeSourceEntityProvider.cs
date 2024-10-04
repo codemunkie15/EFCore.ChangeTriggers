@@ -5,9 +5,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.I
 
 internal class ChangeSourceEntityProvider : ChangeSourceProvider<ChangeSource>
 {
-    private readonly ChangeSourceEntityChangeSourceProvider changeSourceProvider;
+    private readonly EntityChangeSourceProvider changeSourceProvider;
 
-    public ChangeSourceEntityProvider(ChangeSourceEntityChangeSourceProvider changeSourceProvider)
+    public ChangeSourceEntityProvider(EntityChangeSourceProvider changeSourceProvider)
     {
         this.changeSourceProvider = changeSourceProvider;
     }

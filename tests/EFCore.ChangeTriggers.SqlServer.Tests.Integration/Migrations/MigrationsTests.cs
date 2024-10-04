@@ -59,6 +59,27 @@ public class MigrationsTests : IClassFixture<MigrationsFixture>, IAsyncLifetime
         Assert.True(users.All(u => u.Changes.All(c => c.ChangedBy.Id == currentUser.Id)));
     }
 
+    [Fact]
+    public void ScriptMigration_SetsCorrectChangeContext()
+    {
+        var dbContext = fixture.Services.GetRequiredService<MigrationsDbContext>();
+        var migrator = dbContext.Database.GetService<IMigrator>();
+        var changeSourceProvider = fixture.Services.GetRequiredService<MigrationsCurrentChangeSourceProvider>();
+        var currentUserProvider = fixture.Services.GetRequiredService<MigrationsCurrentUserProvider>();
+
+        var currentChangeSource = ChangeSource.Migrations;
+        var currentUser = new MigrationsUser { Id = 1 };
+
+        changeSourceProvider.CurrentChangeSource = currentChangeSource;
+        currentUserProvider.CurrentUser = currentUser;
+
+        var script = migrator.GenerateScript();
+        var scriptLines = script.Split(Environment.NewLine);
+
+        Assert.Equal($"EXEC sp_set_session_context N'ChangeContext.ChangedBy', {currentUser.Id};", scriptLines.FirstOrDefault());
+        Assert.Equal($"EXEC sp_set_session_context N'ChangeContext.ChangeSource', {(int)currentChangeSource};", scriptLines.Skip(1).FirstOrDefault());
+    }
+
     public Task InitializeAsync() => Task.CompletedTask;
 
     public async Task DisposeAsync()

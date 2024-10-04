@@ -19,7 +19,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Infr
                             options.UseChangedBy<ChangedByScalarProvider, string>();
                         });
                 })
-                .AddSingleton(new ChangedByScalarCurrentUserProvider())
+                .AddSingleton(new ScalarCurrentUserProvider())
                 .BuildServiceProvider();
         }
     }

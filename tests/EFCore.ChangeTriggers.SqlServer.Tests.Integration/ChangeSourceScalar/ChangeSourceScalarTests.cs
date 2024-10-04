@@ -42,7 +42,7 @@ public class ChangeSourceScalarTests : IClassFixture<ChangeSourceScalarFixture>,
         for (int i = 1; i <= 10; i++)
         {
             using var scope = fixture.Services.CreateScope();
-            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<ChangeSourceScalarChangeSourceProvider>();
+            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<ScalarChangeSourceProvider>();
             changeSourceProvider.CurrentChangeSource = (ChangeSource)i;
 
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangeSourceScalarDbContext>();
@@ -62,7 +62,7 @@ public class ChangeSourceScalarTests : IClassFixture<ChangeSourceScalarFixture>,
         for (int i = 1; i <= 10; i++)
         {
             using var scope = fixture.Services.CreateScope();
-            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<ChangeSourceScalarChangeSourceProvider>();
+            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<ScalarChangeSourceProvider>();
             changeSourceProvider.CurrentChangeSource = (ChangeSource)i;
 
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangeSourceScalarDbContext>();

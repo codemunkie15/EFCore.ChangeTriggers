@@ -42,7 +42,7 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
         for (int i = 1; i <= 10; i++)
         {
             using var scope = fixture.Services.CreateScope();
-            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<ChangeSourceEntityChangeSourceProvider>();
+            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<EntityChangeSourceProvider>();
             changeSourceProvider.CurrentChangeSource = new ChangeSource { Id = i };
 
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangeSourceEntityDbContext>();
@@ -62,7 +62,7 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
         for (int i = 1; i <= 10; i++)
         {
             using var scope = fixture.Services.CreateScope();
-            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<ChangeSourceEntityChangeSourceProvider>();
+            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<EntityChangeSourceProvider>();
             changeSourceProvider.CurrentChangeSource = new ChangeSource { Id = i };
 
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangeSourceEntityDbContext>();

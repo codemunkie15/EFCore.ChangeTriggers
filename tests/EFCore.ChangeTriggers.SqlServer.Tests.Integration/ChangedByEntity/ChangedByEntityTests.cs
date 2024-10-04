@@ -18,38 +18,69 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>, IAsyn
     [Fact]
     public void MultipleScopes_SetsCorrectChangedBy()
     {
-        CreateUsers();
+        const int numberOfUsers = 50;
+        CreateChangedBySourceUsers(numberOfUsers);
+        CreateTestUsers(numberOfUsers);
 
         var dbContext = fixture.Services.GetRequiredService<ChangedByEntityDbContext>();
-        var users = dbContext.TestUsers.Include(u => u.Changes).ThenInclude(c => c.ChangedBy).ToList();
+        var testUsers = dbContext.TestUsers
+            .Include(u => u.Changes)
+            .ThenInclude(c => c.ChangedBy)
+            .OrderBy(u => u.Id)
+            .Skip(numberOfUsers)
+            .ToList();
 
-        Assert.True(users.All(u => u.Changes.All(c => c.ChangedBy.Id == u.Id)));
+        Assert.Equal(numberOfUsers, testUsers.Count);
+        Assert.True(testUsers.All(u => u.Changes.All(c => c.ChangedBy.Username == $"Change{u.Username}")));
     }
 
     [Fact]
     public async Task MultipleScopes_SetsCorrectChangedBy_Async()
     {
-        await CreateUsersAsync();
+        const int numberOfUsers = 50;
+        CreateChangedBySourceUsers(numberOfUsers);
+        await CreateTestUsersAsync(numberOfUsers);
 
         var dbContext = fixture.Services.GetRequiredService<ChangedByEntityDbContext>();
-        var users = await dbContext.TestUsers.Include(u => u.Changes).ToListAsync();
+        var testUsers = await dbContext.TestUsers
+            .Include(u => u.Changes)
+            .ThenInclude(c => c.ChangedBy)
+            .OrderBy(u => u.Id)
+            .Skip(numberOfUsers)
+            .ToListAsync();
 
-        Assert.True(users.All(u => u.Changes.All(c => c.ChangedBy.Id == u.Id)));
+        Assert.Equal(numberOfUsers, testUsers.Count);
+        Assert.True(testUsers.All(u => u.Changes.All(c => c.ChangedBy.Username == $"Change{u.Username}")));
     }
 
-    private void CreateUsers()
+    private void CreateChangedBySourceUsers(int numberOfUsers)
     {
-        for (int i = 1; i <= 50; i++)
+        var dbContext = fixture.Services.GetRequiredService<ChangedByEntityDbContext>();
+        var currentUserProvider = fixture.Services.GetRequiredService<EntityCurrentUserProvider>();
+        currentUserProvider.CurrentUser = new ChangedByEntityUser { Id = 1 };
+
+        for (int i = 1; i <= numberOfUsers; i++)
+        {
+            var user = new ChangedByEntityUser { Username = $"ChangeTestUser{i}" };
+            dbContext.TestUsers.Add(user);
+        }
+
+        dbContext.SaveChanges();
+    }
+
+    private void CreateTestUsers(int numberOfUsers)
+    {
+        for (int i = 1; i <= numberOfUsers; i++)
         {
             using var scope = fixture.Services.CreateScope();
-            var currentUserProvider = scope.ServiceProvider.GetRequiredService<ChangedByEntityCurrentUserProvider>();
-            currentUserProvider.CurrentUser = new ChangedByEntityUser { Id = i };
-
+            var currentUserProvider = scope.ServiceProvider.GetRequiredService<EntityCurrentUserProvider>();
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangedByEntityDbContext>();
+
+            currentUserProvider.CurrentUser = new ChangedByEntityUser { Id = i };
 
             var user = new ChangedByEntityUser
             {
-                Username = $"TestUserEntity{i}"
+                Username = $"TestUser{i}"
             };
 
             dbContext.TestUsers.Add(user);
@@ -57,19 +88,19 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>, IAsyn
         }
     }
 
-    private async Task CreateUsersAsync()
+    private async Task CreateTestUsersAsync(int numberOfUsers)
     {
-        for (int i = 51; i <= 100; i++)
+        for (int i = 1; i <= numberOfUsers; i++)
         {
             using var scope = fixture.Services.CreateScope();
-            var currentUserProvider = scope.ServiceProvider.GetRequiredService<ChangedByEntityCurrentUserProvider>();
-            currentUserProvider.CurrentUser = new ChangedByEntityUser { Id = i };
-
+            var currentUserProvider = scope.ServiceProvider.GetRequiredService<EntityCurrentUserProvider>();
             var dbContext = scope.ServiceProvider.GetRequiredService<ChangedByEntityDbContext>();
+
+            currentUserProvider.CurrentUser = new ChangedByEntityUser { Id = i };
 
             var user = new ChangedByEntityUser
             {
-                Username = $"TestUserEntityAsync{i}"
+                Username = $"TestUser{i}"
             };
 
             dbContext.TestUsers.Add(user);

@@ -1,6 +1,6 @@
 ﻿namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Infrastructure;
 
-internal class ChangedByScalarCurrentUserProvider
+internal class ScalarCurrentUserProvider
 {
     public string CurrentUser { get; set; }
 }

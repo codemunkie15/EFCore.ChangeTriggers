@@ -2,7 +2,7 @@
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infrastructure;
 
-internal class ChangedByEntityCurrentUserProvider
+internal class EntityCurrentUserProvider
 {
     public ChangedByEntityUser CurrentUser { get; set; }
 }
