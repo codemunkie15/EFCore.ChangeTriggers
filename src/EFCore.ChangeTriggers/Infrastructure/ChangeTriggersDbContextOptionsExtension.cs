@@ -9,6 +9,12 @@ namespace EFCore.ChangeTriggers.Infrastructure
     {
         public abstract DbContextOptionsExtensionInfo Info { get; }
 
+        public Func<string, string>? TriggerNameFactory { get; private set; }
+
+        public ChangeContextTypes ChangedByTypes { get; private set; }
+
+        public ChangeContextTypes ChangeSourceTypes { get; private set; }
+
         private readonly List<ServiceDescriptor> serviceDescriptors = [];
 
         protected ChangeTriggersDbContextOptionsExtension()
@@ -21,8 +27,6 @@ namespace EFCore.ChangeTriggers.Infrastructure
             TriggerNameFactory = copyFrom.TriggerNameFactory;
             serviceDescriptors = copyFrom.serviceDescriptors;
         }
-
-        public Func<string, string>? TriggerNameFactory { get; private set; }
 
         public virtual void ApplyServices(IServiceCollection services)
         {
@@ -50,6 +54,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
         {
             var clone = Clone();
             clone.AddChangedByServices<TChangedByProvider, TChangedBy>(applicationServiceProvider);
+            clone.ChangedByTypes = new ChangeContextTypes(typeof(TChangedByProvider), typeof(TChangedBy));
             return clone;
         }
 
@@ -58,6 +63,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
         {
             var clone = Clone();
             clone.AddChangeSourceServices<TChangeSourceProvider, TChangeSource>(applicationServiceProvider);
+            clone.ChangeSourceTypes = new ChangeContextTypes(typeof(TChangeSourceProvider), typeof(TChangeSource));
             return clone;
         }
 
@@ -66,6 +72,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
         {
             AddService<ISetChangeContextOperationGenerator, ChangedBySetChangeContextOperationGenerator<TChangedBy>>();
 
+            // Services that may depend on application services need to be registered differently
             AddService<IChangedByProvider<TChangedBy>, TChangedByProvider>(applicationServiceProvider);
         }
 
@@ -74,6 +81,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
         {
             AddService<ISetChangeContextOperationGenerator, ChangeSourceSetChangeContextOperationGenerator<TChangeSource>>();
 
+            // Services that may depend on application services need to be registered differently
             AddService<IChangeSourceProvider<TChangeSource>, TChangeSourceProvider>(applicationServiceProvider);
         }
 
@@ -106,4 +114,6 @@ namespace EFCore.ChangeTriggers.Infrastructure
 
         protected abstract ChangeTriggersDbContextOptionsExtension Clone();
     }
+
+    public record ChangeContextTypes(Type ProviderType, Type valueType);
 }

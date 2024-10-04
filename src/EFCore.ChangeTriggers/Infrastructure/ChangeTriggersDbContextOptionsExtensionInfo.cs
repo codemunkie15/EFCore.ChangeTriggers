@@ -4,6 +4,9 @@ namespace EFCore.ChangeTriggers.Infrastructure
 {
     public abstract class ChangeTriggersDbContextOptionsExtensionInfo : DbContextOptionsExtensionInfo
     {
+        private new ChangeTriggersDbContextOptionsExtension Extension
+            => (ChangeTriggersDbContextOptionsExtension)base.Extension;
+
         public ChangeTriggersDbContextOptionsExtensionInfo(IDbContextOptionsExtension extension)
             : base(extension)
         {
@@ -13,7 +16,10 @@ namespace EFCore.ChangeTriggers.Infrastructure
 
         public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
         {
-            return string.Equals(LogFragment, other.LogFragment, StringComparison.Ordinal);
+            return other is ChangeTriggersDbContextOptionsExtensionInfo otherInfo &&
+                Extension.TriggerNameFactory == otherInfo.Extension.TriggerNameFactory &&
+                Extension.ChangedByTypes == otherInfo.Extension.ChangedByTypes &&
+                Extension.ChangeSourceTypes == otherInfo.Extension.ChangeSourceTypes;
         }
 
         public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
