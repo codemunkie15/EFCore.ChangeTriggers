@@ -23,6 +23,9 @@ jobs:
     # Build solution
     - name: Build solution
       run: dotnet build --configuration $BUILD_CONFIG
+
+    - name: Check Docker status
+      run: docker info
       
     # Run tests
     - name: Run tests
