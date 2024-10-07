@@ -15,9 +15,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity
 
         public async Task InitializeAsync()
         {
-            msSqlContainer = new MsSqlBuilder()
-                .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1433))
-                .Build();
+            msSqlContainer = TestContainerBuilder.MsSql().Build();
 
             await msSqlContainer.StartAsync();
 
