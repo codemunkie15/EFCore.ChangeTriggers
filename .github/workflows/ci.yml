@@ -3,27 +3,26 @@ on:
   workflow_dispatch: # Allow running the workflow manually from the GitHub UI
   pull_request:
     branches:
-      - 'main' # Run the workflow for pull requests to 'main'
+      - '*'
 
 jobs:
   build:
-    
+    name: Build
+    runs-on: ubuntu-latest
     env:
       BUILD_CONFIG: 'Release'
-      
-    runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
         
-    # Install the .NET SDK
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
       
-    # Build solution
     - name: Build solution
       run: dotnet build --configuration $BUILD_CONFIG
       
-    # Run tests
     - name: Run tests
       run: dotnet test --configuration $BUILD_CONFIG --no-build
