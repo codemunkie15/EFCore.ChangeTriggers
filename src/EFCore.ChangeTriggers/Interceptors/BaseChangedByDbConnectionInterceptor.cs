@@ -1,9 +1,8 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.EfCoreExtension;
 using EFCore.ChangeTriggers.Extensions;
+using EFCore.ChangeTriggers.Infrastructure;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
-using System.Threading;
 
 namespace EFCore.ChangeTriggers.Interceptors
 {

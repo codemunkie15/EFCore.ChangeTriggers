@@ -93,13 +93,13 @@ namespace EFCore.ChangeTriggers.Extensions
         /// <param name="builder">The entity type builder to use for configuration.</param>
         /// <param name="optionsBuilder">An optional action to configure the change table.</param>
         /// <returns>The same entity type builder so that further calls can be chained.</returns>
-        public static EntityTypeBuilder<TChangeEntity> IsChangeTable<TChangeEntity, TChangeId, TChangedBy, TChangeSource>(
+        public static EntityTypeBuilder<TChangeEntity> IsChangeTable<TChangeEntity, TChangedBy, TChangeSource>(
             this EntityTypeBuilder<TChangeEntity> builder,
             Action<ChangeTableOptions<TChangeSource>>? optionsBuilder = null)
-            where TChangeEntity : class, IChange, IHasChangeId<TChangeId>, IHasChangedBy<TChangedBy>, IHasChangeSource<TChangeSource>
+            where TChangeEntity : class, IChange, IHasChangedBy<TChangedBy>, IHasChangeSource<TChangeSource>
         {
             return builder
-                .IsChangeTable<TChangeEntity, TChangeId>()
+                .IsChangeTable()
                 .HasChangedBy<TChangeEntity, TChangedBy>()
                 .HasChangeSource(optionsBuilder);
         }
@@ -111,12 +111,10 @@ namespace EFCore.ChangeTriggers.Extensions
         /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
         /// <param name="builder">The entity type builder to use for configuration.</param>
         /// <returns>The same entity type builder so that further calls can be chained.</returns>
-        public static EntityTypeBuilder<TChangeEntity> IsChangeTable<TChangeEntity, TChangeId>(
+        public static EntityTypeBuilder<TChangeEntity> IsChangeTable<TChangeEntity>(
             this EntityTypeBuilder<TChangeEntity> builder)
-            where TChangeEntity : class, IChange, IHasChangeId<TChangeId>
+            where TChangeEntity : class, IChange
         {
-            builder.HasKey(e => e.ChangeId);
-
             builder.Property(e => e.OperationType)
                 .HasColumnName("OperationTypeId")
                 .IsOperationTypeProperty();
@@ -141,12 +139,12 @@ namespace EFCore.ChangeTriggers.Extensions
         /// <typeparam name="TChangedBy">The type that represents who a change was made by.</typeparam>
         /// <param name="builder">The entity type builder to use for configuration.</param>
         /// <returns>The same entity type builder so that further calls can be chained.</returns>
-        public static EntityTypeBuilder<TChangeEntity> IsChangeTable<TChangeEntity, TChangeId, TChangedBy>(
+        public static EntityTypeBuilder<TChangeEntity> IsChangeTable<TChangeEntity, TChangedBy>(
             this EntityTypeBuilder<TChangeEntity> builder)
-            where TChangeEntity : class, IChange, IHasChangeId<TChangeId>, IHasChangedBy<TChangedBy>
+            where TChangeEntity : class, IChange, IHasChangedBy<TChangedBy>
         {
             return builder
-                .IsChangeTable<TChangeEntity, TChangeId>()
+                .IsChangeTable()
                 .HasChangedBy<TChangeEntity, TChangedBy>();
         }
 
@@ -159,13 +157,13 @@ namespace EFCore.ChangeTriggers.Extensions
         /// <param name="builder">The entity type builder to use for configuration.</param>
         /// <param name="optionsBuilder">An optional action to configure the change table.</param>
         /// <returns>The same entity type builder so that further calls can be chained.</returns>
-        public static EntityTypeBuilder<TChangeEntity> IsChangeTable<TChangeEntity, TChangeId, TChangeSource>(
+        public static EntityTypeBuilder<TChangeEntity> IsChangeTable<TChangeEntity, TChangeSource>(
             this EntityTypeBuilder<TChangeEntity> builder,
             Action<ChangeTableOptions<TChangeSource>>? optionsBuilder = null)
-            where TChangeEntity : class, IChange, IHasChangeId<TChangeId>, IHasChangeSource<TChangeSource>
+            where TChangeEntity : class, IChange, IHasChangeSource<TChangeSource>
         {
             return builder
-                .IsChangeTable<TChangeEntity, TChangeId>()
+                .IsChangeTable()
                 .HasChangeSource(optionsBuilder);
         }
 

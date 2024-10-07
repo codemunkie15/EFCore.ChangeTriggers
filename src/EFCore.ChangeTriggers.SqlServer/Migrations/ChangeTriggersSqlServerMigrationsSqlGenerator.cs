@@ -26,7 +26,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Migrations
         {
         }
 
-        protected override void Generate(MigrationOperation operation, IModel model, MigrationCommandListBuilder builder)
+        protected override void Generate(MigrationOperation operation, IModel? model, MigrationCommandListBuilder builder)
         {
             if (operation is CreateChangeTriggerOperation createChangeTriggerOperation)
             {
@@ -53,7 +53,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Migrations
         protected virtual void Generate(CreateChangeTriggerOperation operation, MigrationCommandListBuilder builder)
         {
             using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("EFCore.ChangeTriggers.SqlServer.Templates.CreateChangeTriggerSqlTemplate.sql");
-            using var reader = new StreamReader(stream);
+            using var reader = new StreamReader(stream!);
             var sqlTemplate = reader.ReadToEnd();
 
             var template = Template.Parse(sqlTemplate);
@@ -92,7 +92,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Migrations
                 .EndCommand();
         }
 
-        protected virtual void Generate(NoCheckConstraintOperation operation, IModel model, MigrationCommandListBuilder builder)
+        protected virtual void Generate(NoCheckConstraintOperation operation, IModel? model, MigrationCommandListBuilder builder)
         {
             builder
                 .Append("ALTER TABLE ")
@@ -103,15 +103,12 @@ namespace EFCore.ChangeTriggers.SqlServer.Migrations
                 .EndCommand();
         }
 
-        protected virtual void Generate(SetChangeContextOperation operation, IModel model, MigrationCommandListBuilder builder)
+        protected virtual void Generate(SetChangeContextOperation operation, IModel? model, MigrationCommandListBuilder builder)
         {
             var nameTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(string))!;
-            var valueTypeMapping = Dependencies.TypeMappingSource.FindMapping(operation.ContextValueType);
 
-            if (valueTypeMapping == null)
-            {
-                throw new InvalidOperationException($"The change context type {operation.ContextValueType} is not supported by the provider.");
-            }
+            var valueTypeMapping = Dependencies.TypeMappingSource.FindMapping(operation.ContextValueType)
+                ?? throw new InvalidOperationException($"The change context type {operation.ContextValueType} is not supported by the provider.");
 
             builder
                 .Append("EXEC sp_set_session_context ")

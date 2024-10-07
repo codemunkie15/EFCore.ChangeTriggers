@@ -37,6 +37,7 @@ namespace TestHarness
             modelBuilder.Entity<UserChange>(e =>
             {
                 e.ToTable("UserChanges");
+                e.HasKey(u => u.ChangeId);
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
             });
@@ -51,6 +52,7 @@ namespace TestHarness
             modelBuilder.Entity<PermissionChange>(e =>
             {
                 e.ToTable("PermissionChanges");
+                e.HasKey(p => p.ChangeId);
                 e.Property(u => u.Name).IsRequired();
             });
 

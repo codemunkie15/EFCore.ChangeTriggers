@@ -6,8 +6,8 @@ namespace EFCore.ChangeTriggers.Migrations.Operations
     {
         public string? Schema { get; set; }
 
-        public string Table { get; set; }
+        public required string Table { get; set; }
 
-        public string Constraint { get; set; }
+        public required string Constraint { get; set; }
     }
 }

@@ -9,11 +9,11 @@
         /// <summary>
         /// The current change entity.
         /// </summary>
-        public TChange ChangeEntity { get; set; }
+        public required TChange ChangeEntity { get; set; }
 
         /// <summary>
         /// The previous change entity.
         /// </summary>
-        public TChange PreviousChangeEntity { get; set; }
+        public required TChange PreviousChangeEntity { get; set; }
     }
 }

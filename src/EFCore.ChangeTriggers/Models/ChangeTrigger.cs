@@ -4,19 +4,19 @@ namespace EFCore.ChangeTriggers.Models
 {
     internal class ChangeTrigger : IEquatable<ChangeTrigger>
     {
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
-        public IEnumerable<string> ChangeTableDataColumns { get; set; }
+        public required IEnumerable<string> ChangeTableDataColumns { get; set; }
 
-        public IEnumerable<string> TrackedTablePrimaryKeyColumns { get; set; }
+        public required IEnumerable<string> TrackedTablePrimaryKeyColumns { get; set; }
 
-        public ChangeContextColumn OperationTypeColumn { get; set; }
+        public required ChangeContextColumn OperationTypeColumn { get; set; }
 
-        public ChangeContextColumn? ChangeSourceColumn { get; set; }
+        public required ChangeContextColumn? ChangeSourceColumn { get; set; }
 
-        public ChangeContextColumn ChangedAtColumn { get; set; }
+        public required ChangeContextColumn ChangedAtColumn { get; set; }
 
-        public ChangeContextColumn? ChangedByColumn { get; set; }
+        public required ChangeContextColumn? ChangedByColumn { get; set; }
 
         public bool Equals(ChangeTrigger? other)
         {
