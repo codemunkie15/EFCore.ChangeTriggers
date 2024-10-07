@@ -26,4 +26,4 @@ jobs:
       
     # Run tests
     - name: Run tests
-      run: dotnet test --configuration $BUILD_CONFIG --no-build --logger "console;verbosity=detailed"
+      run: dotnet test --configuration $BUILD_CONFIG --no-build
