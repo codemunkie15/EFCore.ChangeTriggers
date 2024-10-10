@@ -13,16 +13,16 @@ jobs:
       BUILD_CONFIG: 'Release'
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+          
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
         
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-      
-    - name: Build solution
-      run: dotnet build --configuration $BUILD_CONFIG
-      
-    - name: Run tests
-      run: dotnet test --configuration $BUILD_CONFIG --no-build
+      - name: Build solution
+        run: dotnet build --configuration $BUILD_CONFIG
+        
+      - name: Run tests
+        run: dotnet test --configuration $BUILD_CONFIG --no-build

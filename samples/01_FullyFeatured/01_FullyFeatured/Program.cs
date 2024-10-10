@@ -3,6 +3,7 @@ using _01_FullyFeatured.DbModels.Orders;
 using _01_FullyFeatured.DbModels.Products;
 using _01_FullyFeatured.DbModels.Users;
 using EFCore.ChangeTriggers.SqlServer;
+using EFCore.ChangeTriggers.SqlServer.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +18,12 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 {
     options
         .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
-        .UseSqlServerChangeTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>(options =>
+        .UseSqlServerChangeTriggers(options =>
         {
-            options.MigrationSourceType = ChangeSourceType.Migration;
+            options
+                .UseTriggerNameFactory(tableName => $"{tableName}_CustomTriggerName")
+                .UseChangedBy<ChangedByProvider, User>()
+                .UseChangeSource<ChangeSourceProvider, ChangeSourceType>();
         });
 });
 

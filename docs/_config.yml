@@ -1,0 +1,13 @@
+title: EFCore.ChangeTriggers
+theme: just-the-docs
+url: https://just-the-docs.github.io
+
+aux_links:
+  "GitHub":
+    - "//github.com/codemunkie15/EFCore.ChangeTriggers"
+aux_links_new_tab: true
+
+callouts:
+  note:
+    title: Note
+    color: purple
