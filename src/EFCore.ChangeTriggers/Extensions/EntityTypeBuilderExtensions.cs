@@ -14,7 +14,7 @@ namespace EFCore.ChangeTriggers.Extensions
         /// Configures the entity to use change triggers.
         /// </summary>
         /// <typeparam name="TTrackedEntity">The <see cref="ITracked{TChangeType}"/> entity type to configure change triggers for.</typeparam>
-        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type that tracks the changes for the <typeparamref name="TTrackedEntity"/>.</typeparam>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked}"/> entity type that tracks the changes for the <typeparamref name="TTrackedEntity"/>.</typeparam>
         /// <param name="builder">The entity type builder used for configuration.</param>
         /// <param name="optionsBuilder">An optional action to configure the change trigger.</param>
         /// <returns>The same entity type builder so further calls can be chained.</returns>
@@ -86,8 +86,7 @@ namespace EFCore.ChangeTriggers.Extensions
         /// <summary>
         /// Configures the entity as a change table.
         /// </summary>
-        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type to configure.</typeparam>
-        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked}"/> entity type to configure.</typeparam>
         /// <typeparam name="TChangedBy">The type that represents who a change was made by.</typeparam>
         /// <typeparam name="TChangeSource">The type that represents where a change originated from.</typeparam>
         /// <param name="builder">The entity type builder to use for configuration.</param>
@@ -107,8 +106,7 @@ namespace EFCore.ChangeTriggers.Extensions
         /// <summary>
         /// Configures the entity as a change table.
         /// </summary>
-        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type to configure.</typeparam>
-        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked}"/> entity type to configure.</typeparam>
         /// <param name="builder">The entity type builder to use for configuration.</param>
         /// <returns>The same entity type builder so that further calls can be chained.</returns>
         public static EntityTypeBuilder<TChangeEntity> IsChangeTable<TChangeEntity>(
@@ -134,8 +132,7 @@ namespace EFCore.ChangeTriggers.Extensions
         /// <summary>
         /// Configures the entity as a change table.
         /// </summary>
-        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type to configure.</typeparam>
-        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked}"/> entity type to configure.</typeparam>
         /// <typeparam name="TChangedBy">The type that represents who a change was made by.</typeparam>
         /// <param name="builder">The entity type builder to use for configuration.</param>
         /// <returns>The same entity type builder so that further calls can be chained.</returns>
@@ -151,8 +148,7 @@ namespace EFCore.ChangeTriggers.Extensions
         /// <summary>
         /// Configures the entity as a change table.
         /// </summary>
-        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked, TChangeId}"/> entity type to configure.</typeparam>
-        /// <typeparam name="TChangeId">The <typeparamref name="TChangeEntity"/> change identifier type.</typeparam>
+        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked}"/> entity type to configure.</typeparam>
         /// <typeparam name="TChangeSource">The type that represents where a change originated from.</typeparam>
         /// <param name="builder">The entity type builder to use for configuration.</param>
         /// <param name="optionsBuilder">An optional action to configure the change table.</param>

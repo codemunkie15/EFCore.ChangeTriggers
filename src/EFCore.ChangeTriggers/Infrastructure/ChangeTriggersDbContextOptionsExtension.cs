@@ -11,9 +11,9 @@ namespace EFCore.ChangeTriggers.Infrastructure
 
         public Func<string, string>? TriggerNameFactory { get; private set; }
 
-        public ChangeContextTypes ChangedByTypes { get; private set; }
+        public ChangeContextConfig ChangedByConfig { get; private set; }
 
-        public ChangeContextTypes ChangeSourceTypes { get; private set; }
+        public ChangeContextConfig ChangeSourceConfig { get; private set; }
 
         private readonly List<ServiceDescriptor> serviceDescriptors = [];
 
@@ -54,7 +54,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
         {
             var clone = Clone();
             clone.AddChangedByServices<TChangedByProvider, TChangedBy>(applicationServiceProvider);
-            clone.ChangedByTypes = new ChangeContextTypes(typeof(TChangedByProvider), typeof(TChangedBy));
+            clone.ChangedByConfig = new ChangeContextConfig(typeof(TChangedByProvider), typeof(TChangedBy));
             return clone;
         }
 
@@ -63,7 +63,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
         {
             var clone = Clone();
             clone.AddChangeSourceServices<TChangeSourceProvider, TChangeSource>(applicationServiceProvider);
-            clone.ChangeSourceTypes = new ChangeContextTypes(typeof(TChangeSourceProvider), typeof(TChangeSource));
+            clone.ChangeSourceConfig = new ChangeContextConfig(typeof(TChangeSourceProvider), typeof(TChangeSource));
             return clone;
         }
 
@@ -115,5 +115,5 @@ namespace EFCore.ChangeTriggers.Infrastructure
         protected abstract ChangeTriggersDbContextOptionsExtension Clone();
     }
 
-    public record ChangeContextTypes(Type ProviderType, Type valueType);
+    public record ChangeContextConfig(Type ProviderType, Type valueType);
 }

@@ -16,6 +16,7 @@ builder.Services
         options
             .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Database=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False", options =>
             {
+                //options.UseCompatibilityLevel()
             })
             .UseSqlServerChangeTriggers(options =>
             {

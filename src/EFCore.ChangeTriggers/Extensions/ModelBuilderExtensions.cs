@@ -16,7 +16,7 @@ namespace EFCore.ChangeTriggers.Extensions
             .Where(mi => mi.Name.Equals(nameof(EntityTypeBuilderExtensions.IsChangeTable)));
 
         /// <summary>
-        /// Automatically configures any entities in the model that implement <see cref="ITracked{TChangeType}"/> or <see cref="IChange{TTracked, TChangeId}"/>.
+        /// Automatically configures any entities in the model that implement <see cref="ITracked{TChangeType}"/> or <see cref="IChange{TTracked}"/>.
         /// </summary>
         /// <remarks>This method uses reflection.</remarks>
         /// <param name="modelBuilder">The model builder being used for configuration.</param>

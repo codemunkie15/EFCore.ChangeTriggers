@@ -18,8 +18,8 @@ namespace EFCore.ChangeTriggers.Infrastructure
         {
             return other is ChangeTriggersDbContextOptionsExtensionInfo otherInfo &&
                 Extension.TriggerNameFactory == otherInfo.Extension.TriggerNameFactory &&
-                Extension.ChangedByTypes == otherInfo.Extension.ChangedByTypes &&
-                Extension.ChangeSourceTypes == otherInfo.Extension.ChangeSourceTypes;
+                Extension.ChangedByConfig == otherInfo.Extension.ChangedByConfig &&
+                Extension.ChangeSourceConfig == otherInfo.Extension.ChangeSourceConfig;
         }
 
         public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)

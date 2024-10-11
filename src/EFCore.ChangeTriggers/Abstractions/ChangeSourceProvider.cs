@@ -1,5 +1,9 @@
 ﻿namespace EFCore.ChangeTriggers.Abstractions
 {
+    /// <summary>
+    /// Provides the change context for where changes originate from.
+    /// </summary>
+    /// <typeparam name="TChangeSource"></typeparam>
     public abstract class ChangeSourceProvider<TChangeSource> : IChangeSourceProvider<TChangeSource>
     {
         public virtual TChangeSource GetChangeSource()
