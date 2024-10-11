@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Migrations
 {

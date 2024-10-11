@@ -1,7 +1,6 @@
 ﻿using EFCore.ChangeTriggers.Infrastructure;
 using EFCore.ChangeTriggers.SqlServer.Interceptors;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Infrastructure
 {
