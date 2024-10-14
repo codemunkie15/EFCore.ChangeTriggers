@@ -1,12 +1,10 @@
-﻿using EFCore.ChangeTriggers.Models;
-
-namespace EFCore.ChangeTriggers.Abstractions
+﻿namespace EFCore.ChangeTriggers.Abstractions
 {
     /// <summary>
     /// This is an internal API and should not be used in application code.
     /// </summary>
     /// <remarks>
-    /// <see cref="IChange{TTracked, TChangeId}"/> is the correct interface to implement for change entities.
+    /// <see cref="IChange{TTracked}"/> is the correct interface to implement for change entities.
     /// </remarks>
     public interface IChange
     {
