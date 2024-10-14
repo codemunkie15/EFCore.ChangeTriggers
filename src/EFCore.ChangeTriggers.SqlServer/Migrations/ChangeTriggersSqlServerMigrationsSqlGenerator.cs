@@ -6,7 +6,6 @@ using Scriban.Runtime;
 using Scriban;
 using System.Reflection;
 using EFCore.ChangeTriggers.Constants;
-using EFCore.ChangeTriggers.Models;
 using EFCore.ChangeTriggers.Migrations.Operations;
 using EFCore.ChangeTriggers.SqlServer.Templates;
 
@@ -14,12 +13,12 @@ namespace EFCore.ChangeTriggers.SqlServer.Migrations
 {
     internal class ChangeTriggersSqlServerMigrationsSqlGenerator : SqlServerMigrationsSqlGenerator
     {
-        private readonly IEnumerable<ChangeConfig> changeConfigs = new List<ChangeConfig>()
-        {
-            new ChangeConfig((int)OperationType.Insert, "inserted", "i"),
-            new ChangeConfig((int)OperationType.Update, "inserted", "i"),
-            new ChangeConfig((int)OperationType.Delete, "deleted", "d"),
-        };
+        private readonly IEnumerable<ChangeConfig> changeConfigs =
+        [
+            new((int)OperationType.Insert, "inserted", "i"),
+            new((int)OperationType.Update, "inserted", "i"),
+            new((int)OperationType.Delete, "deleted", "d"),
+        ];
 
         public ChangeTriggersSqlServerMigrationsSqlGenerator(MigrationsSqlGeneratorDependencies dependencies, ICommandBatchPreparer commandBatchPreparer)
             : base(dependencies, commandBatchPreparer)

@@ -3,8 +3,8 @@ using EFCore.ChangeTriggers.Configuration;
 using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Exceptions;
 using EFCore.ChangeTriggers.Helpers;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Extensions
 {
@@ -25,31 +25,12 @@ namespace EFCore.ChangeTriggers.Extensions
             where TTrackedEntity : class, ITracked<TChangeEntity>
             where TChangeEntity : class, IHasTrackedEntity<TTrackedEntity>
         {
-            var options = ChangeTriggerOptions.Create(optionsBuilder);
-
             var trackedEntityType = builder.Metadata;
             var changeEntityType = builder.Metadata.Model.FindEntityType(typeof(TChangeEntity))!;
 
-            builder.HasAnnotation(AnnotationConstants.UseChangeTriggers, true);
+            builder.HasAnnotation(AnnotationConstants.HasChangeTrigger, true);
             builder.HasAnnotation(AnnotationConstants.ChangeEntityTypeName, changeEntityType!.Name);
             changeEntityType.AddAnnotation(AnnotationConstants.TrackedEntityTypeName, trackedEntityType!.Name);
-
-            // https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-7.0/breaking-changes#sqlserver-tables-with-triggers
-            builder.ToTable(t => t.HasTrigger("ChangeTrigger"));
-
-            // Configure relationship between TTracked and TChange using primary key as foreign key
-            var trackedTablePrimaryKey = trackedEntityType.FindPrimaryKey();
-
-            if (trackedTablePrimaryKey == null)
-            {
-                throw new ChangeTriggersConfigurationException(
-                    $"Tracked entity type '{trackedEntityType.Name}' must have a primary key configured to use change triggers.");
-            }
-
-            builder
-                .HasMany(e => e.Changes)
-                .WithOne(e => e.TrackedEntity)
-                .HasForeignKey(trackedTablePrimaryKey.Properties.Select(p => p.Name).ToArray());
 
             if (optionsBuilder is not null)
             {
@@ -113,18 +94,7 @@ namespace EFCore.ChangeTriggers.Extensions
             this EntityTypeBuilder<TChangeEntity> builder)
             where TChangeEntity : class, IChange
         {
-            builder.Property(e => e.OperationType)
-                .HasColumnName("OperationTypeId")
-                .IsOperationTypeProperty();
-
-            builder.Property(e => e.ChangedAt)
-                .IsChangedAtProperty();
-
-            foreach (var foreignKey in builder.Metadata.GetForeignKeys())
-            {
-                foreignKey.HasNoCheck(); // Stops cascade delete from removing the change entities if the source entity is deleted
-                foreignKey.IsRequired = false; // Forces a LEFT JOIN so change entities can still be queried if the source entity is deleted
-            }
+            builder.HasAnnotation(AnnotationConstants.IsChangeTable, true);
 
             return builder;
         }
@@ -167,25 +137,7 @@ namespace EFCore.ChangeTriggers.Extensions
             this EntityTypeBuilder<TChangeEntity> builder)
             where TChangeEntity : class, IChange, IHasChangedBy<TChangedBy>
         {
-            var changedByEntity = builder.Metadata.Model.FindEntityType(typeof(TChangedBy));
-            if (changedByEntity != null)
-            {
-                // Configure ChangedBy as a relationship with navigation
-
-                changedByEntity.EnsureSinglePrimaryKey();
-
-                builder
-                    .HasOne(typeof(TChangedBy), nameof(IHasChangedBy<TChangedBy>.ChangedBy)) // Can't use a navigation expression because TChangedBy may not be a class
-                    .WithMany()
-                    .IsChangedByForeignKey(); // Used to find the column type for the trigger
-            }
-            else
-            {
-                // Configure ChangedBy as a scalar property
-                builder.Property(e => e.ChangedBy)
-                    .IsChangedByProperty();
-            }
-
+            builder.HasAnnotation(AnnotationConstants.ChangedByClrTypeName, typeof(TChangedBy).FullName!);
             return builder;
         }
 
@@ -194,21 +146,7 @@ namespace EFCore.ChangeTriggers.Extensions
             Action<ChangeTableOptions<TChangeSource>>? optionsBuilder = null)
             where TChangeEntity : class, IChange, IHasChangeSource<TChangeSource>
         {
-            if (builder.Metadata.Model.FindEntityType(typeof(TChangeSource)) != null)
-            {
-                // Configure ChangeSource as a foreign key with navigation
-                builder
-                    .HasOne(typeof(TChangeSource), nameof(IHasChangeSource<TChangeSource>.ChangeSource)) // Can't use a navigation expression because TChangeSource may not be a class
-                    .WithMany()
-                    .IsChangeSourceForeignKey();
-            }
-            else
-            {
-                // Configure ChangedBy as a scalar property
-                builder.Property(e => e.ChangeSource)
-                .IsChangeSourceProperty();
-            }
-
+            builder.HasAnnotation(AnnotationConstants.ChangeSourceClrTypeName, typeof(TChangeSource).FullName!);
             return builder;
         }
     }

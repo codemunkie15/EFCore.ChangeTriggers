@@ -1,5 +1,5 @@
-﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Models;
+﻿using EFCore.ChangeTriggers;
+using EFCore.ChangeTriggers.Abstractions;
 
 namespace TestHarness.DbModels.Users
 {

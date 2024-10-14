@@ -1,6 +1,6 @@
 ﻿using EFCore.ChangeTriggers.Migrations.Operations;
 
-namespace EFCore.ChangeTriggers.Models
+namespace EFCore.ChangeTriggers.Migrations.Models
 {
     internal class ChangeTrigger : IEquatable<ChangeTrigger>
     {

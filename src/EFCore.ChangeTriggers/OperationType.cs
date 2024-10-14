@@ -1,4 +1,4 @@
-﻿namespace EFCore.ChangeTriggers.Models
+﻿namespace EFCore.ChangeTriggers
 {
     /// <summary>
     /// Indicates the type of change operation.

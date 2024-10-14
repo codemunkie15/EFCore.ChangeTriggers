@@ -22,7 +22,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.TestUser", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.ChangedByScalarUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,12 +42,12 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
                         });
 
                     b
-                        .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.TestUserChange")
-                        .HasAnnotation("ChangeTriggers:Use", true)
+                        .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.ChangedByScalarUserChange")
+                        .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
                         .HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.TestUserChange", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.ChangedByScalarUserChange", b =>
                 {
                     b.Property<int>("ChangeId")
                         .ValueGeneratedOnAdd()
@@ -82,12 +82,15 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
 
                     b.ToTable("TestUserChanges");
 
-                    b.HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.TestUser");
+                    b
+                        .HasAnnotation("ChangeTriggers:ChangedByClrTypeName", "System.String")
+                        .HasAnnotation("ChangeTriggers:IsChangeTable", true)
+                        .HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.ChangedByScalarUser");
                 });
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.TestUserChange", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.ChangedByScalarUserChange", b =>
                 {
-                    b.HasOne("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.TestUser", "TrackedEntity")
+                    b.HasOne("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.ChangedByScalarUser", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id")
                         .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
@@ -95,7 +98,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
                     b.Navigation("TrackedEntity");
                 });
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.TestUser", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain.ChangedByScalarUser", b =>
                 {
                     b.Navigation("Changes");
                 });

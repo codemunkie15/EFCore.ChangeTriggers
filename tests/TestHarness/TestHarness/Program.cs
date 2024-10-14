@@ -21,7 +21,7 @@ builder.Services
             .UseSqlServerChangeTriggers(options =>
             {
                 options
-                    .UseTriggerNameFactory(tableName => $"{tableName}_CustomTriggerName")
+                    .UseTriggerNameFactory(tableName => $"{tableName}_GlobalCustomTriggerName")
                     .UseChangedBy<ChangedByProvider, User>()
                     .UseChangeSource<ChangeSourceProvider, ChangeSourceType>();
             });

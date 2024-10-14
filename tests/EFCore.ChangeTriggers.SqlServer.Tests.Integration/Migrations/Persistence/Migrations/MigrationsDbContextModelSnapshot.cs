@@ -43,7 +43,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Persisten
 
                     b
                         .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Domain.MigrationsUserChange")
-                        .HasAnnotation("ChangeTriggers:Use", true)
+                        .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
                         .HasAnnotation("SqlServer:UseSqlOutputClause", false);
 
                     b.HasData(
@@ -98,7 +98,11 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Persisten
 
                     b.ToTable("TestUserChanges");
 
-                    b.HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Domain.MigrationsUser");
+                    b
+                        .HasAnnotation("ChangeTriggers:ChangedByClrTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Domain.MigrationsUser")
+                        .HasAnnotation("ChangeTriggers:ChangeSourceClrTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Domain.ChangeSource")
+                        .HasAnnotation("ChangeTriggers:IsChangeTable", true)
+                        .HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Domain.MigrationsUser");
                 });
 
             modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Domain.MigrationsUserChange", b =>

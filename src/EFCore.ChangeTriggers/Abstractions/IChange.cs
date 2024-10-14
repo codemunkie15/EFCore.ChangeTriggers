@@ -1,6 +1,4 @@
-﻿using EFCore.ChangeTriggers.Models;
-
-namespace EFCore.ChangeTriggers.Abstractions
+﻿namespace EFCore.ChangeTriggers.Abstractions
 {
     /// <summary>
     /// This is an internal API and should not be used in application code.

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Persistence.Migrations
 {
     [DbContext(typeof(ChangeSourceEntityDbContext))]
-    [Migration("20241003154608_Initial")]
+    [Migration("20241014184838_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -114,7 +114,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.P
 
                     b
                         .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Domain.ChangeSourceEntityUserChange")
-                        .HasAnnotation("ChangeTriggers:Use", true)
+                        .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
                         .HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
@@ -153,7 +153,10 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.P
 
                     b.ToTable("TestUserChanges");
 
-                    b.HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Domain.ChangeSourceEntityUser");
+                    b
+                        .HasAnnotation("ChangeTriggers:ChangeSourceClrTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Domain.ChangeSource")
+                        .HasAnnotation("ChangeTriggers:IsChangeTable", true)
+                        .HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Domain.ChangeSourceEntityUser");
                 });
 
             modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Domain.ChangeSourceEntityUserChange", b =>

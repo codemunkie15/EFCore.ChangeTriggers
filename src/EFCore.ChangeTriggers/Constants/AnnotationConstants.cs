@@ -4,9 +4,12 @@
     {
         private const string Prefix = "ChangeTriggers";
 
-        public const string UseChangeTriggers = $"{Prefix}:Use";
+        public const string HasChangeTrigger = $"{Prefix}:{nameof(HasChangeTrigger)}";
+        public const string IsChangeTable = $"{Prefix}:{nameof(IsChangeTable)}";
         public const string TrackedEntityTypeName = $"{Prefix}:{nameof(TrackedEntityTypeName)}";
         public const string ChangeEntityTypeName = $"{Prefix}:{nameof(ChangeEntityTypeName)}";
+        public const string ChangedByClrTypeName = $"{Prefix}:{nameof(ChangedByClrTypeName)}";
+        public const string ChangeSourceClrTypeName = $"{Prefix}:{nameof(ChangeSourceClrTypeName)}";
         public const string TriggerNameFormat = $"{Prefix}:{nameof(TriggerNameFormat)}";
         public const string HasNoCheckConstraint = $"{Prefix}:{nameof(HasNoCheckConstraint)}";
 

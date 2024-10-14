@@ -1,5 +1,4 @@
-﻿using DotNet.Testcontainers.Builders;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infrastructure;
+﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infrastructure;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

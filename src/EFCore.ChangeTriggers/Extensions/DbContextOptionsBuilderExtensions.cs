@@ -12,7 +12,8 @@ namespace EFCore.ChangeTriggers.Extensions
         {
             return optionsBuilder
                 .ReplaceService<IMigrationsModelDiffer, ChangeTriggersMigrationsModelDiffer>()
-                .ReplaceService<IMigrator, ChangeTriggersMigrator>();
+                .ReplaceService<IMigrator, ChangeTriggersMigrator>()
+                .ReplaceService<IModelCustomizer, ChangeTriggersModelCustomizer>();
         }
 
         public static IDbContextOptionsBuilderInfrastructure AsInfrastructure(this DbContextOptionsBuilder optionsBuilder)

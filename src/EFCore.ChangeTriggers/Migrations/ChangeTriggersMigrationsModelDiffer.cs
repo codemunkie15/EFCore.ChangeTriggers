@@ -2,8 +2,8 @@
 using EFCore.ChangeTriggers.Extensions;
 using EFCore.ChangeTriggers.Helpers;
 using EFCore.ChangeTriggers.Infrastructure;
+using EFCore.ChangeTriggers.Migrations.Models;
 using EFCore.ChangeTriggers.Migrations.Operations;
-using EFCore.ChangeTriggers.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -138,15 +138,15 @@ namespace EFCore.ChangeTriggers.Migrations
 
         private IEnumerable<ChangeTrackedEntity> GetChangeTrackedEntites(IRelationalModel? model)
         {
-            var trackedEntityTypes = model?.Model.GetEntityTypes().Where(e => e.IsChangeTracked()) ?? Enumerable.Empty<IEntityType>();
+            var trackedEntityTypes = model?.Model.GetEntityTypes().Where(e => e.HasChangeTrigger()) ?? [];
 
             foreach (var trackedEntityType in trackedEntityTypes)
             {
-                yield return GetChangeTrackedEntity(trackedEntityType);
+                yield return CreateChangeTrackedEntity(trackedEntityType);
             }
         }
 
-        private ChangeTrackedEntity GetChangeTrackedEntity(IEntityType trackedEntityType)
+        private ChangeTrackedEntity CreateChangeTrackedEntity(IEntityType trackedEntityType)
         {
             var changeEntityType = trackedEntityType.GetChangeEntityType();
             var changeTable = changeEntityType.GetTableMappings().First().Table;

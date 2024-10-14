@@ -1,2 +1,2 @@
-cd ../../
-dotnet ef migrations add Initial --context ChangedByScalarDbContext --output-dir ChangedByScalar/Persistence/Migrations
+$addMigration = Join-Path $PSScriptRoot "..\..\add-migration.ps1"
+& $addMigration -Context ChangedByScalarDbContext -OutputDir ChangedByScalar/Persistence/Migrations

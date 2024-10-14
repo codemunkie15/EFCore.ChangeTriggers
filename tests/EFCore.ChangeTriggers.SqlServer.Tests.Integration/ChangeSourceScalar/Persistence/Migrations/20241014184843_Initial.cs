@@ -1,4 +1,5 @@
-﻿using EFCore.ChangeTriggers.Migrations.Operations;
+﻿using System;
+using EFCore.ChangeTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable

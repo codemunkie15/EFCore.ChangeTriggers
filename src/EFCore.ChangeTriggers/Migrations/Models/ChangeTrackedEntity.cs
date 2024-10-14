@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.ChangeTriggers.Models
+namespace EFCore.ChangeTriggers.Migrations.Models
 {
     internal class ChangeTrackedEntity
     {

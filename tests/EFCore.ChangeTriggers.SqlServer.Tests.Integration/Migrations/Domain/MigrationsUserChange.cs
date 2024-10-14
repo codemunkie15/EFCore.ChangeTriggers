@@ -1,5 +1,4 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Models;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Migrations.Domain;
 
