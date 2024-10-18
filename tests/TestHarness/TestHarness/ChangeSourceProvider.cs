@@ -1,5 +1,4 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using System.Threading.Tasks;
 
 namespace TestHarness
 {

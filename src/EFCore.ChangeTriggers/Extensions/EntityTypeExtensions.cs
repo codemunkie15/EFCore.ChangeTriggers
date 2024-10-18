@@ -6,9 +6,24 @@ namespace EFCore.ChangeTriggers.Extensions
 {
     internal static class EntityTypeExtensions
     {
-        public static bool IsChangeTracked(this IReadOnlyEntityType entityType)
+        public static bool HasChangeTrigger(this IReadOnlyEntityType entityType)
         {
-            return entityType.FindAnnotation(AnnotationConstants.UseChangeTriggers) != null;
+            return entityType.FindAnnotation(AnnotationConstants.HasChangeTrigger) != null;
+        }
+
+        public static bool IsChangeTable(this IReadOnlyEntityType entityType)
+        {
+            return entityType.FindAnnotation(AnnotationConstants.IsChangeTable) != null;
+        }
+
+        public static bool HasChangedBy(this IReadOnlyEntityType entityType)
+        {
+            return entityType.FindAnnotation(AnnotationConstants.ChangedByClrTypeName) != null;
+        }
+
+        public static bool HasChangeSource(this IReadOnlyEntityType entityType)
+        {
+            return entityType.FindAnnotation(AnnotationConstants.ChangeSourceClrTypeName) != null;
         }
 
         public static IEntityType GetTrackedEntityType(this IEntityType entityType)
@@ -21,6 +36,16 @@ namespace EFCore.ChangeTriggers.Extensions
         {
             var changeEntityTypeName = entityType.GetAnnotation(AnnotationConstants.ChangeEntityTypeName).Value!.ToString()!;
             return entityType.Model.FindEntityType(changeEntityTypeName)!;
+        }
+
+        public static string GetChangedByClrTypeName(this IReadOnlyEntityType entityType)
+        {
+            return entityType.GetAnnotation(AnnotationConstants.ChangedByClrTypeName).Value!.ToString()!;
+        }
+
+        public static string GetChangeSourceClrTypeName(this IReadOnlyEntityType entityType)
+        {
+            return entityType.GetAnnotation(AnnotationConstants.ChangeSourceClrTypeName).Value!.ToString()!;
         }
 
         public static string? GetTriggerNameFormat(this IReadOnlyEntityType entityType)

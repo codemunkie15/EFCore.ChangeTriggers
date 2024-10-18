@@ -1,9 +1,6 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Extensions;
-using EFCore.ChangeTriggers.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace EFCore.ChangeTriggers.Extensions
 {
@@ -19,7 +16,7 @@ namespace EFCore.ChangeTriggers.Extensions
             .Where(mi => mi.Name.Equals(nameof(EntityTypeBuilderExtensions.IsChangeTable)));
 
         /// <summary>
-        /// Automatically configures any entities in the model that implement <see cref="ITracked{TChangeType}"/> or <see cref="IChange{TTracked, TChangeId}"/>.
+        /// Automatically configures any entities in the model that implement <see cref="ITracked{TChangeType}"/> or <see cref="IChange{TTracked}"/>.
         /// </summary>
         /// <remarks>This method uses reflection.</remarks>
         /// <param name="modelBuilder">The model builder being used for configuration.</param>
@@ -41,10 +38,8 @@ namespace EFCore.ChangeTriggers.Extensions
                         .GetGenericArguments()
                         .First();
 
-                var changeIdType = GetChangeIdType(trackedType, changeType);
-
                 modelBuilder.ConfigureTrackedEntity(trackedType, changeType);
-                modelBuilder.ConfigureChangeEntity(changeType, changeIdType);
+                modelBuilder.ConfigureChangeEntity(changeType);
             }
 
             return modelBuilder;
@@ -58,11 +53,11 @@ namespace EFCore.ChangeTriggers.Extensions
             hasChangeTriggerGenericMethod.Invoke(null, new[] { trackedEntityTypeBuilder, null });
         }
 
-        private static void ConfigureChangeEntity(this ModelBuilder modelBuilder, Type changeType, Type changeIdType)
+        private static void ConfigureChangeEntity(this ModelBuilder modelBuilder, Type changeType)
         {
             dynamic changeEntityTypeBuilder = CreateEntityTypeBuilder(modelBuilder, changeType);
 
-            var typeArguments = new List<Type> { changeType, changeIdType };
+            var typeArguments = new List<Type> { changeType };
             var parameters = new List<object?> { changeEntityTypeBuilder };
 
             var hasChangedByInterfaceType = changeType
@@ -93,20 +88,6 @@ namespace EFCore.ChangeTriggers.Extensions
         {
             var modelBuilderEntityGenericMethod = ModelBuilderEntityMethod.MakeGenericMethod(entityType);
             return modelBuilderEntityGenericMethod.Invoke(modelBuilder, null)!;
-        }
-
-        private static Type GetChangeIdType(Type trackedType, Type changeType)
-        {
-            var changeInterfaceType = changeType.GetInterfaces()
-                    .SingleOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IChange<,>));
-
-            if (changeInterfaceType == null)
-            {
-                throw new ChangeTriggersConfigurationException(
-                    $"The type '{changeType.Name}' needs to implement the IChange interface to be used as the change type for tracked type '{trackedType.Name}'.");
-            }
-
-            return changeInterfaceType.GetGenericArguments()[1];
         }
     }
 }
