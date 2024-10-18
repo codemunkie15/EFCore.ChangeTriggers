@@ -25,10 +25,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Pers
             modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain.ChangedByEntityUser", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Username")
                         .IsRequired()

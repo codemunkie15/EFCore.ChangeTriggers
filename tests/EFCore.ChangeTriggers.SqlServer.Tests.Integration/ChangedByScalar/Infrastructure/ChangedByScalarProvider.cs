@@ -13,7 +13,7 @@ internal class ChangedByScalarProvider : ChangedByProvider<string>
 
     public override Task<string> GetChangedByAsync()
     {
-        return Task.FromResult(currentUserProvider.CurrentUser);
+        return Task.FromResult(currentUserProvider.CurrentUserAsync);
     }
 
     public override string GetChangedBy()

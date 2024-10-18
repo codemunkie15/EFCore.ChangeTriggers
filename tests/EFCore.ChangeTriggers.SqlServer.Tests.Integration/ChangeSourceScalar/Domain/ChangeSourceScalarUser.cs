@@ -9,4 +9,15 @@ public class ChangeSourceScalarUser : ITracked<ChangeSourceScalarUserChange>
     public string Username { get; set; }
 
     public ICollection<ChangeSourceScalarUserChange> Changes { get; set; }
+
+    public ChangeSourceScalarUser()
+    {
+        
+    }
+
+    public ChangeSourceScalarUser(int id, string username)
+    {
+        Id = id;
+        Username = username;
+    }
 }

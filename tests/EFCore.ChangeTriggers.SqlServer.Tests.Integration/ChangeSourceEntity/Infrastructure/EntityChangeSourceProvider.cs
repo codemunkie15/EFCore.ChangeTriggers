@@ -5,4 +5,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.I
 internal class EntityChangeSourceProvider
 {
     public ChangeSource CurrentChangeSource { get; set; }
+
+    public ChangeSource CurrentChangeSourceAsync { get; set; }
 }

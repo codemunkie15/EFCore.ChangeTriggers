@@ -19,11 +19,16 @@ public class ChangedByEntityDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.AutoConfigureChangeTriggers();
+
+        modelBuilder.Entity<ChangedByEntityUser>(u =>
+        {
+            u.Property(u => u.Id).ValueGeneratedNever();
+        });
+
         modelBuilder.Entity<ChangedByEntityUserChange>(uc =>
         {
             uc.HasKey(uc => uc.ChangeId);
         });
-
-        modelBuilder.AutoConfigureChangeTriggers();
     }
 }

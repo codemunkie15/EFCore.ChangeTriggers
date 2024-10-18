@@ -5,4 +5,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.I
 internal class ScalarChangeSourceProvider
 {
     public ChangeSource CurrentChangeSource { get; set; }
+
+    public ChangeSource CurrentChangeSourceAsync { get; set; }
 }

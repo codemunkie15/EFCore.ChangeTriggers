@@ -14,7 +14,7 @@ internal class ChangedByEntityProvider : ChangedByProvider<ChangedByEntityUser>
 
     public override Task<ChangedByEntityUser> GetChangedByAsync()
     {
-        return Task.FromResult(currentUserProvider.CurrentUser);
+        return Task.FromResult(currentUserProvider.CurrentUserAsync);
     }
 
     public override ChangedByEntityUser GetChangedBy()

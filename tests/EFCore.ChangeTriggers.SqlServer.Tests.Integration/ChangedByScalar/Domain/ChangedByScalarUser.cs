@@ -9,4 +9,15 @@ public class ChangedByScalarUser : ITracked<ChangedByScalarUserChange>
     public string Username { get; set; }
 
     public ICollection<ChangedByScalarUserChange> Changes { get; set; }
+
+    public ChangedByScalarUser()
+    {
+        
+    }
+
+    public ChangedByScalarUser(int id, string username)
+    {
+        Id = id;
+        Username = username;
+    }
 }

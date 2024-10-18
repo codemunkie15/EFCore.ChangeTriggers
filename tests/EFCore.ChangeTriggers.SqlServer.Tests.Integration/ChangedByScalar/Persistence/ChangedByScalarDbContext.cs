@@ -19,11 +19,16 @@ public class ChangedByScalarDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.AutoConfigureChangeTriggers();
+
+        modelBuilder.Entity<ChangedByScalarUser>(u =>
+        {
+            u.Property(u => u.Id).ValueGeneratedNever();
+        });
+
         modelBuilder.Entity<ChangedByScalarUserChange>(uc =>
         {
             uc.HasKey(uc => uc.ChangeId);
         });
-
-        modelBuilder.AutoConfigureChangeTriggers();
     }
 }

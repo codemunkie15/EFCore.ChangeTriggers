@@ -19,6 +19,11 @@ public class ChangeSourceScalarDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ChangeSourceScalarUser>(u =>
+        {
+            u.Property(u => u.Id).ValueGeneratedNever();
+        });
+
         modelBuilder.Entity<ChangeSourceScalarUserChange>(uc =>
         {
             uc.HasKey(uc => uc.ChangeId);

@@ -1,88 +1,204 @@
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Infrastructure;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Persistence;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar;
 
 public class ChangeSourceScalarTests : IClassFixture<ChangeSourceScalarFixture>, IAsyncLifetime
 {
     private readonly ChangeSourceScalarFixture fixture;
+    private readonly ChangeSourceScalarTestHelper testHelper;
 
     public ChangeSourceScalarTests(ChangeSourceScalarFixture fixture)
     {
         this.fixture = fixture;
+        testHelper = new ChangeSourceScalarTestHelper(fixture);
     }
 
     [Fact]
-    public void MultipleScopes_SetsCorrectChangeSource()
+    public void AddEntity_InsertsChangeEntity_WithCorrectProperties()
     {
-        CreateUsers();
+        testHelper.ChangeSourceProvider.CurrentChangeSource = ChangeSource.Tests;
 
-        var dbContext = fixture.Services.GetRequiredService<ChangeSourceScalarDbContext>();
-        var users = dbContext.TestUsers.Include(u => u.Changes).ToList();
+        var user = testHelper.AddTestUser(1);
+        testHelper.DbContext.SaveChanges();
 
-        Assert.True(users.All(u => u.Changes.All(c => u.Username == $"ChangeSource{(int)c.ChangeSource}")));
+        var userChanges = testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1).ToList();
+
+        var userChange = userChanges.Should().ContainSingle().Which;
+        userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
+        userChange.OperationType.Should().Be(OperationType.Insert);
+        userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSource);
+        userChange.TrackedEntity.Id.Should().Be(user.Id);
     }
 
     [Fact]
-    public async Task MultipleScopes_SetsCorrectChangeSource_Async()
+    public async void AddEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        await CreateUsersAsync();
+        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSource.Tests;
 
-        var dbContext = fixture.Services.GetRequiredService<ChangeSourceScalarDbContext>();
-        var users = await dbContext.TestUsers.Include(u => u.Changes).ToListAsync();
+        var user = testHelper.AddTestUser(1);
+        await testHelper.DbContext.SaveChangesAsync();
 
-        Assert.True(users.All(u => u.Changes.All(c => u.Username == $"ChangeSource{(int)c.ChangeSource}")));
+        var userChanges = await testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1).ToListAsync();
+
+        var userChange = userChanges.Should().ContainSingle().Which;
+        userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
+        userChange.OperationType.Should().Be(OperationType.Insert);
+        userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSourceAsync);
+        userChange.TrackedEntity.Id.Should().Be(user.Id);
     }
 
-    private void CreateUsers()
+    [Fact]
+    public void AddEntity_WithMultipleScopes_InsertsChangeEntity_WithCorrectProperties()
     {
-        for (int i = 1; i <= 10; i++)
+        const int numberOfScopes = 10;
+
+        for (int i = 1; i <= numberOfScopes; i++)
         {
-            using var scope = fixture.Services.CreateScope();
-            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<ScalarChangeSourceProvider>();
-            changeSourceProvider.CurrentChangeSource = (ChangeSource)i;
+            using var helperScoped = new ChangeSourceScalarTestHelper(fixture);
+            testHelper.ChangeSourceProvider.CurrentChangeSource = (ChangeSource)i;
 
-            var dbContext = scope.ServiceProvider.GetRequiredService<ChangeSourceScalarDbContext>();
-
-            var user = new ChangeSourceScalarUser
-            {
-                Username = $"ChangeSource{i}"
-            };
-
-            dbContext.TestUsers.Add(user);
-            dbContext.SaveChanges();
+            helperScoped.AddTestUser(i);
+            helperScoped.DbContext.SaveChanges();
         }
+
+        var testUsers = testHelper.GetAllTestUsers().ToList();
+
+        testUsers.Should().HaveCount(numberOfScopes);
+        testUsers.Should().AllSatisfy(u =>
+        {
+            var userChange = u.Changes.Should().ContainSingle().Which;
+
+            userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
+            userChange.OperationType.Should().Be(OperationType.Insert);
+            userChange.ChangeSource.Should().Be((ChangeSource)u.Id);
+            userChange.TrackedEntity.Id.Should().Be(u.Id);
+        });
     }
 
-    private async Task CreateUsersAsync()
+    [Fact]
+    public async Task AddEntity_WithMultipleScopes_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        for (int i = 1; i <= 10; i++)
+        const int numberOfScopes = 10;
+
+        for (int i = 1; i <= numberOfScopes; i++)
         {
-            using var scope = fixture.Services.CreateScope();
-            var changeSourceProvider = scope.ServiceProvider.GetRequiredService<ScalarChangeSourceProvider>();
-            changeSourceProvider.CurrentChangeSource = (ChangeSource)i;
+            using var helperScoped = new ChangeSourceScalarTestHelper(fixture);
+            testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = (ChangeSource)i;
 
-            var dbContext = scope.ServiceProvider.GetRequiredService<ChangeSourceScalarDbContext>();
-
-            var user = new ChangeSourceScalarUser
-            {
-                Username = $"ChangeSource{i}"
-            };
-
-            dbContext.TestUsers.Add(user);
-            await dbContext.SaveChangesAsync();
+            helperScoped.AddTestUser(i);
+            await helperScoped.DbContext.SaveChangesAsync();
         }
+
+        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+
+        testUsers.Should().HaveCount(numberOfScopes);
+        testUsers.Should().AllSatisfy(u =>
+        {
+            var userChange = u.Changes.Should().ContainSingle().Which;
+
+            userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
+            userChange.OperationType.Should().Be(OperationType.Insert);
+            userChange.ChangeSource.Should().Be((ChangeSource)u.Id);
+            userChange.TrackedEntity.Id.Should().Be(u.Id);
+        });
+    }
+
+    [Fact]
+    public void UpdateEntity_InsertsChangeEntity_WithCorrectProperties()
+    {
+        testHelper.ChangeSourceProvider.CurrentChangeSource = ChangeSource.Tests;
+
+        var user = testHelper.AddTestUser(1);
+        testHelper.DbContext.SaveChanges();
+
+        user.Username = "Modified";
+        testHelper.DbContext.SaveChanges();
+
+        var userChanges = testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1 && uc.OperationType == OperationType.Update).ToList();
+
+        var userChange = userChanges.Should().ContainSingle().Which;
+        userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
+        userChange.OperationType.Should().Be(OperationType.Update);
+        userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSource);
+        userChange.TrackedEntity.Id.Should().Be(user.Id);
+    }
+
+    [Fact]
+    public async void UpdateEntity_InsertsChangeEntity_WithCorrectProperties_Async()
+    {
+        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSource.Tests;
+
+        var user = testHelper.AddTestUser(1);
+        await testHelper.DbContext.SaveChangesAsync();
+
+        user.Username = "Modified";
+        await testHelper.DbContext.SaveChangesAsync();
+
+        var userChanges = await testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1 && uc.OperationType == OperationType.Update).ToListAsync();
+
+        var userChange = userChanges.Should().ContainSingle().Which;
+        userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
+        userChange.OperationType.Should().Be(OperationType.Update);
+        userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSourceAsync);
+        userChange.TrackedEntity.Id.Should().Be(user.Id);
+    }
+
+    [Fact]
+    public void DeleteEntity_InsertsChangeEntity_WithCorrectProperties()
+    {
+        testHelper.ChangeSourceProvider.CurrentChangeSource = ChangeSource.Tests;
+
+        var user = testHelper.AddTestUser(1);
+        testHelper.DbContext.SaveChanges();
+
+        testHelper.DbContext.TestUsers.Remove(user);
+        testHelper.DbContext.SaveChanges();
+
+        var userChanges = testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1 && uc.OperationType == OperationType.Delete).ToList();
+
+        var userChange = userChanges.Should().ContainSingle().Which;
+        userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
+        userChange.OperationType.Should().Be(OperationType.Delete);
+        userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSource);
+        userChange.TrackedEntity.Should().BeNull();
+    }
+
+    [Fact]
+    public async void DeleteEntity_InsertsChangeEntity_WithCorrectProperties_Async()
+    {
+        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSource.Tests;
+
+        var user = testHelper.AddTestUser(1);
+        await testHelper.DbContext.SaveChangesAsync();
+
+        testHelper.DbContext.TestUsers.Remove(user);
+        await testHelper.DbContext.SaveChangesAsync();
+
+        var userChanges = await testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1 && uc.OperationType == OperationType.Delete).ToListAsync();
+
+        var userChange = userChanges.Should().ContainSingle().Which;
+        userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
+        userChange.OperationType.Should().Be(OperationType.Delete);
+        userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSourceAsync);
+        userChange.TrackedEntity.Should().BeNull();
     }
 
     public Task InitializeAsync() => Task.CompletedTask;
 
     public async Task DisposeAsync()
     {
-        var dbContext = fixture.Services.GetRequiredService<ChangeSourceScalarDbContext>();
-        await dbContext.TestUsers.ExecuteDeleteAsync();
-        await dbContext.TestUserChanges.ExecuteDeleteAsync();
+        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSource.Tests;
+
+        // Clear database
+        await testHelper.DbContext.TestUsers.ExecuteDeleteAsync();
+        await testHelper.DbContext.TestUserChanges.ExecuteDeleteAsync();
+
+        // Reset current user
+        testHelper.ChangeSourceProvider.CurrentChangeSource = ChangeSource.None;
+        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSource.None;
+
+        testHelper.Dispose();
     }
 }

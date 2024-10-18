@@ -14,7 +14,7 @@ internal class ChangeSourceScalarProvider : ChangeSourceProvider<ChangeSource>
 
     public override Task<ChangeSource> GetChangeSourceAsync()
     {
-        return Task.FromResult(changeSourceProvider.CurrentChangeSource);
+        return Task.FromResult(changeSourceProvider.CurrentChangeSourceAsync);
     }
 
     public override ChangeSource GetChangeSource()

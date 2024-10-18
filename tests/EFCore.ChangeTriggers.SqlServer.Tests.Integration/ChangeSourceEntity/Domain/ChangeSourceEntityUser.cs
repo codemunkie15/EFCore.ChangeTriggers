@@ -9,4 +9,15 @@ public class ChangeSourceEntityUser : ITracked<ChangeSourceEntityUserChange>
     public string Username { get; set; }
 
     public ICollection<ChangeSourceEntityUserChange> Changes { get; set; }
+
+    public ChangeSourceEntityUser()
+    {
+        
+    }
+
+    public ChangeSourceEntityUser(int id, string username)
+    {
+        Id = id;
+        Username = username;
+    }
 }

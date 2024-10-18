@@ -9,4 +9,15 @@ public class ChangedByEntityUser : ITracked<ChangedByEntityUserChange>
     public string Username { get; set; }
 
     public ICollection<ChangedByEntityUserChange> Changes { get; set; }
+
+    public ChangedByEntityUser()
+    {
+        
+    }
+
+    public ChangedByEntityUser(int id, string username)
+    {
+        Id = id;
+        Username = username;
+    }
 }

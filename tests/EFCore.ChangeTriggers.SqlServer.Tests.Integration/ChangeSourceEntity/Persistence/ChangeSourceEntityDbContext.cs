@@ -21,6 +21,11 @@ public class ChangeSourceEntityDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ChangeSourceEntityUser>(u =>
+        {
+            u.Property(u => u.Id).ValueGeneratedNever();
+        });
+
         modelBuilder.Entity<ChangeSourceEntityUserChange>(uc =>
         {
             uc.HasKey(uc => uc.ChangeId);

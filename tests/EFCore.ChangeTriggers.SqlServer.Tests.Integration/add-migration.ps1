@@ -2,12 +2,18 @@ param(
 	[Parameter(Mandatory=$true)]
     [string]$Context,
 
-	[Parameter(Mandatory=$true)]
-    [string]$OutputDir
+    [string]$OutputDir = (Join-Path $MyInvocation.PSScriptRoot "Migrations")
 )
 
 $noBuildArgument = if ($Global:NoBuild) { "--no-build" } else { "" }
 
+if (Test-Path $OutputDir)
+{
+	Write-Host "Removing existing migrations..."
+	Remove-Item -Recurse -Force -Path $OutputDir
+}
+
+Write-Host "Scaffolding new migration..."
 dotnet ef migrations add Initial `
 	--context $Context `
 	--output-dir $OutputDir `
