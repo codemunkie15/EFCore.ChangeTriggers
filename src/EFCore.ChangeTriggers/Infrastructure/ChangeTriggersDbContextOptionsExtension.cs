@@ -11,9 +11,9 @@ namespace EFCore.ChangeTriggers.Infrastructure
 
         public Func<string, string>? TriggerNameFactory { get; private set; }
 
-        public ChangeContextConfig ChangedByConfig { get; private set; }
+        public ChangeContextConfig? ChangedByConfig { get; private set; }
 
-        public ChangeContextConfig ChangeSourceConfig { get; private set; }
+        public ChangeContextConfig? ChangeSourceConfig { get; private set; }
 
         private readonly List<ServiceDescriptor> serviceDescriptors = [];
 
@@ -35,6 +35,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
             foreach (var serviceDescriptor in serviceDescriptors)
             {
                 services.Add(serviceDescriptor);
+                services.AddScoped<object, object>();
             }
         }
 
@@ -49,40 +50,40 @@ namespace EFCore.ChangeTriggers.Infrastructure
             return clone;
         }
 
-        public ChangeTriggersDbContextOptionsExtension WithChangedBy<TChangedByProvider, TChangedBy>(IServiceProvider? applicationServiceProvider)
+        public ChangeTriggersDbContextOptionsExtension WithChangedBy<TChangedByProvider, TChangedBy>()
             where TChangedByProvider : class, IChangedByProvider<TChangedBy>
         {
             var clone = Clone();
-            clone.AddChangedByServices<TChangedByProvider, TChangedBy>(applicationServiceProvider);
+            clone.AddChangedByServices<TChangedByProvider, TChangedBy>();
             clone.ChangedByConfig = new ChangeContextConfig(typeof(TChangedByProvider), typeof(TChangedBy));
             return clone;
         }
 
-        public ChangeTriggersDbContextOptionsExtension WithChangeSource<TChangeSourceProvider, TChangeSource>(IServiceProvider? applicationServiceProvider)
+        public ChangeTriggersDbContextOptionsExtension WithChangeSource<TChangeSourceProvider, TChangeSource>()
             where TChangeSourceProvider : class, IChangeSourceProvider<TChangeSource>
         {
             var clone = Clone();
-            clone.AddChangeSourceServices<TChangeSourceProvider, TChangeSource>(applicationServiceProvider);
+            clone.AddChangeSourceServices<TChangeSourceProvider, TChangeSource>();
             clone.ChangeSourceConfig = new ChangeContextConfig(typeof(TChangeSourceProvider), typeof(TChangeSource));
             return clone;
         }
 
-        protected virtual void AddChangedByServices<TChangedByProvider, TChangedBy>(IServiceProvider? applicationServiceProvider)
+        protected virtual void AddChangedByServices<TChangedByProvider, TChangedBy>()
             where TChangedByProvider : class, IChangedByProvider<TChangedBy>
         {
             AddService<ISetChangeContextOperationGenerator, ChangedBySetChangeContextOperationGenerator<TChangedBy>>();
 
             // Services that may depend on application services need to be registered differently
-            AddService<IChangedByProvider<TChangedBy>, TChangedByProvider>(applicationServiceProvider);
+            AddApplicationService<IChangedByProvider<TChangedBy>, TChangedByProvider>();
         }
 
-        protected virtual void AddChangeSourceServices<TChangeSourceProvider, TChangeSource>(IServiceProvider? applicationServiceProvider)
+        protected virtual void AddChangeSourceServices<TChangeSourceProvider, TChangeSource>()
             where TChangeSourceProvider : class, IChangeSourceProvider<TChangeSource>
         {
             AddService<ISetChangeContextOperationGenerator, ChangeSourceSetChangeContextOperationGenerator<TChangeSource>>();
 
             // Services that may depend on application services need to be registered differently
-            AddService<IChangeSourceProvider<TChangeSource>, TChangeSourceProvider>(applicationServiceProvider);
+            AddApplicationService<IChangeSourceProvider<TChangeSource>, TChangeSourceProvider>();
         }
 
         protected void AddService<TService, TImplementation>(ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -90,26 +91,22 @@ namespace EFCore.ChangeTriggers.Infrastructure
             serviceDescriptors.Add(new ServiceDescriptor(typeof(TService), typeof(TImplementation), serviceLifetime));
         }
 
-        protected void AddService<TService, TImplementation>(IServiceProvider? applicationServiceProvider, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        protected void AddApplicationService<TService, TImplementation>(ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
             where TImplementation : class, TService
         {
-            if (applicationServiceProvider != null)
-            {
-                // Attempt to resolve/create the service from the application service provider, incase it has application specific dependencies.
-                // Hopefully soon EF Core will have a better way to deal with this scenario that doesn't require reflection.
-                serviceDescriptors.Add(new ServiceDescriptor(
-                    typeof(TService),
-                    services =>
-                    {
-                        return ActivatorUtilities.GetServiceOrCreateInstance<TImplementation>(applicationServiceProvider);
-                    },
-                    serviceLifetime));
-            }
-            else
-            {
-                // If no application service provider is available, just register the service in the EF Core provider.
-                AddService<TService, TImplementation>(serviceLifetime);
-            }
+            // Attempt to resolve/create the service from the application service provider, incase it has application specific dependencies
+            serviceDescriptors.Add(new ServiceDescriptor(
+                typeof(TService),
+                services =>
+                {
+                    var applicationServiceProvider = services
+                        .GetRequiredService<IDbContextOptions>()
+                        .FindExtension<CoreOptionsExtension>()?
+                        .ApplicationServiceProvider;
+
+                    return ActivatorUtilities.GetServiceOrCreateInstance<TImplementation>(applicationServiceProvider ?? services);
+                },
+                serviceLifetime));
         }
 
         protected abstract ChangeTriggersDbContextOptionsExtension Clone();

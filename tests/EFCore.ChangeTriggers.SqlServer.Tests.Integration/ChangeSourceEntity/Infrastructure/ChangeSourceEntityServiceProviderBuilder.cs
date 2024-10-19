@@ -20,7 +20,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.I
                             options.UseChangeSource<ChangeSourceEntityProvider, ChangeSource>();
                         });
                 })
-                .AddSingleton(new EntityChangeSourceProvider())
+                .AddScoped<EntityChangeSourceProvider>()
                 .BuildServiceProvider();
         }
     }

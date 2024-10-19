@@ -1,31 +1,23 @@
-﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Infrastructure;
+﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Infrastructure;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Persistence;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Testcontainers.MsSql;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar
 {
-    public class ChangeSourceScalarFixture : IAsyncLifetime
+    public class ChangeSourceScalarFixture : ContainerFixture<ChangeSourceScalarDbContext>
     {
-        public IServiceProvider Services { get; private set; }
+        public override bool MigrateDatabase => true;
 
-        private MsSqlContainer msSqlContainer;
-
-        public async Task InitializeAsync()
+        protected override IServiceProvider BuildServiceProvider(string connectionString)
         {
-            msSqlContainer = TestContainerBuilder.MsSql().Build();
-
-            await msSqlContainer.StartAsync();
-
-            Services = ChangeSourceScalarServiceProviderBuilder.Build(msSqlContainer.GetConnectionString());
-            var dbContext = Services.GetRequiredService<ChangeSourceScalarDbContext>();
-            await dbContext.Database.MigrateAsync();
+            return ChangeSourceScalarServiceProviderBuilder.Build(connectionString);
         }
 
-        public async Task DisposeAsync()
+        protected override void SetMigrationChangeContext()
         {
-            await msSqlContainer.DisposeAsync().AsTask();
+            var provider = Services.GetRequiredService<ScalarChangeSourceProvider>();
+            provider.CurrentChangeSourceAsync = ChangeSource.Migrations;
         }
     }
 }

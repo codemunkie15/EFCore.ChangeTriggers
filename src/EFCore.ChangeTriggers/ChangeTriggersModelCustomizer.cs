@@ -1,9 +1,6 @@
-﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Exceptions;
-using EFCore.ChangeTriggers.Extensions;
+﻿using EFCore.ChangeTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EFCore.ChangeTriggers
 {

@@ -32,10 +32,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
         /// <returns>The options builder so that further calls can be chained.</returns>
         public TBuilder UseChangedBy<TChangedByProvider, TChangedBy>()
             where TChangedByProvider : class, IChangedByProvider<TChangedBy>
-        {
-            var applicationServiceProvider = optionsBuilder.Options.FindExtension<CoreOptionsExtension>()?.ApplicationServiceProvider;
-            return WithOption(e => (TExtension)e.WithChangedBy<TChangedByProvider, TChangedBy>(applicationServiceProvider));
-        }
+            => WithOption(e => (TExtension)e.WithChangedBy<TChangedByProvider, TChangedBy>());
 
         /// <summary>
         /// Configures the context to track where changes originated from.
@@ -45,10 +42,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
         /// <returns>The options builder so that further calls can be chained.</returns>
         public TBuilder UseChangeSource<TChangeSourceProvider, TChangeSource>()
             where TChangeSourceProvider : class, IChangeSourceProvider<TChangeSource>
-        {
-            var applicationServiceProvider = optionsBuilder.Options.FindExtension<CoreOptionsExtension>()?.ApplicationServiceProvider;
-            return WithOption(e => (TExtension)e.WithChangeSource<TChangeSourceProvider, TChangeSource>(applicationServiceProvider));
-        }
+            => WithOption(e => (TExtension)e.WithChangeSource<TChangeSourceProvider, TChangeSource>());
 
         protected virtual TBuilder WithOption(Func<TExtension, TExtension> setAction)
         {

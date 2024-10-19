@@ -20,7 +20,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infr
                             options.UseChangedBy<ChangedByEntityProvider, ChangedByEntityUser>();
                         });
                 })
-                .AddSingleton(new EntityCurrentUserProvider())
+                .AddScoped<EntityCurrentUserProvider>()
                 .BuildServiceProvider();
         }
     }

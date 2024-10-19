@@ -28,7 +28,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -42,6 +41,33 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                         .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain.ChangeSourceScalarUserChange")
                         .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
                         .HasAnnotation("SqlServer:UseSqlOutputClause", false);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Username = "System"
+                        },
+                        new
+                        {
+                            Id = 100,
+                            Username = "TestUser100"
+                        },
+                        new
+                        {
+                            Id = 101,
+                            Username = "TestUser101"
+                        },
+                        new
+                        {
+                            Id = 102,
+                            Username = "TestUser102"
+                        },
+                        new
+                        {
+                            Id = 103,
+                            Username = "TestUser103"
+                        });
                 });
 
             modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain.ChangeSourceScalarUserChange", b =>
@@ -69,7 +95,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                         .HasAnnotation("ChangeTriggers:IsOperationTypeColumn", true);
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ChangeId");

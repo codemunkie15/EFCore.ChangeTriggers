@@ -4,7 +4,6 @@ using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Exceptions;
 using EFCore.ChangeTriggers.Helpers;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Extensions
 {

@@ -11,7 +11,7 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>, IAsyn
     public ChangedByScalarTests(ChangedByScalarFixture fixture)
     {
         this.fixture = fixture;
-        testHelper = new ChangedByScalarTestHelper(fixture);
+        testHelper = new ChangedByScalarTestHelper(fixture.Services);
     }
 
     [Fact]
@@ -55,14 +55,14 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>, IAsyn
 
         for (int i = 1; i <= numberOfScopes; i++)
         {
-            using var helperScoped = new ChangedByScalarTestHelper(fixture);
-            helperScoped.CurrentUserProvider.CurrentUser = i.ToString();
+            using var testHelperScoped = new ChangedByScalarTestHelper(fixture.Services);
+            testHelperScoped.CurrentUserProvider.CurrentUser = i.ToString();
 
-            helperScoped.AddTestUser(i);
-            helperScoped.DbContext.SaveChanges();
+            testHelperScoped.AddTestUser(i);
+            testHelperScoped.DbContext.SaveChanges();
         }
 
-        var testUsers = testHelper.GetAllTestUsers().ToList();
+        var testUsers = testHelper.GetAllTestUsers().Where(u => u.Id >= 1 && u.Id <= numberOfScopes).ToList();
 
         testUsers.Should().HaveCount(numberOfScopes);
         testUsers.Should().AllSatisfy(u =>
@@ -83,14 +83,14 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>, IAsyn
 
         for (int i = 1; i <= numberOfScopes; i++)
         {
-            using var helperScoped = new ChangedByScalarTestHelper(fixture);
-            helperScoped.CurrentUserProvider.CurrentUserAsync = i.ToString();
+            using var testHelperScoped = new ChangedByScalarTestHelper(fixture.Services);
+            testHelperScoped.CurrentUserProvider.CurrentUserAsync = i.ToString();
 
-            helperScoped.AddTestUser(i);
-            await helperScoped.DbContext.SaveChangesAsync();
+            testHelperScoped.AddTestUser(i);
+            await testHelperScoped.DbContext.SaveChangesAsync();
         }
 
-        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+        var testUsers = await testHelper.GetAllTestUsers().Where(u => u.Id >= 1 && u.Id <= numberOfScopes).ToListAsync();
 
         testUsers.Should().HaveCount(numberOfScopes);
         testUsers.Should().AllSatisfy(u =>

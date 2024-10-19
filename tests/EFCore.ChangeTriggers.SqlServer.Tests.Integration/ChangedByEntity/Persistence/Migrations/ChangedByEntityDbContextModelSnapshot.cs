@@ -28,7 +28,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Pers
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -42,6 +41,33 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Pers
                         .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain.ChangedByEntityUserChange")
                         .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
                         .HasAnnotation("SqlServer:UseSqlOutputClause", false);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Username = "System"
+                        },
+                        new
+                        {
+                            Id = 100,
+                            Username = "TestUser100"
+                        },
+                        new
+                        {
+                            Id = 101,
+                            Username = "TestUser101"
+                        },
+                        new
+                        {
+                            Id = 102,
+                            Username = "TestUser102"
+                        },
+                        new
+                        {
+                            Id = 103,
+                            Username = "TestUser103"
+                        });
                 });
 
             modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain.ChangedByEntityUserChange", b =>
@@ -56,7 +82,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Pers
                         .HasColumnType("datetimeoffset")
                         .HasAnnotation("ChangeTriggers:IsChangedAtColumn", true);
 
-                    b.Property<int>("ChangedById")
+                    b.Property<int?>("ChangedById")
                         .HasColumnType("int");
 
                     b.Property<int>("Id")
@@ -68,7 +94,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Pers
                         .HasAnnotation("ChangeTriggers:IsOperationTypeColumn", true);
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ChangeId");

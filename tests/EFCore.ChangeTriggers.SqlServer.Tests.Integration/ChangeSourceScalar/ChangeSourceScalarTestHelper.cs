@@ -14,9 +14,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar
 
         private readonly IServiceScope scope;
 
-        public ChangeSourceScalarTestHelper(ChangeSourceScalarFixture fixture)
+        public ChangeSourceScalarTestHelper(IServiceProvider services)
         {
-            scope = fixture.Services.CreateScope();
+            scope = services.CreateScope();
             DbContext = scope.ServiceProvider.GetRequiredService<ChangeSourceScalarDbContext>();
             ChangeSourceProvider = scope.ServiceProvider.GetRequiredService<ScalarChangeSourceProvider>();
         }

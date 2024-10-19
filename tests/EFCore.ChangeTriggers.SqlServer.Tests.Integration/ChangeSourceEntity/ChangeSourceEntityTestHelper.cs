@@ -2,6 +2,8 @@
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Infrastructure;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity
@@ -14,9 +16,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity
 
         private readonly IServiceScope scope;
 
-        public ChangeSourceEntityTestHelper(ChangeSourceEntityFixture fixture)
+        public ChangeSourceEntityTestHelper(IServiceProvider services)
         {
-            scope = fixture.Services.CreateScope();
+            scope = services.CreateScope();
             DbContext = scope.ServiceProvider.GetRequiredService<ChangeSourceEntityDbContext>();
             ChangeSourceProvider = scope.ServiceProvider.GetRequiredService<EntityChangeSourceProvider>();
         }

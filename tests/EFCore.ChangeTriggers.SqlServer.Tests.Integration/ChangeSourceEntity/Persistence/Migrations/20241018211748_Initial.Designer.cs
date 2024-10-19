@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Persistence.Migrations
 {
     [DbContext(typeof(ChangeSourceEntityDbContext))]
-    [Migration("20241015230454_Initial")]
+    [Migration("20241018211748_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -99,7 +99,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.P
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -113,6 +112,33 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.P
                         .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Domain.ChangeSourceEntityUserChange")
                         .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
                         .HasAnnotation("SqlServer:UseSqlOutputClause", false);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Username = "System"
+                        },
+                        new
+                        {
+                            Id = 100,
+                            Username = "TestUser100"
+                        },
+                        new
+                        {
+                            Id = 101,
+                            Username = "TestUser101"
+                        },
+                        new
+                        {
+                            Id = 102,
+                            Username = "TestUser102"
+                        },
+                        new
+                        {
+                            Id = 103,
+                            Username = "TestUser103"
+                        });
                 });
 
             modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Domain.ChangeSourceEntityUserChange", b =>
@@ -123,7 +149,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.P
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChangeId"));
 
-                    b.Property<int>("ChangeSourceId")
+                    b.Property<int?>("ChangeSourceId")
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset>("ChangedAt")
@@ -139,7 +165,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.P
                         .HasAnnotation("ChangeTriggers:IsOperationTypeColumn", true);
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ChangeId");

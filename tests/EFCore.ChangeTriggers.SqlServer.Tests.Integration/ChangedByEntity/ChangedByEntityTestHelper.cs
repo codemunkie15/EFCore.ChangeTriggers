@@ -14,9 +14,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity
 
         private readonly IServiceScope scope;
 
-        public ChangedByEntityTestHelper(ChangedByEntityFixture fixture)
+        public ChangedByEntityTestHelper(IServiceProvider services)
         {
-            scope = fixture.Services.CreateScope();
+            scope = services.CreateScope();
             DbContext = scope.ServiceProvider.GetRequiredService<ChangedByEntityDbContext>();
             CurrentUserProvider = scope.ServiceProvider.GetRequiredService<EntityCurrentUserProvider>();
         }

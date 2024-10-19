@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Persistence.Migrations
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -17,7 +19,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -31,10 +33,10 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                     ChangeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OperationTypeId = table.Column<int>(type: "int", nullable: false),
                     ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ChangeSource = table.Column<int>(type: "int", nullable: false)
+                    ChangedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -45,11 +47,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                         principalTable: "TestUsers",
                         principalColumn: "Id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestUserChanges_Id",
-                table: "TestUserChanges",
-                column: "Id");
 
             migrationBuilder.AddNoCheckConstraint(
                 table: "TestUserChanges",
@@ -63,7 +60,24 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                 changeTableDataColumns: new[] { "Id", "Username" },
                 operationTypeColumn: new ChangeContextColumn("OperationTypeId", "int"),
                 changedAtColumn: new ChangeContextColumn("ChangedAt"),
-                changeSourceColumn: new ChangeContextColumn("ChangeSource", "int"));
+                changedByColumn: new ChangeContextColumn("ChangedBy", "nvarchar(max)"));
+
+            migrationBuilder.InsertData(
+                table: "TestUsers",
+                columns: new[] { "Id", "Username" },
+                values: new object[,]
+                {
+                    { 0, "System" },
+                    { 100, "TestUser100" },
+                    { 101, "TestUser101" },
+                    { 102, "TestUser102" },
+                    { 103, "TestUser103" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestUserChanges_Id",
+                table: "TestUserChanges",
+                column: "Id");
         }
 
         /// <inheritdoc />

@@ -21,18 +21,18 @@ namespace EFCore.ChangeTriggers.SqlServer.Infrastructure
         {
         }
 
-        protected override void AddChangedByServices<TChangedByProvider, TChangedBy>(IServiceProvider? applicationServiceProvider)
+        protected override void AddChangedByServices<TChangedByProvider, TChangedBy>()
         {
             AddService<IInterceptor, ChangedBySqlServerDbConnectionInterceptor<TChangedBy>>();
 
-            base.AddChangedByServices<TChangedByProvider, TChangedBy>(applicationServiceProvider);
+            base.AddChangedByServices<TChangedByProvider, TChangedBy>();
         }
 
-        protected override void AddChangeSourceServices<TChangeSourceProvider, TChangeSource>(IServiceProvider? applicationServiceProvider)
+        protected override void AddChangeSourceServices<TChangeSourceProvider, TChangeSource>()
         {
             AddService<IInterceptor, ChangeSourceSqlServerDbConnectionInterceptor<TChangeSource>>();
 
-            base.AddChangeSourceServices<TChangeSourceProvider, TChangeSource>(applicationServiceProvider);
+            base.AddChangeSourceServices<TChangeSourceProvider, TChangeSource>();
         }
 
         protected override ChangeTriggersDbContextOptionsExtension Clone()
