@@ -5,7 +5,7 @@
     /// </summary>
     public class ChangeEvent
     {
-        public string Description { get; set; }
+        public required string Description { get; set; }
 
         public string? OldValue { get; set; }
 

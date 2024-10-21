@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using TestHarness.DbModels.PaymentMethods;
+﻿using TestHarness.DbModels.PaymentMethods;
 using TestHarness.DbModels.Users;
 
 namespace TestHarness
