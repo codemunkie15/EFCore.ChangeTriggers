@@ -195,10 +195,6 @@ public class ChangeSourceScalarTests : IClassFixture<ChangeSourceScalarFixture>,
         await testHelper.DbContext.TestUsers.ExecuteDeleteAsync();
         await testHelper.DbContext.TestUserChanges.ExecuteDeleteAsync();
 
-        // Reset current user
-        testHelper.ChangeSourceProvider.CurrentChangeSource = ChangeSource.None;
-        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSource.None;
-
         testHelper.Dispose();
     }
 }

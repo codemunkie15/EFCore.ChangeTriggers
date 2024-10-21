@@ -30,12 +30,11 @@ namespace EFCore.ChangeTriggers.Infrastructure
 
         public virtual void ApplyServices(IServiceCollection services)
         {
-            services.AddSingleton(new ChangeTriggersExtensionContext());
+            services.AddScoped<ChangeTriggersExtensionContext>();
 
             foreach (var serviceDescriptor in serviceDescriptors)
             {
                 services.Add(serviceDescriptor);
-                services.AddScoped<object, object>();
             }
         }
 

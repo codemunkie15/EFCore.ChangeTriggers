@@ -1,4 +1,6 @@
+using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Infrastructure;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -38,6 +40,29 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
     }
 
     [Fact]
+    public void MigrateDatabase_UsingMigrationChangeSource_InsertsChangeEntity_WithCorrectProperties()
+    {
+        var changeSourceProvider = (ChangeSourceScalarProvider)testHelper.DbContext.GetService<IChangeSourceProvider<ChangeSource>>();
+        changeSourceProvider.UseCustomGetMigrationChangeSource = true;
+
+        testHelper.ChangeSourceProvider.MigrationChangeSource = ChangeSource.Tests;
+
+        testHelper.DbContext.Database.Migrate();
+
+        var testUsers = testHelper.GetAllTestUsers().ToList();
+
+        testUsers.Should().AllSatisfy(u =>
+        {
+            var userChange = u.Changes.Should().ContainSingle().Which;
+
+            userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
+            userChange.OperationType.Should().Be(OperationType.Insert);
+            userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.MigrationChangeSource);
+            userChange.TrackedEntity.Id.Should().Be(u.Id);
+        });
+    }
+
+    [Fact]
     public async void MigrateDatabase_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSource.Tests;
@@ -53,6 +78,29 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
             userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
             userChange.OperationType.Should().Be(OperationType.Insert);
             userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSourceAsync);
+            userChange.TrackedEntity.Id.Should().Be(u.Id);
+        });
+    }
+
+    [Fact]
+    public async void MigrateDatabase_UsingMigrationChangeSource_InsertsChangeEntity_WithCorrectProperties_Async()
+    {
+        var changeSourceProvider = (ChangeSourceScalarProvider)testHelper.DbContext.GetService<IChangeSourceProvider<ChangeSource>>();
+        changeSourceProvider.UseCustomGetMigrationChangeSource = true;
+
+        testHelper.ChangeSourceProvider.MigrationChangeSourceAsync = ChangeSource.Tests;
+
+        await testHelper.DbContext.Database.MigrateAsync();
+
+        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+
+        testUsers.Should().AllSatisfy(u =>
+        {
+            var userChange = u.Changes.Should().ContainSingle().Which;
+
+            userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
+            userChange.OperationType.Should().Be(OperationType.Insert);
+            userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.MigrationChangeSourceAsync);
             userChange.TrackedEntity.Id.Should().Be(u.Id);
         });
     }
@@ -76,10 +124,6 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
     {
         var migrator = testHelper.DbContext.Database.GetService<IMigrator>();
         await migrator.MigrateAsync("0");
-
-        // Reset current user
-        testHelper.ChangeSourceProvider.CurrentChangeSource = ChangeSource.None;
-        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSource.None;
 
         testHelper.Dispose();
     }

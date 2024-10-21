@@ -1,4 +1,6 @@
+using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infrastructure;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -38,6 +40,29 @@ public class ChangedByEntityMigrationTests : IClassFixture<ChangedByEntityMigrat
     }
 
     [Fact]
+    public void MigrateDatabase_UsingMigrationChangedBy_InsertsChangeEntity_WithCorrectProperties()
+    {
+        var changedByProvider = (ChangedByEntityProvider)testHelper.DbContext.GetService<IChangedByProvider<ChangedByEntityUser>>();
+        changedByProvider.UseCustomGetMigrationChangedBy = true;
+
+        testHelper.CurrentUserProvider.MigrationCurrentUser = new ChangedByEntityUser { Id = 0 };
+
+        testHelper.DbContext.Database.Migrate();
+
+        var testUsers = testHelper.GetAllTestUsers().ToList();
+
+        testUsers.Should().AllSatisfy(u =>
+        {
+            var userChange = u.Changes.Should().ContainSingle().Which;
+
+            userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
+            userChange.OperationType.Should().Be(OperationType.Insert);
+            userChange.ChangedBy.Id.Should().Be(testHelper.CurrentUserProvider.MigrationCurrentUser.Id);
+            userChange.TrackedEntity.Id.Should().Be(u.Id);
+        });
+    }
+
+    [Fact]
     public async void MigrateDatabase_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.CurrentUserProvider.CurrentUserAsync = new ChangedByEntityUser { Id = 0 };
@@ -53,6 +78,29 @@ public class ChangedByEntityMigrationTests : IClassFixture<ChangedByEntityMigrat
             userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
             userChange.OperationType.Should().Be(OperationType.Insert);
             userChange.ChangedBy.Id.Should().Be(testHelper.CurrentUserProvider.CurrentUserAsync.Id);
+            userChange.TrackedEntity.Id.Should().Be(u.Id);
+        });
+    }
+
+    [Fact]
+    public async void MigrateDatabase_UsingMigrationChangedBy_InsertsChangeEntity_WithCorrectProperties_Async()
+    {
+        var changedByProvider = (ChangedByEntityProvider)testHelper.DbContext.GetService<IChangedByProvider<ChangedByEntityUser>>();
+        changedByProvider.UseCustomGetMigrationChangedBy = true;
+
+        testHelper.CurrentUserProvider.MigrationCurrentUserAsync = new ChangedByEntityUser { Id = 0 };
+
+        await testHelper.DbContext.Database.MigrateAsync();
+
+        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+
+        testUsers.Should().AllSatisfy(u =>
+        {
+            var userChange = u.Changes.Should().ContainSingle().Which;
+
+            userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
+            userChange.OperationType.Should().Be(OperationType.Insert);
+            userChange.ChangedBy.Id.Should().Be(testHelper.CurrentUserProvider.MigrationCurrentUserAsync.Id);
             userChange.TrackedEntity.Id.Should().Be(u.Id);
         });
     }
@@ -76,10 +124,6 @@ public class ChangedByEntityMigrationTests : IClassFixture<ChangedByEntityMigrat
     {
         var migrator = testHelper.DbContext.Database.GetService<IMigrator>();
         await migrator.MigrateAsync("0");
-
-        // Reset current user
-        testHelper.CurrentUserProvider.CurrentUser = null;
-        testHelper.CurrentUserProvider.CurrentUser = null;
 
         testHelper.Dispose();
     }

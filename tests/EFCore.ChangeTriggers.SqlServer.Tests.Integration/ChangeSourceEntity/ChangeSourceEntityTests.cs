@@ -195,10 +195,6 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
         await testHelper.DbContext.TestUsers.ExecuteDeleteAsync();
         await testHelper.DbContext.TestUserChanges.ExecuteDeleteAsync();
 
-        // Reset current user
-        testHelper.ChangeSourceProvider.CurrentChangeSource = null;
-        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = null;
-
         testHelper.Dispose();
     }
 }

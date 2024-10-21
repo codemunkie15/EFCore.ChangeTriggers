@@ -5,6 +5,8 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.I
 
 internal class ChangeSourceEntityProvider : ChangeSourceProvider<ChangeSource>
 {
+    public bool UseCustomGetMigrationChangeSource { get; set; }
+
     private readonly EntityChangeSourceProvider changeSourceProvider;
 
     public ChangeSourceEntityProvider(EntityChangeSourceProvider changeSourceProvider)
@@ -20,5 +22,25 @@ internal class ChangeSourceEntityProvider : ChangeSourceProvider<ChangeSource>
     public override ChangeSource GetChangeSource()
     {
         return changeSourceProvider.CurrentChangeSource;
+    }
+
+    public override ChangeSource GetMigrationChangeSource()
+    {
+        if (UseCustomGetMigrationChangeSource)
+        {
+            return changeSourceProvider.MigrationChangeSource;
+        }
+
+        return base.GetMigrationChangeSource();
+    }
+
+    public override Task<ChangeSource> GetMigrationChangeSourceAsync()
+    {
+        if (UseCustomGetMigrationChangeSource)
+        {
+            return Task.FromResult(changeSourceProvider.MigrationChangeSourceAsync);
+        }
+
+        return base.GetMigrationChangeSourceAsync();
     }
 }

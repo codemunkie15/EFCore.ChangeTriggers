@@ -5,6 +5,8 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Infr
 
 internal class ChangedByEntityProvider : ChangedByProvider<ChangedByEntityUser>
 {
+    public bool UseCustomGetMigrationChangedBy { get; set; }
+
     private readonly EntityCurrentUserProvider currentUserProvider;
 
     public ChangedByEntityProvider(EntityCurrentUserProvider currentUserProvider)
@@ -20,5 +22,25 @@ internal class ChangedByEntityProvider : ChangedByProvider<ChangedByEntityUser>
     public override ChangedByEntityUser GetChangedBy()
     {
         return currentUserProvider.CurrentUser;
+    }
+
+    public override ChangedByEntityUser GetMigrationChangedBy()
+    {
+        if (UseCustomGetMigrationChangedBy)
+        {
+            return currentUserProvider.MigrationCurrentUser;
+        }
+
+        return base.GetMigrationChangedBy();
+    }
+
+    public override Task<ChangedByEntityUser> GetMigrationChangedByAsync()
+    {
+        if (UseCustomGetMigrationChangedBy)
+        {
+            return Task.FromResult(currentUserProvider.MigrationCurrentUserAsync);
+        }
+
+        return base.GetMigrationChangedByAsync();
     }
 }

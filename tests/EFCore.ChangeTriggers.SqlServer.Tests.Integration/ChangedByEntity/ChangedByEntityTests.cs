@@ -201,10 +201,6 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>, IAsyn
         await testHelper.DbContext.TestUsers.ExecuteDeleteAsync();
         await testHelper.DbContext.TestUserChanges.ExecuteDeleteAsync();
 
-        // Reset current user
-        testHelper.CurrentUserProvider.CurrentUser = null;
-        testHelper.CurrentUserProvider.CurrentUserAsync = null;
-
         testHelper.Dispose();
     }
 }
