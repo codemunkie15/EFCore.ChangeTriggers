@@ -1,4 +1,4 @@
-﻿using EFCore.ChangeTriggers.Extensions;
+﻿using EFCore.ChangeTriggers.Metadata;
 using EFCore.ChangeTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Metadata;
 

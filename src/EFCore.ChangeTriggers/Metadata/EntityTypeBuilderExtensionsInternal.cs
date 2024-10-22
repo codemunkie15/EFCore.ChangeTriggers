@@ -1,15 +1,13 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EFCore.ChangeTriggers.Extensions
+namespace EFCore.ChangeTriggers.Metadata
 {
     internal static class EntityTypeBuilderExtensionsInternal
     {
-        public static EntityTypeBuilder HasChangeTriggerInternal(
-            this EntityTypeBuilder builder)
+        public static EntityTypeBuilder HasChangeTriggerInternal(this EntityTypeBuilder builder)
         {
             // https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-7.0/breaking-changes#sqlserver-tables-with-triggers
             builder.ToTable(t => t.HasTrigger("ChangeTrigger"));
@@ -28,8 +26,7 @@ namespace EFCore.ChangeTriggers.Extensions
             return builder;
         }
 
-        public static EntityTypeBuilder IsChangeTableInternal(
-            this EntityTypeBuilder builder)
+        public static EntityTypeBuilder IsChangeTableInternal(this EntityTypeBuilder builder)
         {
             builder.Property(nameof(IChange.OperationType))
                 .HasColumnName("OperationTypeId")
@@ -47,10 +44,8 @@ namespace EFCore.ChangeTriggers.Extensions
             return builder;
         }
 
-        public static EntityTypeBuilder HasChangedByInternal(
-            this EntityTypeBuilder builder)
+        public static EntityTypeBuilder HasChangedByInternal(this EntityTypeBuilder builder, Type changedByClrType)
         {
-            var changedByClrType = builder.Metadata.GetChangedByClrTypeName();
             var changedByEntity = builder.Metadata.Model.FindEntityType(changedByClrType);
             if (changedByEntity != null)
             {
@@ -73,10 +68,8 @@ namespace EFCore.ChangeTriggers.Extensions
             return builder;
         }
 
-        public static EntityTypeBuilder HasChangeSourceInternal(
-            this EntityTypeBuilder builder)
+        public static EntityTypeBuilder HasChangeSourceInternal(this EntityTypeBuilder builder, Type changeSourceClrType)
         {
-            var changeSourceClrType = builder.Metadata.GetChangeSourceClrTypeName();
             var changeSourceEntity = builder.Metadata.Model.FindEntityType(changeSourceClrType);
             if (changeSourceEntity != null)
             {

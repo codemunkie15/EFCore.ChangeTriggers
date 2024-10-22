@@ -26,6 +26,8 @@ namespace EFCore.ChangeTriggers.Infrastructure
         {
             TriggerNameFactory = copyFrom.TriggerNameFactory;
             serviceDescriptors = copyFrom.serviceDescriptors;
+            ChangedByConfig = copyFrom.ChangedByConfig;
+            ChangeSourceConfig = copyFrom.ChangeSourceConfig;
         }
 
         public virtual void ApplyServices(IServiceCollection services)
@@ -111,5 +113,5 @@ namespace EFCore.ChangeTriggers.Infrastructure
         protected abstract ChangeTriggersDbContextOptionsExtension Clone();
     }
 
-    public record ChangeContextConfig(Type ProviderType, Type valueType);
+    public record ChangeContextConfig(Type ProviderType, Type EntityClrType);
 }

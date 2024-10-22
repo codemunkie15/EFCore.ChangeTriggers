@@ -243,8 +243,8 @@ namespace TestHarness.Migrations
                     b.ToTable("UserChanges", (string)null);
 
                     b
-                        .HasAnnotation("ChangeTriggers:ChangedByClrTypeName", "TestHarness.DbModels.Users.User")
-                        .HasAnnotation("ChangeTriggers:ChangeSourceClrTypeName", "TestHarness.ChangeSourceType")
+                        .HasAnnotation("ChangeTriggers:HasChangedBy", true)
+                        .HasAnnotation("ChangeTriggers:HasChangeSource", true)
                         .HasAnnotation("ChangeTriggers:IsChangeTable", true);
                 });
 

@@ -1,6 +1,6 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Extensions;
 using EFCore.ChangeTriggers.Infrastructure;
+using EFCore.ChangeTriggers.Metadata;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
 

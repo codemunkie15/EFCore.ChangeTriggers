@@ -2,8 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using LinqKit;
 using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Extensions;
-using EFCore.ChangeTriggers.Constants;
+using EFCore.ChangeTriggers.Metadata;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
 {

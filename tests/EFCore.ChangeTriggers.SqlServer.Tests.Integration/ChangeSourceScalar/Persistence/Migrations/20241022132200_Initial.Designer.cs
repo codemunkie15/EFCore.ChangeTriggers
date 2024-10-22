@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Persistence.Migrations
 {
     [DbContext(typeof(ChangeSourceScalarDbContext))]
-    [Migration("20241019224838_Initial")]
+    [Migration("20241022132200_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -41,7 +41,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                         });
 
                     b
-                        .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain.ChangeSourceScalarUserChange")
                         .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
                         .HasAnnotation("SqlServer:UseSqlOutputClause", false);
 
@@ -107,9 +106,8 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                     b.ToTable("TestUserChanges");
 
                     b
-                        .HasAnnotation("ChangeTriggers:ChangeSourceClrTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain.ChangeSource")
-                        .HasAnnotation("ChangeTriggers:IsChangeTable", true)
-                        .HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain.ChangeSourceScalarUser");
+                        .HasAnnotation("ChangeTriggers:HasChangeSource", true)
+                        .HasAnnotation("ChangeTriggers:IsChangeTable", true);
                 });
 
             modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain.ChangeSourceScalarUserChange", b =>
@@ -117,7 +115,8 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
                     b.HasOne("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain.ChangeSourceScalarUser", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id")
-                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true)
+                        .HasAnnotation("ChangeTriggers:IsTrackedEntityForeignKey", true);
 
                     b.Navigation("TrackedEntity");
                 });

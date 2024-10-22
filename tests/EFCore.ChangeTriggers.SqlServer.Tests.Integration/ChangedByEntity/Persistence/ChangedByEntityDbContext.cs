@@ -1,4 +1,4 @@
-﻿using EFCore.ChangeTriggers.Extensions;
+﻿using EFCore.ChangeTriggers.Metadata;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;

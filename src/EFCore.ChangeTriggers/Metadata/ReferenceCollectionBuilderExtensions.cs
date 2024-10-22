@@ -1,7 +1,7 @@
 ﻿using EFCore.ChangeTriggers.Constants;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EFCore.ChangeTriggers.Extensions
+namespace EFCore.ChangeTriggers.Metadata
 {
     internal static class ReferenceCollectionBuilderExtensions
     {
@@ -18,11 +18,6 @@ namespace EFCore.ChangeTriggers.Extensions
         public static ReferenceCollectionBuilder IsChangeSourceForeignKey(this ReferenceCollectionBuilder builder)
         {
             return builder.HasAnnotation(AnnotationConstants.IsChangeSourceColumn, true);
-        }
-
-        public static ReferenceCollectionBuilder HasNoCheck(this ReferenceCollectionBuilder builder)
-        {
-            return builder.HasAnnotation(AnnotationConstants.HasNoCheckConstraint, true);
         }
     }
 }

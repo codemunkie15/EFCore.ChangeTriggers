@@ -3,7 +3,7 @@ using EFCore.ChangeTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.ChangeTriggers.Extensions
+namespace EFCore.ChangeTriggers.Metadata
 {
     internal static class PropertyExtensions
     {

@@ -1,4 +1,5 @@
-﻿using EFCore.ChangeTriggers.Extensions;
+﻿using EFCore.ChangeTriggers.Infrastructure;
+using EFCore.ChangeTriggers.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -13,8 +14,9 @@ namespace EFCore.ChangeTriggers
         public override void Customize(ModelBuilder modelBuilder, DbContext context)
         {
             base.Customize(modelBuilder, context);
-
             // Delay ChangeTriggers entity config until after context.OnModelCreating() has ran
+
+            var options = context.GetService<IDbContextOptions>().Extensions.OfType<ChangeTriggersDbContextOptionsExtension>().Single()!;
 
             foreach (var trackedEntityType in modelBuilder.Model.GetEntityTypes().Where(e => e.HasChangeTrigger()))
             {
@@ -29,12 +31,12 @@ namespace EFCore.ChangeTriggers
 
                 if (changeEntityType.HasChangedBy())
                 {
-                    builder.HasChangedByInternal();
+                    builder.HasChangedByInternal(options.ChangedByConfig!.EntityClrType);
                 }
 
                 if (changeEntityType.HasChangeSource())
                 {
-                    builder.HasChangeSourceInternal();
+                    builder.HasChangeSourceInternal(options.ChangeSourceConfig!.EntityClrType);
                 }
             }
         }

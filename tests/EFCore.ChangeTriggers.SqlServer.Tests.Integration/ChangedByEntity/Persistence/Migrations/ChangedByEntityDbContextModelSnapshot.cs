@@ -38,7 +38,6 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Pers
                         });
 
                     b
-                        .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain.ChangedByEntityUserChange")
                         .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
                         .HasAnnotation("SqlServer:UseSqlOutputClause", false);
 
@@ -105,9 +104,8 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Pers
                     b.ToTable("TestUserChanges");
 
                     b
-                        .HasAnnotation("ChangeTriggers:ChangedByClrTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain.ChangedByEntityUser")
-                        .HasAnnotation("ChangeTriggers:IsChangeTable", true)
-                        .HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain.ChangedByEntityUser");
+                        .HasAnnotation("ChangeTriggers:HasChangedBy", true)
+                        .HasAnnotation("ChangeTriggers:IsChangeTable", true);
                 });
 
             modelBuilder.Entity("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain.ChangedByEntityUserChange", b =>
@@ -121,7 +119,8 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Pers
                     b.HasOne("EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain.ChangedByEntityUser", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id")
-                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true)
+                        .HasAnnotation("ChangeTriggers:IsTrackedEntityForeignKey", true);
 
                     b.Navigation("ChangedBy");
 

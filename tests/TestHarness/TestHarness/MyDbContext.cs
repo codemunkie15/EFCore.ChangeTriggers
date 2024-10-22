@@ -35,6 +35,8 @@ namespace TestHarness
                 e.Property(u => u.DateOfBirth).IsRequired();
                 e.HasMany(u => u.PaymentMethods).WithOne(pm => pm.User);
 
+                e.HasChangeTrigger();
+
                 e.ConfigureChangeTrigger(options =>
                 {
                     options.TriggerNameFactory = tableName => $"{tableName}_CustomTriggerName";
