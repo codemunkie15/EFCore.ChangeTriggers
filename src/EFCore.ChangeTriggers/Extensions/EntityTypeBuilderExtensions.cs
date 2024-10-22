@@ -1,7 +1,6 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.Configuration;
 using EFCore.ChangeTriggers.Constants;
-using EFCore.ChangeTriggers.Exceptions;
 using EFCore.ChangeTriggers.Helpers;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,23 +12,17 @@ namespace EFCore.ChangeTriggers.Extensions
         /// Configures the entity to use change triggers.
         /// </summary>
         /// <typeparam name="TTrackedEntity">The <see cref="ITracked{TChangeType}"/> entity type to configure change triggers for.</typeparam>
-        /// <typeparam name="TChangeEntity">The <see cref="IChange{TTracked}"/> entity type that tracks the changes for the <typeparamref name="TTrackedEntity"/>.</typeparam>
         /// <param name="builder">The entity type builder used for configuration.</param>
         /// <param name="optionsBuilder">An optional action to configure the change trigger.</param>
         /// <returns>The same entity type builder so further calls can be chained.</returns>
-        /// <exception cref="ChangeTriggersConfigurationException"></exception>
-        public static EntityTypeBuilder<TTrackedEntity> HasChangeTrigger<TTrackedEntity, TChangeEntity>(
+        public static EntityTypeBuilder<TTrackedEntity> HasChangeTrigger<TTrackedEntity>(
             this EntityTypeBuilder<TTrackedEntity> builder,
             Action<ChangeTriggerOptions>? optionsBuilder = null)
-            where TTrackedEntity : class, ITracked<TChangeEntity>
-            where TChangeEntity : class, IHasTrackedEntity<TTrackedEntity>
+            where TTrackedEntity : class
         {
             var trackedEntityType = builder.Metadata;
-            var changeEntityType = builder.Metadata.Model.FindEntityType(typeof(TChangeEntity))!;
 
             builder.HasAnnotation(AnnotationConstants.HasChangeTrigger, true);
-            builder.HasAnnotation(AnnotationConstants.ChangeEntityTypeName, changeEntityType!.Name);
-            changeEntityType.AddAnnotation(AnnotationConstants.TrackedEntityTypeName, trackedEntityType!.Name);
 
             if (optionsBuilder is not null)
             {

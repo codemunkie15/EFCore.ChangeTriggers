@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using LinqKit;
 using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.Extensions;
+using EFCore.ChangeTriggers.Constants;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
 {
@@ -95,7 +96,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
         /// <exception cref="InvalidOperationException"></exception>
         public IQueryable<TChangeEvent> Build()
         {
-            if (!changeQueries.Any())
+            if (changeQueries.Count == 0)
             {
                 throw new InvalidOperationException("There are no queries configured to build.");
             }
@@ -106,18 +107,16 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
         private Expression<Func<TChange, TChange, bool>> GetTrackedTablePrimaryKeysAreEqualExpression()
         {
             var changeEntityType = context.Model.FindEntityType(typeof(TChange))!;
-            var trackedEntityType = changeEntityType.GetTrackedEntityType();
-
-            var primaryKeyProperties = trackedEntityType.FindPrimaryKey().Properties;
+            var trackedEntityForeignKeyProperties = changeEntityType.GetTrackedEntityForeignKey().Properties;
 
             var currentChangeParam = Expression.Parameter(typeof(TChange));
             var previousChangeParam = Expression.Parameter(typeof(TChange));
 
             var expressions = new List<Expression>();
 
-            foreach (var primaryKeyProperty in primaryKeyProperties)
+            foreach (var foreignKeyProperty in trackedEntityForeignKeyProperties)
             {
-                var propertyName = primaryKeyProperty.Name;
+                var propertyName = foreignKeyProperty.Name;
                 var currentChangeProperty = Expression.PropertyOrField(currentChangeParam, propertyName);
                 var previousChangeProperty = Expression.PropertyOrField(previousChangeParam, propertyName);
 
@@ -132,14 +131,13 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
         private IEnumerable<string> GetEntityPropertyNames()
         {
             var changeEntity = context.Model.FindEntityType(typeof(TChange))!;
-            var trackedEntity = changeEntity.GetTrackedEntityType();
+            var trackedEntityForeignKeyNames = changeEntity.GetTrackedEntityForeignKey().Properties.Select(p => p.Name);
 
-            var trackedEntityPrimaryKeyNames = trackedEntity.FindPrimaryKey()!.Properties.Select(p => p.Name);
             return changeEntity.GetProperties().Where(p =>
                 !p.IsPrimaryKey() &&
                 !p.IsShadowProperty() &&
                 !p.IsChangeContextProperty() &&
-                !trackedEntityPrimaryKeyNames.Contains(p.Name))
+                !trackedEntityForeignKeyNames.Contains(p.Name))
                 .Select(p => p.Name);
         }
 

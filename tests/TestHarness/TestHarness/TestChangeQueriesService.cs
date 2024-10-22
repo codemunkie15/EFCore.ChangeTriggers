@@ -15,22 +15,22 @@ namespace TestHarness
 
         public async Task RunAsync()
         {
-            var query = dbContext
-                .CreateChangeEventQueryBuilder<User, ChangeSourceType>()
-                .AddChanges(
-                    dbContext.UserChanges.Where(uc => uc.Id == 2),
-                    builder =>
-                    {
-                        builder
-                            .AddEntityProperties() // Auto add simple properties (Name, DateOfBirth)
-                            .AddProperty("Primary payment method changed", e => e.PrimaryPaymentMethod.Name); // Add a custom property for primary payment method that uses the name
-                    }
-                ).Build();
+            //var query = dbContext
+            //    .CreateChangeEventQueryBuilder<User, ChangeSourceType>()
+            //    .AddChanges(
+            //        dbContext.UserChanges.Where(uc => uc.Id == 2),
+            //        builder =>
+            //        {
+            //            builder
+            //                .AddEntityProperties() // Auto add simple properties (Name, DateOfBirth)
+            //                .AddProperty("Primary payment method changed", e => e.PrimaryPaymentMethod.Name); // Add a custom property for primary payment method that uses the name
+            //        }
+            //    ).Build();
 
-            var changes = await query.ToListAsync();
+            //var changes = await query.ToListAsync();
 
-            var markdown = changes.ToMarkdownTable();
-            Console.WriteLine(markdown);
+            //var markdown = changes.ToMarkdownTable();
+            //Console.WriteLine(markdown);
 
             var query2 = dbContext
                 .CreateChangeEventQueryBuilder()
@@ -46,9 +46,9 @@ namespace TestHarness
                     })
                 .Build();
 
-            var changes1 = query.OrderBy(ce => ce.ChangedAt).ToListAsync();
+            //var changes1 = query.OrderBy(ce => ce.ChangedAt).ToListAsync();
             var changes2 = await query2.OrderBy(ce => ce.ChangedAt).ToListAsync();
-
+            Console.WriteLine(changes2.ToMarkdownTable());
         }
     }
 }

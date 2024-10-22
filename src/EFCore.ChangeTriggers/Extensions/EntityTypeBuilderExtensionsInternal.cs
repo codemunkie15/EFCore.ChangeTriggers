@@ -1,4 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
+using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,7 +22,8 @@ namespace EFCore.ChangeTriggers.Extensions
             builder
                 .HasMany(nameof(ITracked<object>.Changes))
                 .WithOne(nameof(IHasTrackedEntity<object>.TrackedEntity))
-                .HasForeignKey(trackedTablePrimaryKey.Properties.Select(p => p.Name).ToArray());
+                .HasForeignKey(trackedTablePrimaryKey.Properties.Select(p => p.Name).ToArray())
+                .IsTrackedEntityForeignKey();
 
             return builder;
         }

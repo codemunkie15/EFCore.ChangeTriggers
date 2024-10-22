@@ -6,8 +6,6 @@
 
         public const string HasChangeTrigger = $"{Prefix}:{nameof(HasChangeTrigger)}";
         public const string IsChangeTable = $"{Prefix}:{nameof(IsChangeTable)}";
-        public const string TrackedEntityTypeName = $"{Prefix}:{nameof(TrackedEntityTypeName)}";
-        public const string ChangeEntityTypeName = $"{Prefix}:{nameof(ChangeEntityTypeName)}";
         public const string ChangedByClrTypeName = $"{Prefix}:{nameof(ChangedByClrTypeName)}";
         public const string ChangeSourceClrTypeName = $"{Prefix}:{nameof(ChangeSourceClrTypeName)}";
         public const string TriggerNameFormat = $"{Prefix}:{nameof(TriggerNameFormat)}";
@@ -17,5 +15,6 @@
         public const string IsChangeSourceColumn = $"{Prefix}:{nameof(IsChangeSourceColumn)}";
         public const string IsChangedAtColumn = $"{Prefix}:{nameof(IsChangedAtColumn)}";
         public const string IsChangedByColumn = $"{Prefix}:{nameof(IsChangedByColumn)}";
+        public const string IsTrackedEntityForeignKey = $"{Prefix}:{nameof(IsTrackedEntityForeignKey)}";
     }
 }

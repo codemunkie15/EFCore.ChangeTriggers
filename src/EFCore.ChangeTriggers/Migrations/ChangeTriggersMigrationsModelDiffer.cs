@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Migrations
 {
@@ -148,7 +149,9 @@ namespace EFCore.ChangeTriggers.Migrations
 
         private ChangeTrackedEntity CreateChangeTrackedEntity(IEntityType trackedEntityType)
         {
-            var changeEntityType = trackedEntityType.GetChangeEntityType();
+            Debugger.Launch();
+
+            var changeEntityType = trackedEntityType.GetTrackedEntityForeignKey().DeclaringEntityType;
             var changeTable = changeEntityType.GetTableMappings().First().Table;
 
             var changeTableProperties = changeEntityType.GetProperties().ToList();

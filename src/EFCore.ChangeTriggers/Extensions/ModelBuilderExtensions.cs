@@ -38,18 +38,18 @@ namespace EFCore.ChangeTriggers.Extensions
                         .GetGenericArguments()
                         .First();
 
-                modelBuilder.ConfigureTrackedEntity(trackedType, changeType);
+                modelBuilder.ConfigureTrackedEntity(trackedType);
                 modelBuilder.ConfigureChangeEntity(changeType);
             }
 
             return modelBuilder;
         }
 
-        private static void ConfigureTrackedEntity(this ModelBuilder modelBuilder, Type trackedType, Type changeType)
+        private static void ConfigureTrackedEntity(this ModelBuilder modelBuilder, Type trackedType)
         {
             dynamic trackedEntityTypeBuilder = CreateEntityTypeBuilder(modelBuilder, trackedType);
 
-            var hasChangeTriggerGenericMethod = HasChangeTriggerMethod.MakeGenericMethod(trackedType, changeType);
+            var hasChangeTriggerGenericMethod = HasChangeTriggerMethod.MakeGenericMethod(trackedType);
             hasChangeTriggerGenericMethod.Invoke(null, new[] { trackedEntityTypeBuilder, null });
         }
 

@@ -26,16 +26,11 @@ namespace EFCore.ChangeTriggers.Extensions
             return entityType.FindAnnotation(AnnotationConstants.ChangeSourceClrTypeName) != null;
         }
 
-        public static IEntityType GetTrackedEntityType(this IEntityType entityType)
+        public static IForeignKey GetTrackedEntityForeignKey(this IEntityType entityType)
         {
-            var trackedEntityTypeName = entityType.GetAnnotation(AnnotationConstants.TrackedEntityTypeName).Value!.ToString()!;
-            return entityType.Model.FindEntityType(trackedEntityTypeName)!;
-        }
-
-        public static IEntityType GetChangeEntityType(this IEntityType entityType)
-        {
-            var changeEntityTypeName = entityType.GetAnnotation(AnnotationConstants.ChangeEntityTypeName).Value!.ToString()!;
-            return entityType.Model.FindEntityType(changeEntityTypeName)!;
+            return entityType.GetForeignKeys().FirstOrDefault(fk => fk.IsTrackedEntityForeignKey()) ??
+                entityType.GetReferencingForeignKeys().FirstOrDefault(fk => fk.IsTrackedEntityForeignKey()) ??
+                throw new ChangeTriggersConfigurationException($"The entity {entityType.Name} has no tracked entity foreign key annotation.");
         }
 
         public static string GetChangedByClrTypeName(this IReadOnlyEntityType entityType)

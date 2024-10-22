@@ -15,5 +15,10 @@ namespace EFCore.ChangeTriggers.Extensions
         {
             return foreignKey.FindAnnotation(AnnotationConstants.HasNoCheckConstraint) != null;
         }
+
+        public static bool IsTrackedEntityForeignKey(this IForeignKey foreignKey)
+        {
+            return foreignKey.FindAnnotation(AnnotationConstants.IsTrackedEntityForeignKey) != null;
+        }
     }
 }
