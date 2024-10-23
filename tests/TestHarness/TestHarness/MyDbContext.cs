@@ -1,4 +1,4 @@
-﻿using EFCore.ChangeTriggers.Extensions;
+﻿using EFCore.ChangeTriggers;
 using Microsoft.EntityFrameworkCore;
 using TestHarness.DbModels.PaymentMethods;
 using TestHarness.DbModels.Permissions;
@@ -34,8 +34,6 @@ namespace TestHarness
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
                 e.HasMany(u => u.PaymentMethods).WithOne(pm => pm.User);
-
-                e.HasChangeTrigger();
 
                 e.ConfigureChangeTrigger(options =>
                 {

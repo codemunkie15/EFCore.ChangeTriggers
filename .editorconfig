@@ -2,3 +2,6 @@
 
 # EF1001: Internal EF Core API usage.
 dotnet_diagnostic.EF1001.severity = none
+
+# IDE0130: Namespace does not match folder structure
+dotnet_diagnostic.IDE0130.severity = error

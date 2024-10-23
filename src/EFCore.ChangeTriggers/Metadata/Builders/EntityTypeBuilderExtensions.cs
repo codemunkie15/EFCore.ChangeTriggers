@@ -1,9 +1,12 @@
 ﻿using EFCore.ChangeTriggers.Configuration;
 using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Helpers;
+using EFCore.ChangeTriggers.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EFCore.ChangeTriggers.Metadata.Builders
+#pragma warning disable IDE0130 // Namespace does not match folder structure
+namespace EFCore.ChangeTriggers
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     public static class EntityTypeBuilderExtensions
     {

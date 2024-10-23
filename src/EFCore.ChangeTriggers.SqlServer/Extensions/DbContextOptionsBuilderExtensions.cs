@@ -1,10 +1,11 @@
-﻿using EFCore.ChangeTriggers.Extensions;
-using EFCore.ChangeTriggers.SqlServer.Infrastructure;
+﻿using EFCore.ChangeTriggers.SqlServer.Infrastructure;
 using EFCore.ChangeTriggers.SqlServer.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EFCore.ChangeTriggers.SqlServer.Extensions
+#pragma warning disable IDE0130 // Namespace does not match folder structure
+namespace EFCore.ChangeTriggers.SqlServer
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     public static class DbContextOptionsBuilderExtensions
     {

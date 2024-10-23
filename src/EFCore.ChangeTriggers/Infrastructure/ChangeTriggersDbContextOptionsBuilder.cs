@@ -1,5 +1,4 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.ChangeTriggers.Infrastructure

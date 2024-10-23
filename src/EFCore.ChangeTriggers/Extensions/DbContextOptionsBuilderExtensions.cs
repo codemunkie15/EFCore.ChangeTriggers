@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EFCore.ChangeTriggers.Extensions
+#pragma warning disable IDE0130 // Namespace does not match folder structure
+namespace EFCore.ChangeTriggers
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     internal static class DbContextOptionsBuilderExtensions
     {
