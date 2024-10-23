@@ -3,7 +3,7 @@ using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Helpers;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EFCore.ChangeTriggers.Metadata
+namespace EFCore.ChangeTriggers.Metadata.Builders
 {
     public static class EntityTypeBuilderExtensions
     {

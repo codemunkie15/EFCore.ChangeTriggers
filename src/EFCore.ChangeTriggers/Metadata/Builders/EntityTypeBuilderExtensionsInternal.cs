@@ -3,7 +3,7 @@ using EFCore.ChangeTriggers.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EFCore.ChangeTriggers.Metadata
+namespace EFCore.ChangeTriggers.Metadata.Builders
 {
     internal static class EntityTypeBuilderExtensionsInternal
     {

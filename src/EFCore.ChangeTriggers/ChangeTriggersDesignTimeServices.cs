@@ -1,4 +1,4 @@
-﻿using EFCore.ChangeTriggers.Migrations.CSharp;
+﻿using EFCore.ChangeTriggers.Migrations.Design;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Migrations.Design;
 using Microsoft.Extensions.DependencyInjection;

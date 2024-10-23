@@ -3,7 +3,7 @@ using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.ChangeTriggers.Migrations.Migrators
+namespace EFCore.ChangeTriggers.Migrations.Operations.OperationGenerators
 {
     internal class ChangeSourceSetChangeContextOperationGenerator<TChangeSource> : BaseSetChangeContextOperationGenerator, ISetChangeContextOperationGenerator
     {

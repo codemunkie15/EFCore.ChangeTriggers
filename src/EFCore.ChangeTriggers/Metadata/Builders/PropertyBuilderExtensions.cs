@@ -1,7 +1,7 @@
 ﻿using EFCore.ChangeTriggers.Constants;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EFCore.ChangeTriggers.Metadata
+namespace EFCore.ChangeTriggers.Metadata.Builders
 {
     internal static class PropertyBuilderExtensions
     {

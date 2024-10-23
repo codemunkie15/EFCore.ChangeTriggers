@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations.Design;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
-namespace EFCore.ChangeTriggers.Migrations.CSharp
+namespace EFCore.ChangeTriggers.Migrations.Design
 {
     internal class ChangeTriggersCSharpMigrationOperationGenerator : CSharpMigrationOperationGenerator
     {

@@ -1,5 +1,6 @@
 ﻿using EFCore.ChangeTriggers.Infrastructure;
 using EFCore.ChangeTriggers.Metadata;
+using EFCore.ChangeTriggers.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 

@@ -1,7 +1,9 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
+using EFCore.ChangeTriggers.Metadata;
+using EFCore.ChangeTriggers.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.ChangeTriggers.Metadata
+namespace EFCore.ChangeTriggers.Extensions
 {
     public static class ModelBuilderExtensions
     {

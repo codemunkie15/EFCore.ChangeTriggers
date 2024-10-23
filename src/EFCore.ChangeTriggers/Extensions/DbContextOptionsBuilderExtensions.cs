@@ -1,5 +1,4 @@
 ﻿using EFCore.ChangeTriggers.Migrations;
-using EFCore.ChangeTriggers.Migrations.Migrators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
