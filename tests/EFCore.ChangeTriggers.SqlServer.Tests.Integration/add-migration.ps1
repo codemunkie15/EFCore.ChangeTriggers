@@ -5,8 +5,6 @@ param(
     [string]$OutputDir = (Join-Path $MyInvocation.PSScriptRoot "Migrations")
 )
 
-$noBuildArgument = if ($Global:NoBuild) { "--no-build" } else { "" }
-
 if (Test-Path $OutputDir)
 {
 	Write-Host "Removing existing migrations..."
@@ -18,4 +16,4 @@ dotnet ef migrations add Initial `
 	--context $Context `
 	--output-dir $OutputDir `
 	--project (Join-Path $PSScriptRoot "EFCore.ChangeTriggers.SqlServer.Tests.Integration.csproj") `
-	$noBuildArgument
+	@(if ($Global:NoBuild) { "--no-build" } else { $null })
