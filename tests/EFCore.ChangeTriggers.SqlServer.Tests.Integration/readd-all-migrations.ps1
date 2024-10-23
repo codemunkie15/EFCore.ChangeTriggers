@@ -22,8 +22,7 @@ foreach ($persistenceDir in $persistenceDirs) {
     if (Test-Path $addMigrationScript) {
         Write-Host "Running add-migration.ps1 in: $($persistenceDir.FullName)"
 
-        $noBuildArgument = if ($loopCounter > 0) { "-NoBuild" } else { "" }
-        & $addMigrationScript $noBuildArgument
+        & $addMigrationScript
     } else {
         Write-Host "add-migration.ps1 not found in: $($persistenceDir.FullName)"
     }
