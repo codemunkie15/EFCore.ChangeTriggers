@@ -23,7 +23,7 @@ jobs:
         
       - name: "Re-scaffold integration test migrations"
         shell: pwsh
-        run: .\tests\EFCore.ChangeTriggers.SqlServer.Tests.Integration\readd-all-migrations.ps1
+        run: .\tests\EFCore.ChangeTriggers.SqlServer.Tests.Integration\readd-all-migrations.ps1 -verbose
 
       - name: Build solution
         run: dotnet build --configuration $BUILD_CONFIG
