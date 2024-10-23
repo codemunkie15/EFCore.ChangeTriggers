@@ -15,12 +15,12 @@ namespace EFCore.ChangeTriggers.Helpers
                 if (trackedEntityType != null)
                 {
                     throw new ChangeTriggersConfigurationException(
-                        $"Trigger name for tracked entity type '{trackedEntityType.Name}' cannot contain the value '{{0}}'.");
+                        ExceptionStrings.TriggerNameForEntityContainsFormatString(trackedEntityType.DisplayName()));
                 }
                 else
                 {
                     throw new ChangeTriggersConfigurationException(
-                        $"Trigger name cannot contain the value '{{0}}'.");
+                        ExceptionStrings.TriggerNameContainsFormatString());
                 }
             }
 

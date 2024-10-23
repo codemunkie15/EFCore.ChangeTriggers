@@ -2,9 +2,14 @@
 https://github.com/jpierson/to-markdown-table
  */
 
+
+/*
+https://github.com/jpierson/to-markdown-table
+ */
+
 using System.Reflection;
 
-namespace System.Linq
+namespace TestHarness
 {
     public static class LinqMarkdownTableExtensions
     {
@@ -15,8 +20,7 @@ namespace System.Linq
                 .GetRuntimeFields()
                 .Where(f => f.IsPublic);
 
-            var gettables = Enumerable.Union(
-                properties.Select(p => new { p.Name, GetValue = (Func<object, object>)p.GetValue, Type = p.PropertyType }),
+            var gettables = properties.Select(p => new { p.Name, GetValue = (Func<object, object>)p.GetValue, Type = p.PropertyType }).Union(
                 fields.Select(p => new { p.Name, GetValue = (Func<object, object>)p.GetValue, Type = p.FieldType }));
 
             var maxColumnValues = source
@@ -32,17 +36,17 @@ namespace System.Linq
             var headerLine = "| " + string.Join(" | ", columnNames.Select((n, i) => n.PadRight(maxColumnValues[i]))) + " |";
 
             var isNumeric = new Func<Type, bool>(type =>
-                type == typeof(Byte) ||
-                type == typeof(SByte) ||
-                type == typeof(UInt16) ||
-                type == typeof(UInt32) ||
-                type == typeof(UInt64) ||
-                type == typeof(Int16) ||
-                type == typeof(Int32) ||
-                type == typeof(Int64) ||
-                type == typeof(Decimal) ||
-                type == typeof(Double) ||
-                type == typeof(Single));
+                type == typeof(byte) ||
+                type == typeof(sbyte) ||
+                type == typeof(ushort) ||
+                type == typeof(uint) ||
+                type == typeof(ulong) ||
+                type == typeof(short) ||
+                type == typeof(int) ||
+                type == typeof(long) ||
+                type == typeof(decimal) ||
+                type == typeof(double) ||
+                type == typeof(float));
 
             var rightAlign = new Func<Type, char>(type => isNumeric(type) ? ':' : ' ');
 

@@ -1,10 +1,11 @@
-﻿using EFCore.ChangeTriggers.Configuration.ChangeTriggers;
-using EFCore.ChangeTriggers.Constants;
-using EFCore.ChangeTriggers.Extensions;
+﻿using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Helpers;
+using EFCore.ChangeTriggers.Infrastructure;
+using EFCore.ChangeTriggers.Metadata;
+using EFCore.ChangeTriggers.Migrations.Models;
 using EFCore.ChangeTriggers.Migrations.Operations;
-using EFCore.ChangeTriggers.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
@@ -17,17 +18,17 @@ namespace EFCore.ChangeTriggers.Migrations
 {
     public class ChangeTriggersMigrationsModelDiffer : MigrationsModelDiffer
     {
-        private readonly ChangeTriggersOptions changeTriggersOptions;
+        private readonly IDbContextOptions dbContextOptions;
 
         public ChangeTriggersMigrationsModelDiffer(
-            ChangeTriggersOptions changeTriggersOptions,
+            IDbContextOptions dbContextOptions,
             IRelationalTypeMappingSource typeMappingSource,
             IMigrationsAnnotationProvider migrationsAnnotationProvider,
             IRowIdentityMapFactory rowIdentityMapFactory,
             CommandBatchPreparerDependencies commandBatchPreparerDependencies)
             : base(typeMappingSource, migrationsAnnotationProvider, rowIdentityMapFactory, commandBatchPreparerDependencies)
         {
-            this.changeTriggersOptions = changeTriggersOptions;
+            this.dbContextOptions = dbContextOptions;
         }
 
         protected override IEnumerable<MigrationOperation> Diff(IRelationalModel? source, IRelationalModel? target, DiffContext diffContext)
@@ -137,17 +138,17 @@ namespace EFCore.ChangeTriggers.Migrations
 
         private IEnumerable<ChangeTrackedEntity> GetChangeTrackedEntites(IRelationalModel? model)
         {
-            var trackedEntityTypes = model?.Model.GetEntityTypes().Where(e => e.IsChangeTracked()) ?? Enumerable.Empty<IEntityType>();
+            var trackedEntityTypes = model?.Model.GetEntityTypes().Where(e => e.HasChangeTrigger()) ?? [];
 
             foreach (var trackedEntityType in trackedEntityTypes)
             {
-                yield return GetChangeTrackedEntity(trackedEntityType);
+                yield return CreateChangeTrackedEntity(trackedEntityType);
             }
         }
 
-        private ChangeTrackedEntity GetChangeTrackedEntity(IEntityType trackedEntityType)
+        private ChangeTrackedEntity CreateChangeTrackedEntity(IEntityType trackedEntityType)
         {
-            var changeEntityType = trackedEntityType.GetChangeEntityType();
+            var changeEntityType = trackedEntityType.GetTrackedEntityForeignKey().DeclaringEntityType;
             var changeTable = changeEntityType.GetTableMappings().First().Table;
 
             var changeTableProperties = changeEntityType.GetProperties().ToList();
@@ -219,6 +220,7 @@ namespace EFCore.ChangeTriggers.Migrations
 
             var triggerNameFormat = ChangeTriggerDefaults.TriggerNameFormat;
 
+            var changeTriggersOptions = dbContextOptions.Extensions.OfType<ChangeTriggersDbContextOptionsExtension>().First();
             if (changeTriggersOptions.TriggerNameFactory != null)
             {
                 triggerNameFormat = TriggerNameFormatHelper.GetTriggerNameFormat(changeTriggersOptions.TriggerNameFactory);

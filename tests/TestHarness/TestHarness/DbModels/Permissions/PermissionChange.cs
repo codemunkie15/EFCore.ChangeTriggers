@@ -1,10 +1,9 @@
-﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Models;
-using System;
+﻿using EFCore.ChangeTriggers;
+using EFCore.ChangeTriggers.Abstractions;
 
 namespace TestHarness.DbModels.Permissions
 {
-    public class PermissionChange : PermissionBase, IChange<Permission, int>
+    public class PermissionChange : PermissionBase, IChange<Permission>
     {
         public int ChangeId { get; set; }
 

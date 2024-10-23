@@ -1,5 +1,9 @@
 ﻿namespace EFCore.ChangeTriggers.Abstractions
 {
+    /// <summary>
+    /// Provides the change context for who changes are made by.
+    /// </summary>
+    /// <typeparam name="TChangedBy">The changed by type (either a static value e.g. a username string, or an EF Core entity).</typeparam>
     public abstract class ChangedByProvider<TChangedBy> : IChangedByProvider<TChangedBy>
     {
         public virtual TChangedBy GetChangedBy()
