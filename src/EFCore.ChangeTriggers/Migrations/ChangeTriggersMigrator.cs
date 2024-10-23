@@ -1,5 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Infrastructure;
-using EFCore.ChangeTriggers.Migrations.Operations.OperationGenerators;
+using EFCore.ChangeTriggers.Migrations.Operations.Generators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Migrations
 {

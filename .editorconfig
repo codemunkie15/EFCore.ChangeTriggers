@@ -5,3 +5,6 @@ dotnet_diagnostic.EF1001.severity = none
 
 # IDE0130: Namespace does not match folder structure
 dotnet_diagnostic.IDE0130.severity = error
+
+# IDE0059: Unnecessary assignment of a value
+dotnet_diagnostic.IDE0059.severity = warning

@@ -8,6 +8,7 @@ using System.Reflection;
 using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Migrations.Operations;
 using EFCore.ChangeTriggers.SqlServer.Templates;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EFCore.ChangeTriggers.SqlServer.Migrations
 {
@@ -104,10 +105,11 @@ namespace EFCore.ChangeTriggers.SqlServer.Migrations
 
         protected virtual void Generate(SetChangeContextOperation operation, IModel? model, MigrationCommandListBuilder builder)
         {
-            var nameTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(string))!;
+            var nameTypeMapping = Dependencies.TypeMappingSource.GetMapping(typeof(string));
 
-            var valueTypeMapping = Dependencies.TypeMappingSource.FindMapping(operation.ContextValueType)
-                ?? throw new InvalidOperationException($"The change context type {operation.ContextValueType} is not supported by the provider.");
+            var valueTypeMapping = model != null
+                ? Dependencies.TypeMappingSource.GetMappingForValue(operation.ContextValue, model)
+                : Dependencies.TypeMappingSource.GetMappingForValue(operation.ContextValue);
 
             builder
                 .Append("EXEC sp_set_session_context ")

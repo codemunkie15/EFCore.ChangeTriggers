@@ -1,4 +1,4 @@
-﻿using EFCore.ChangeTriggers.SqlServer.Extensions;
+﻿using EFCore.ChangeTriggers.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,9 +36,9 @@ var dbContext = host.Services.GetRequiredService<MyDbContext>();
 var testDataService = host.Services.GetRequiredService<TestDataService>();
 var testChangeQueriesService = host.Services.GetRequiredService<TestChangeQueriesService>();
 
-//await testDataService.CreateAsync();
+await testDataService.CreateAsync();
 
-await testChangeQueriesService.RunAsync();
+//await testChangeQueriesService.RunAsync();
 
 Console.ReadLine();
 

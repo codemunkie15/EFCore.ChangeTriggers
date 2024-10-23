@@ -1,5 +1,6 @@
 ﻿using EFCore.ChangeTriggers;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using TestHarness.DbModels.PaymentMethods;
 using TestHarness.DbModels.Permissions;
 using TestHarness.DbModels.Users;
@@ -22,6 +23,19 @@ namespace TestHarness
             : base(options)
         {
 
+        }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            Debugger.Launch();
+
+            configurationBuilder
+                .DefaultTypeMapping<ChangeSourceType>()
+                .HasConversion<string>();
+
+            configurationBuilder
+                .Properties<ChangeSourceType>()
+                .HaveConversion<string>();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,6 +61,18 @@ namespace TestHarness
                 e.HasKey(u => u.ChangeId);
                 e.Property(u => u.Name).IsRequired();
                 e.Property(u => u.DateOfBirth).IsRequired();
+
+                e.HasData(new
+                {
+                    ChangeId = 50,
+                    ChangedById = 1,
+                    ChangeSource = ChangeSourceType.Migration,
+                    ChangedAt = DateTimeOffset.UtcNow,
+                    OperationType = OperationType.Insert,
+                    Id = 1,
+                    Name = "Test",
+                    DateOfBirth = "Test"
+                });
             });
 
             modelBuilder.Entity<Permission>(e =>

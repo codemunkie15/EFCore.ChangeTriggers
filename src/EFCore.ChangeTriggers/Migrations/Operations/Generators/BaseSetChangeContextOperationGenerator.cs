@@ -1,8 +1,7 @@
 ﻿using EFCore.ChangeTriggers.Metadata;
-using EFCore.ChangeTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.ChangeTriggers.Migrations.Operations.OperationGenerators
+namespace EFCore.ChangeTriggers.Migrations.Operations.Generators
 {
     internal abstract class BaseSetChangeContextOperationGenerator
     {
@@ -11,8 +10,7 @@ namespace EFCore.ChangeTriggers.Migrations.Operations.OperationGenerators
             return new SetChangeContextOperation
             {
                 ContextName = name,
-                ContextValue = model.GetRawValue<TContextValue>(value),
-                ContextValueType = model.GetRawValueType(typeof(TContextValue))
+                ContextValue = model.GetRawValue(value)
             };
         }
     }

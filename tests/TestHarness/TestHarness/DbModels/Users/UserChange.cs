@@ -3,13 +3,13 @@ using EFCore.ChangeTriggers.Abstractions;
 
 namespace TestHarness.DbModels.Users
 {
-    public class UserChange : UserBase, IChange<User>, IHasChangeSource<string>, IHasChangedBy<User>
+    public class UserChange : UserBase, IChange<User>, IHasChangeSource<ChangeSourceType>, IHasChangedBy<User>
     {
         public int ChangeId { get; set; }
 
         public OperationType OperationType { get; set; }
 
-        public string ChangeSource { get; set; }
+        public ChangeSourceType ChangeSource { get; set; }
 
         public DateTimeOffset ChangedAt { get; set; }
 

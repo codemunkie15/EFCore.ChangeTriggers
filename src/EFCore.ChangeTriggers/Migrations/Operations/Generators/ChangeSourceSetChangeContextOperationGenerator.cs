@@ -1,9 +1,8 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.Constants;
-using EFCore.ChangeTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.ChangeTriggers.Migrations.Operations.OperationGenerators
+namespace EFCore.ChangeTriggers.Migrations.Operations.Generators
 {
     internal class ChangeSourceSetChangeContextOperationGenerator<TChangeSource> : BaseSetChangeContextOperationGenerator, ISetChangeContextOperationGenerator
     {

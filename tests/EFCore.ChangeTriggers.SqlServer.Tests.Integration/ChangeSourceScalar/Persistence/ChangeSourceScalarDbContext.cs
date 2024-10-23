@@ -1,5 +1,4 @@
-﻿using EFCore.ChangeTriggers.Extensions;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
+﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -20,6 +19,8 @@ public class ChangeSourceScalarDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.AutoConfigureChangeTriggers();
+
         modelBuilder.Entity<ChangeSourceScalarUser>(u =>
         {
             u.Property(u => u.Id).ValueGeneratedNever();
@@ -37,7 +38,5 @@ public class ChangeSourceScalarDbContext : DbContext
         {
             uc.HasKey(uc => uc.ChangeId);
         });
-
-        modelBuilder.AutoConfigureChangeTriggers();
     }
 }

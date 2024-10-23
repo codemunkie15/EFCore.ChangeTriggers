@@ -1,6 +1,4 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Metadata;
-using EFCore.ChangeTriggers.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
 #pragma warning disable IDE0130 // Namespace does not match folder structure

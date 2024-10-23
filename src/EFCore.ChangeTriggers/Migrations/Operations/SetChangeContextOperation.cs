@@ -7,7 +7,5 @@ namespace EFCore.ChangeTriggers.Migrations.Operations
         public required string ContextName { get; set; }
 
         public object? ContextValue { get; set; }
-
-        public required Type ContextValueType { get; set; }
     }
 }

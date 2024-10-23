@@ -21,28 +21,42 @@ namespace EFCore.ChangeTriggers.Interceptors
 
         public override void ConnectionOpened(DbConnection connection, ConnectionEndEventData eventData)
         {
+            if (eventData.Context == null)
+            {
+                // TODO: what exception?
+                throw new Exception("");
+            }
+
             var changedBy = changeTriggersExtensionContext.IsMigrationRunning
                 ? changedByProvider.GetMigrationChangedBy()
                 : changedByProvider.GetChangedBy();
 
-            var changedByRawValue = eventData.Context?.Model.GetRawValue<TChangedBy>(changedBy);
+            var changedByRawValue = eventData.Context.Model.GetRawValue(changedBy); // TODO: Is there a better way to get this?
+            var changedByProviderValue = eventData.Context.Model.ConvertToProvider(changedByRawValue);
 
-            SetChangedByChangeContext(eventData, changedByRawValue);
+            SetChangedByChangeContext(eventData, changedByProviderValue);
         }
 
         public override async Task ConnectionOpenedAsync(DbConnection connection, ConnectionEndEventData eventData, CancellationToken cancellationToken = new())
         {
+            if (eventData.Context == null)
+            {
+                // TODO: what exception?
+                throw new Exception("");
+            }
+
             var changedBy = changeTriggersExtensionContext.IsMigrationRunning
                 ? await changedByProvider.GetMigrationChangedByAsync()
                 : await changedByProvider.GetChangedByAsync();
 
-            var changedByRawValue = eventData.Context?.Model.GetRawValue<TChangedBy>(changedBy);
+            var changedByRawValue = eventData.Context.Model.GetRawValue(changedBy);
+            var changedByProviderValue = eventData.Context.Model.ConvertToProvider(changedByRawValue);
 
-            await SetChangedByChangeContextAsync(eventData, changedByRawValue, cancellationToken);
+            await SetChangedByChangeContextAsync(eventData, changedByProviderValue, cancellationToken);
         }
 
-        protected abstract void SetChangedByChangeContext(ConnectionEndEventData eventData, object? changedByRawValue);
+        protected abstract void SetChangedByChangeContext(ConnectionEndEventData eventData, object? changedByProviderValue);
 
-        protected abstract Task SetChangedByChangeContextAsync(ConnectionEndEventData eventData, object? changedByRawValue, CancellationToken cancellationToken);
+        protected abstract Task SetChangedByChangeContextAsync(ConnectionEndEventData eventData, object? changedByProviderValue, CancellationToken cancellationToken);
     }
 }

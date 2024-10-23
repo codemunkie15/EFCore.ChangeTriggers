@@ -1,7 +1,6 @@
-﻿using EFCore.ChangeTriggers.Migrations.Operations;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.ChangeTriggers.Migrations.Operations.OperationGenerators
+namespace EFCore.ChangeTriggers.Migrations.Operations.Generators
 {
     internal interface ISetChangeContextOperationGenerator
     {

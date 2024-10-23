@@ -2,7 +2,6 @@
 using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Infrastructure;
 using EFCore.ChangeTriggers.Interceptors;
-using EFCore.ChangeTriggers.SqlServer.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -21,21 +20,17 @@ namespace EFCore.ChangeTriggers.SqlServer.Interceptors
 
         protected override void SetChangeSourceChangeContext(
             ConnectionEndEventData eventData,
-            object? changeSourceRawValue)
+            object? changeSourceProviderValue)
         {
-            var changeSourceProviderValue = eventData.Context?.ConvertToProvider<TChangeSource>(changeSourceRawValue);
-
             eventData.Context!.Database.ExecuteSql(
                 $"EXEC sp_set_session_context {ChangeContextConstants.ChangeSourceContextName}, {changeSourceProviderValue}");
         }
 
         protected override async Task SetChangeSourceChangeContextAsync(
             ConnectionEndEventData eventData,
-            object? changeSourceRawValue,
+            object? changeSourceProviderValue,
             CancellationToken cancellationToken)
         {
-            var changeSourceProviderValue = eventData.Context?.ConvertToProvider<TChangeSource>(changeSourceRawValue);
-
             await eventData.Context!.Database.ExecuteSqlAsync(
                 $"EXEC sp_set_session_context {ChangeContextConstants.ChangeSourceContextName}, {changeSourceProviderValue}",
                 cancellationToken);

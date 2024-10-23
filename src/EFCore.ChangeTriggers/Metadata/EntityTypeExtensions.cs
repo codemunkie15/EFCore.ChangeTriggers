@@ -30,7 +30,8 @@ namespace EFCore.ChangeTriggers.Metadata
         {
             return entityType.GetForeignKeys().FirstOrDefault(fk => fk.IsTrackedEntityForeignKey()) ??
                 entityType.GetReferencingForeignKeys().FirstOrDefault(fk => fk.IsTrackedEntityForeignKey()) ??
-                throw new ChangeTriggersConfigurationException($"The entity {entityType.Name} has no tracked entity foreign key annotation.");
+                throw new ChangeTriggersConfigurationException(
+                    ExceptionStrings.NoTrackedEntityForeignKeyConfigured(entityType.DisplayName()));
         }
 
         public static string? GetTriggerNameFormat(this IReadOnlyEntityType entityType)
@@ -50,16 +51,12 @@ namespace EFCore.ChangeTriggers.Metadata
 
         public static void EnsureSinglePrimaryKey(this IReadOnlyEntityType entityType)
         {
-            var primaryKey = entityType.FindPrimaryKey();
-
-            if (primaryKey is null)
-            {
-                throw new ChangeTriggersConfigurationException($"{entityType.Name} must have a primary key property to use change triggers.");
-            }
+            var primaryKey = entityType.FindPrimaryKey()
+                ?? throw new ChangeTriggersConfigurationException(ExceptionStrings.NoPrimaryKeyConfigured(entityType.DisplayName()));
 
             if (primaryKey.Properties.Count > 1)
             {
-                throw new ChangeTriggersConfigurationException($"{entityType.Name} must only have one primary key property to use change triggers.");
+                throw new ChangeTriggersConfigurationException(ExceptionStrings.MoreThanOnePrimaryKeyConfigured(entityType.DisplayName()));
             }
         }
     }

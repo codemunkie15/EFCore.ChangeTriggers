@@ -15,7 +15,7 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
             // Configure relationship between TTracked and TChange using primary key as foreign key
             var trackedTablePrimaryKey = builder.Metadata.FindPrimaryKey()
                 ?? throw new ChangeTriggersConfigurationException(
-                    $"Tracked entity type '{builder.Metadata.Name}' must have a primary key configured to use change triggers.");
+                    ExceptionStrings.NoPrimaryKeyConfigured(builder.Metadata.DisplayName()));
 
             builder
                 .HasMany(nameof(ITracked<object>.Changes))
@@ -46,6 +46,10 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
 
         public static EntityTypeBuilder HasChangedByInternal(this EntityTypeBuilder builder, Type changedByClrType)
         {
+            const string changedByPropertyName = nameof(IHasChangedBy<object>.ChangedBy);
+
+            builder.EnsureSameClrType(changedByPropertyName, changedByClrType);
+
             var changedByEntity = builder.Metadata.Model.FindEntityType(changedByClrType);
             if (changedByEntity != null)
             {
@@ -54,7 +58,7 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
                 changedByEntity.EnsureSinglePrimaryKey();
 
                 builder
-                    .HasOne(changedByClrType, nameof(IHasChangedBy<object>.ChangedBy))
+                    .HasOne(changedByClrType, changedByPropertyName)
                     .WithMany()
                     .IsChangedByForeignKey();
             }
@@ -70,6 +74,10 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
 
         public static EntityTypeBuilder HasChangeSourceInternal(this EntityTypeBuilder builder, Type changeSourceClrType)
         {
+            const string changeSourcePropertyName = nameof(IHasChangeSource<object>.ChangeSource);
+
+            builder.EnsureSameClrType(changeSourcePropertyName, changeSourceClrType);
+
             var changeSourceEntity = builder.Metadata.Model.FindEntityType(changeSourceClrType);
             if (changeSourceEntity != null)
             {
@@ -78,7 +86,7 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
                 changeSourceEntity.EnsureSinglePrimaryKey();
 
                 builder
-                    .HasOne(changeSourceClrType, nameof(IHasChangeSource<object>.ChangeSource))
+                    .HasOne(changeSourceClrType, changeSourcePropertyName)
                     .WithMany()
                     .IsChangeSourceForeignKey();
             }
@@ -90,6 +98,23 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
             }
 
             return builder;
+        }
+
+        public static void EnsureSameClrType(this EntityTypeBuilder builder, string propertyName, Type clrType)
+        {
+            var property = builder.Metadata.FindProperty(propertyName);
+            if (property != null && property.ClrType != clrType)
+            {
+                throw new ChangeTriggersConfigurationException(ExceptionStrings.PropertyTypeDoesNotMatch(
+                    builder.Metadata.DisplayName(), propertyName, property.ClrType.ToString(), clrType.ToString()));
+            }
+
+            var navigation = builder.Metadata.FindNavigation(propertyName);
+            if (navigation != null && navigation.ClrType != clrType)
+            {
+                throw new ChangeTriggersConfigurationException(ExceptionStrings.PropertyTypeDoesNotMatch(
+                    builder.Metadata.DisplayName(), propertyName, navigation.ClrType.ToString(), clrType.ToString()));
+            }
         }
     }
 }
