@@ -3,7 +3,7 @@ $persistenceDirs = Get-ChildItem -Recurse -Directory | Where-Object { $_.FullNam
 
 Write-Host "Found $($persistenceDirs.Count) directories to process..."
 
-# Delete current migrations
+# Delete current migrations in-case running locally
 foreach ($persistenceDir in $persistenceDirs) {
     $migrationsPath = Join-Path $persistenceDir.FullName "Migrations"
     
