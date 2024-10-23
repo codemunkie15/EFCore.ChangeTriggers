@@ -1,7 +1,9 @@
 $global:NoBuild = $false
 $persistenceDirs = Get-ChildItem -Recurse -Directory | Where-Object { $_.FullName -like "$PSScriptRoot\*Persistence" }
 
-Write-Output "Found $($persistenceDirs.Count) directories to process..."
+Write-Output $PSScriptRoot
+
+Write-Host "Found $($persistenceDirs.Count) directories to process..."
 
 # Delete current migrations before rebuild
 foreach ($persistenceDir in $persistenceDirs) {
