@@ -1,0 +1,86 @@
+﻿@page
+@using EFCore.ChangeTriggers
+@model A_AspNetCore.Pages.Roles.IndexModel
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<h1>Roles</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Role[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Role[0].Enabled)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Role) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Enabled)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<h3>History</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Operation</th>
+            <th>Changed at</th>
+            <th>Changed by</th>
+            <th>Change source</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.RoleChanges)
+        {
+            <tr>
+                <td>
+                    @switch (item.OperationType)
+                    {
+                        case OperationType.Insert:
+                            <text>Role created</text>
+                            break;
+                        case OperationType.Update:
+                            <text>Role updated</text>
+                            break;
+                        case OperationType.Delete:
+                            <text>Role deleted</text>
+                            break;
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChangedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChangedBy.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChangeSource)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

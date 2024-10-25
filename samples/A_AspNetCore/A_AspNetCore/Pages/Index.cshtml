@@ -1,0 +1,12 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>This sample shows the use of ChangeTriggers with ASP.NET Core.</p>
+    <p>ChangedBy and ChangeSource columns have been configured and <a href="https://github.com/codemunkie15/EFCore.ChangeTriggers/tree/main/src/EFCore.ChangeTriggers.ChangeEventQueries" target="_blank">ChangeEventQueries</a> is used to individual property changes in a table for each entity.</p>
+    <p>If you perform some CRUD operations on the <a asp-page="/Users/Index">User</a> or <a asp-page="/Roles/Index">Role</a> entities, you should see changes being tracked and displayed.</p>
+</div>

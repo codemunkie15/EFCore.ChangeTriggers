@@ -1,0 +1,94 @@
+﻿@page
+@using EFCore.ChangeTriggers
+@model A_AspNetCore.Pages.Users.IndexModel
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h1>Users</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Users[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Users[0].DateOfBirth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Users[0].Role)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Users) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfBirth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Role.Id)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<br>
+
+<h3>History</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Operation</th>
+            <th>Changed at</th>
+            <th>Changed by</th>
+            <th>Change source</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.UserChanges)
+        {
+            <tr>
+                <td>
+                    @switch (item.OperationType)
+                    {
+                        case OperationType.Insert:
+                            <text>User created</text>
+                            break;
+                        case OperationType.Update:
+                            <text>User updated</text>
+                            break;
+                        case OperationType.Delete:
+                            <text>User deleted</text>
+                            break;
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChangedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChangedBy.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChangeSource)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
