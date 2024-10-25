@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.MsSql;
 
@@ -11,7 +12,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
 
         public abstract bool MigrateDatabase { get; }
 
-        protected MsSqlContainer msSqlContainer;
+        private MsSqlContainer msSqlContainer;
 
         public virtual async Task InitializeAsync()
         {
@@ -21,7 +22,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
 
             await msSqlContainer.StartAsync();
 
-            Services = BuildServiceProvider(msSqlContainer.GetConnectionString());
+            Services = BuildServiceProvider(GetChangeTriggersConnectionString());
 
             if (MigrateDatabase)
             {
@@ -38,8 +39,16 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
 
         protected abstract IServiceProvider BuildServiceProvider(string connectionString);
 
-        protected virtual void SetMigrationChangeContext()
+        protected virtual void SetMigrationChangeContext() { }
+
+        private string GetChangeTriggersConnectionString()
         {
+            var builder = new SqlConnectionStringBuilder(msSqlContainer.GetConnectionString())
+            {
+                InitialCatalog = "ChangeTriggers"
+            };
+
+            return builder.ToString();
         }
     }
 }
