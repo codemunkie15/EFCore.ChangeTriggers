@@ -42,8 +42,7 @@ namespace A_AspNetCore.Pages.Users
                     .AddChanges(_context.UserChanges.Where(c => c.Id == id), builder =>
                     {
                         builder
-                            .AddProperty("Name changed", c => c.Name)
-                            .AddProperty("Date of birth changed", c => c.DateOfBirth)
+                            .AddEntityProperties()
                             .AddProperty("Role changed", c => c.Role.Name);
                     })
                     .Build()

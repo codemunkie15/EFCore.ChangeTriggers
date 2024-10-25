@@ -18,6 +18,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
         private readonly DbContext context;
         private readonly IQueryable<TChange> dbSet;
         private List<IQueryable<TChangeEvent>> changeQueries = new();
+        private Expression<Func<TChange, TChange, bool>>? cachedTrackedEntityForeignKeysAreEqualExpression;
 
         public BaseChangeEventEntityQueryBuilder(DbContext context, IQueryable<TChange> dbSet)
         {
@@ -35,19 +36,19 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
             string description,
             Expression<Func<TChange, string>> valueSelector)
         {
-            var trackedTablePrimaryKeysAreEqual = GetTrackedTablePrimaryKeysAreEqualExpression();
+            var trackedTablePrimaryKeysAreEqual = GetTrackedEntityForeignKeysAreEqualExpression();
 
             var baseQuery =
-                from uc in dbSet.AsExpandable()
-                from puc in dbSet.AsExpandable()
-                    .Where(puc => trackedTablePrimaryKeysAreEqual.Invoke(puc, uc) && puc.ChangedAt < uc.ChangedAt)
-                    .OrderByDescending(puc => puc.ChangedAt)
+                from c in dbSet.AsExpandable()
+                from pc in dbSet.AsExpandable()
+                    .Where(pc => trackedTablePrimaryKeysAreEqual.Invoke(pc, c) && pc.ChangedAt < c.ChangedAt)
+                    .OrderByDescending(pc => pc.ChangedAt)
                     .Take(1)
-                where !valueSelector.Invoke(puc).Equals(valueSelector.Invoke(uc)) // TODO: Should this compare on the string value or original column value?
+                where !valueSelector.Invoke(pc).Equals(valueSelector.Invoke(c)) // TODO: Should this compare on the string value or original column value?
                 select new JoinedChanges<TChange>
                 {
-                    ChangeEntity = uc,
-                    PreviousChangeEntity = puc
+                    ChangeEntity = c,
+                    PreviousChangeEntity = pc
                 };
 
             var query = ProjectToResult(baseQuery, description, valueSelector);
@@ -70,7 +71,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
 
             foreach (var propertyName in entityPropertyNames)
             {
-                var expression = GetValueSelectorExpression(propertyName);
+                var expression = GetDefaultValueSelectorExpression(propertyName);
                 var description = descriptionBuilder is not null ? descriptionBuilder(propertyName) : $"{propertyName} changed";
 
                 AddProperty($"{description}", expression);
@@ -103,28 +104,34 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
             return changeQueries.Aggregate(Queryable.Concat);
         }
 
-        private Expression<Func<TChange, TChange, bool>> GetTrackedTablePrimaryKeysAreEqualExpression()
+        private Expression<Func<TChange, TChange, bool>> GetTrackedEntityForeignKeysAreEqualExpression()
         {
-            var changeEntityType = context.Model.FindEntityType(typeof(TChange))!;
-            var trackedEntityForeignKeyProperties = changeEntityType.GetTrackedEntityForeignKey().Properties;
-
-            var currentChangeParam = Expression.Parameter(typeof(TChange));
-            var previousChangeParam = Expression.Parameter(typeof(TChange));
-
-            var expressions = new List<Expression>();
-
-            foreach (var foreignKeyProperty in trackedEntityForeignKeyProperties)
+            if (cachedTrackedEntityForeignKeysAreEqualExpression == null)
             {
-                var propertyName = foreignKeyProperty.Name;
-                var currentChangeProperty = Expression.PropertyOrField(currentChangeParam, propertyName);
-                var previousChangeProperty = Expression.PropertyOrField(previousChangeParam, propertyName);
+                var changeEntityType = context.Model.FindEntityType(typeof(TChange))!;
+                var trackedEntityForeignKeyProperties = changeEntityType.GetTrackedEntityForeignKey().Properties;
 
-                var equal = Expression.Equal(currentChangeProperty, previousChangeProperty);
-                expressions.Add(equal);
+                var currentChangeParam = Expression.Parameter(typeof(TChange));
+                var previousChangeParam = Expression.Parameter(typeof(TChange));
+
+                var expressions = new List<Expression>();
+
+                foreach (var foreignKeyProperty in trackedEntityForeignKeyProperties)
+                {
+                    var propertyName = foreignKeyProperty.Name;
+                    var currentChangeProperty = Expression.PropertyOrField(currentChangeParam, propertyName);
+                    var previousChangeProperty = Expression.PropertyOrField(previousChangeParam, propertyName);
+
+                    var equal = Expression.Equal(currentChangeProperty, previousChangeProperty);
+                    expressions.Add(equal);
+                }
+
+                var aggregatedExpression = expressions.Aggregate(Expression.AndAlso);
+                cachedTrackedEntityForeignKeysAreEqualExpression = Expression.Lambda<Func<TChange, TChange, bool>>(
+                    aggregatedExpression, currentChangeParam, previousChangeParam);
             }
 
-            var aggregatedExpression = expressions.Aggregate(Expression.AndAlso);
-            return Expression.Lambda<Func<TChange, TChange, bool>>(aggregatedExpression, currentChangeParam, previousChangeParam);
+            return cachedTrackedEntityForeignKeysAreEqualExpression;
         }
 
         private IEnumerable<string> GetEntityPropertyNames()
@@ -140,11 +147,15 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
                 .Select(p => p.Name);
         }
 
-        private Expression<Func<TChange, string>> GetValueSelectorExpression(string propertyName)
+        private Expression<Func<TChange, string>> GetDefaultValueSelectorExpression(string propertyName)
         {
             var changeParameter = Expression.Parameter(typeof(TChange));
             var changeProperty = Expression.PropertyOrField(changeParameter, propertyName);
-            return Expression.Lambda<Func<TChange, string>>(changeProperty, changeParameter);
+
+            // Convert to string
+            var changePropertyAsString = Expression.Call(changeProperty, nameof(ToString), Type.EmptyTypes);
+
+            return Expression.Lambda<Func<TChange, string>>(changePropertyAsString, changeParameter);
         }
     }
 }

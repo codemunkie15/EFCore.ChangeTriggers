@@ -11,7 +11,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builder
     public abstract class BaseChangeEventQueryBuilder<TChangeEvent>
     {
         protected readonly DbContext context;
-        private List<IQueryable<TChangeEvent>> changeQueries = new();
+        private List<IQueryable<TChangeEvent>> changeQueries = [];
 
         public BaseChangeEventQueryBuilder(DbContext context)
         {
