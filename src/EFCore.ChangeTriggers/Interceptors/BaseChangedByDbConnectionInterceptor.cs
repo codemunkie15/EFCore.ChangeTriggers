@@ -3,6 +3,7 @@ using EFCore.ChangeTriggers.Infrastructure;
 using EFCore.ChangeTriggers.Metadata;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
+using System.Diagnostics;
 
 namespace EFCore.ChangeTriggers.Interceptors
 {
@@ -21,6 +22,8 @@ namespace EFCore.ChangeTriggers.Interceptors
 
         public override void ConnectionOpened(DbConnection connection, ConnectionEndEventData eventData)
         {
+            Debugger.Launch();
+
             if (eventData.Context == null)
             {
                 // TODO: what exception?

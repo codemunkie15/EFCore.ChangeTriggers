@@ -2,6 +2,7 @@
 using EFCore.ChangeTriggers.Constants;
 using EFCore.ChangeTriggers.Infrastructure;
 using EFCore.ChangeTriggers.Interceptors;
+using EFCore.ChangeTriggers.SqlServer.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -22,6 +23,12 @@ namespace EFCore.ChangeTriggers.SqlServer.Interceptors
             ConnectionEndEventData eventData,
             object? changeSourceProviderValue)
         {
+            if (eventData.Connection.IsMasterDatabase())
+            {
+                // Database is probably being created, so don't set session context.
+                return;
+            }
+
             eventData.Context!.Database.ExecuteSql(
                 $"EXEC sp_set_session_context {ChangeContextConstants.ChangeSourceContextName}, {changeSourceProviderValue}");
         }
@@ -31,6 +38,12 @@ namespace EFCore.ChangeTriggers.SqlServer.Interceptors
             object? changeSourceProviderValue,
             CancellationToken cancellationToken)
         {
+            if (eventData.Connection.IsMasterDatabase())
+            {
+                // Database is probably being created, so don't set session context.
+                return;
+            }
+
             await eventData.Context!.Database.ExecuteSqlAsync(
                 $"EXEC sp_set_session_context {ChangeContextConstants.ChangeSourceContextName}, {changeSourceProviderValue}",
                 cancellationToken);
