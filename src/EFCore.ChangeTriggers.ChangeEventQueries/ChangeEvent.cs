@@ -23,20 +23,30 @@
 
         public TChangeSource? ChangeSource { get; set; }
     }
+}
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
+namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy
+#pragma warning restore IDE0130 // Namespace does not match folder structure
+{
     /// <summary>
     /// Represents a data change to a property.
     /// </summary>
-    public class ChangeSourceChangeEvent<TChangeSource> : ChangeEvent
-    {
-        public TChangeSource? ChangeSource { get; set; }
-    }
-
-    /// <summary>
-    /// Represents a data change to a property.
-    /// </summary>
-    public class ChangedByChangeEvent<TChangedBy> : ChangeEvent
+    public class ChangeEvent<TChangedBy> : ChangeEvent
     {
         public TChangedBy? ChangedBy { get; set; }
+    }
+}
+
+#pragma warning disable IDE0130 // Namespace does not match folder structure
+namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangeSource
+#pragma warning restore IDE0130 // Namespace does not match folder structure
+{
+    /// <summary>
+    /// Represents a data change to a property.
+    /// </summary>
+    public class ChangeEvent<TChangeSource> : ChangeEvent
+    {
+        public TChangeSource? ChangeSource { get; set; }
     }
 }

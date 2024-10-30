@@ -12,7 +12,6 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
 

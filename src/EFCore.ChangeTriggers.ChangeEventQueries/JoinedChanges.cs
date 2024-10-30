@@ -1,4 +1,4 @@
-﻿namespace EFCore.ChangeTriggers.ChangeEventQueries.EntityBuilder
+﻿namespace EFCore.ChangeTriggers.ChangeEventQueries
 {
     /// <summary>
     /// Represents a join between a change entity and the previous change entity for determining old and new values.
