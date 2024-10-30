@@ -15,26 +15,51 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
         where TChangeEvent : ChangeEvent
     {
         private readonly IQueryable query;
-        private readonly DbContext dbContext;
+        private readonly ChangePair<ParameterExpression> changeParams;
+        private readonly Type cpGenericType;
+        private readonly ParameterExpression cpJoinParam;
+        private readonly ChangePair<MemberExpression> cpJoinProps;
+        private readonly PropertyInfo changedAtProp;
+        private readonly BinaryExpression foreignKeyEqualityCondition;
 
         public BaseChangeEventQueryPropertyBuilder(IQueryable query)
         {
             query.EnsureElementType<IChange>();
 
             this.query = query;
-            dbContext = GetDbContext(query);
+
+            changeParams = new()
+            {
+                Current = Expression.Parameter(query.ElementType, "c"),
+                Previous = Expression.Parameter(query.ElementType, "pc")
+            };
+
+            cpGenericType = typeof(ChangePair<>).MakeGenericType(query.ElementType);
+            cpJoinParam = Expression.Parameter(cpGenericType, "cp");
+            cpJoinProps = new()
+            {
+                Current = Expression.Property(cpJoinParam, nameof(ChangePair<object>.Current)),
+                Previous = Expression.Property(cpJoinParam, nameof(ChangePair<object>.Previous))
+            };
+
+            changedAtProp = query.ElementType.GetProperty(nameof(IChange.ChangedAt))!;
+            foreignKeyEqualityCondition = BuildForeignKeyEqualityCondition();
         }
 
         public IQueryable<TChangeEvent> BuildChangeEventQuery(LambdaExpression valueSelector)
         {
+            var selectors = new ChangePair<Expression>
+            {
+                Current = new ParameterReplaceVisitor(valueSelector.Parameters[0], cpJoinProps.Current).Visit(valueSelector.Body),
+                Previous = new ParameterReplaceVisitor(valueSelector.Parameters[0], cpJoinProps.Previous).Visit(valueSelector.Body)
+            };
+
             var selectManyExpression = BuildSelectManyExpression();
-            var filteredExpression = ApplyFilterToJoinedChanges(selectManyExpression, valueSelector);
-            var finalSelectExpression = BuildChangeEventProjection(filteredExpression, valueSelector);
+            var filteredExpression = BuildChangePairWhereClause(selectManyExpression, selectors);
+            var finalSelectExpression = BuildChangeEventProjection(filteredExpression, selectors);
 
             return query.Provider.CreateQuery<TChangeEvent>(finalSelectExpression);
         }
-
-        protected virtual IEnumerable<MemberBinding> GetAdditionalChangeEventPropertyBindings(MemberExpression changeEntity) => [];
 
         protected MemberBinding BuildChangeEventPropertyBinding<TResult>(Expression<Func<TChangeEvent, TResult>> memberExpression, Expression selector)
         {
@@ -42,117 +67,83 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
             return Expression.Bind(memberInfo, selector);
         }
 
-        private DbContext GetDbContext(IQueryable query)
+        protected virtual IEnumerable<MemberBinding> GetAdditionalChangeEventPropertyBindings(MemberExpression changeEntity) => [];
+
+        private MethodCallExpression BuildSelectManyExpression()
         {
-            if (query is IInfrastructure<IServiceProvider> infrastructure)
-            {
-                var dbContextServices = infrastructure.Instance.GetRequiredService<IDbContextServices>();
-                return dbContextServices.CurrentContext.Context;
-            }
-
-            throw new ChangeEventQueryException("The provided query is not an EF Core queryable.");
-        }
-
-        private Expression BuildSelectManyExpression()
-        {
-            var changedAtProperty = query.ElementType.GetProperty(nameof(IChange.ChangedAt))!;
-            var c = Expression.Parameter(query.ElementType, "c");
-            var pc = Expression.Parameter(query.ElementType, "pc");
-
-            var foreignKeyEqualityCondition = BuildTrackedEntityForeignKeysAreEqualExpression(c, pc);
             var whereCondition = Expression.LessThan(
-                Expression.Property(pc, changedAtProperty),
-                Expression.Property(c, changedAtProperty));
+                Expression.Property(changeParams.Previous, changedAtProp),
+                Expression.Property(changeParams.Current, changedAtProp));
 
             var combinedCondition = Expression.AndAlso(whereCondition, foreignKeyEqualityCondition);
-            var innerWhere = ApplyWhere(query.Expression, combinedCondition, pc);
+            var innerWhere = ApplyWhere(query.Expression, combinedCondition, changeParams.Previous);
 
-            var innerOrderBy = ApplyOrderByDescending(innerWhere, changedAtProperty, pc);
+            var innerOrderBy = ApplyOrderByDescending(innerWhere, changedAtProp, changeParams.Previous);
             var innerTake = ApplyTake(innerOrderBy, 1);
 
-            return BuildSelectMany(c, innerTake);
+            return BuildSelectMany(innerTake);
         }
 
-        private Expression BuildTrackedEntityForeignKeysAreEqualExpression(ParameterExpression c, ParameterExpression pc)
+        private MethodCallExpression BuildSelectMany(Expression innerExpression)
         {
+            var cpConstructor = cpGenericType.GetConstructor(Type.EmptyTypes)!;
+            var collectionSelector = Expression.Lambda(
+                typeof(Func<,>).MakeGenericType(query.ElementType, typeof(IEnumerable<>).MakeGenericType(query.ElementType)),
+                innerExpression,
+                changeParams.Current);
+
+            var joinedChangesInit = Expression.MemberInit(
+                Expression.New(cpConstructor),
+                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<object>.Current))!, changeParams.Current),
+                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<object>.Previous))!, changeParams.Previous)
+            );
+
+            var resultSelector = Expression.Lambda(joinedChangesInit, changeParams.Current, changeParams.Previous);
+
+            return Expression.Call(
+                typeof(Queryable),
+                nameof(Queryable.SelectMany),
+                [query.ElementType, query.ElementType, cpGenericType],
+                query.Expression,
+                collectionSelector,
+                resultSelector);
+        }
+
+        private BinaryExpression BuildForeignKeyEqualityCondition()
+        {
+            var dbContext = query.GetDbContext();
             var changeEntityType = dbContext.Model.FindEntityType(query.ElementType)!;
 
             return changeEntityType
                 .GetTrackedEntityForeignKey()
                 .Properties
                 .Select(prop => Expression.Equal(
-                    Expression.Property(c, prop.PropertyInfo!),
-                    Expression.Property(pc, prop.Name)))
+                    Expression.Property(changeParams.Current, prop.PropertyInfo!),
+                    Expression.Property(changeParams.Previous, prop.Name)))
                 .Aggregate(Expression.AndAlso);
         }
 
-        private Expression ApplyFilterToJoinedChanges(Expression selectManyExpression, LambdaExpression valueSelector)
+        private MethodCallExpression BuildChangePairWhereClause(Expression selectManyExpression, ChangePair<Expression> selectors)
         {
-            var joinedChangesType = typeof(JoinedChanges<>).MakeGenericType(query.ElementType);
-            var jcParameter = Expression.Parameter(joinedChangesType, "jc");
-
-            var jccProperty = Expression.Property(jcParameter, nameof(JoinedChanges<object>.ChangeEntity));
-            var jcpcProperty = Expression.Property(jcParameter, nameof(JoinedChanges<object>.PreviousChangeEntity));
-
-            var cValueSelector = new ParameterReplaceVisitor(valueSelector.Parameters[0], jccProperty).Visit(valueSelector.Body);
-            var pcValueSelector = new ParameterReplaceVisitor(valueSelector.Parameters[0], jcpcProperty).Visit(valueSelector.Body);
-
-            var outerWhere = Expression.Lambda(Expression.NotEqual(cValueSelector, pcValueSelector), jcParameter);
-            return ApplyWhere(selectManyExpression, outerWhere.Body, jcParameter);
+            var outerWhere = Expression.Lambda(Expression.NotEqual(selectors.Current, selectors.Previous), cpJoinParam);
+            return ApplyWhere(selectManyExpression, outerWhere.Body, cpJoinParam);
         }
 
-        private Expression BuildChangeEventProjection(Expression filteredExpression, LambdaExpression valueSelector)
+        private MethodCallExpression BuildChangeEventProjection(Expression filteredExpression, ChangePair<Expression> selectors)
         {
-            var joinedChangesType = typeof(JoinedChanges<>).MakeGenericType(query.ElementType);
-            var jcParameter = Expression.Parameter(joinedChangesType, "jc");
-
-            var jccProperty = Expression.Property(jcParameter, nameof(JoinedChanges<object>.ChangeEntity));
-            var jcpcProperty = Expression.Property(jcParameter, nameof(JoinedChanges<object>.PreviousChangeEntity));
-
-            var cValueSelector = new ParameterReplaceVisitor(valueSelector.Parameters[0], jccProperty).Visit(valueSelector.Body);
-            var pcValueSelector = new ParameterReplaceVisitor(valueSelector.Parameters[0], jcpcProperty).Visit(valueSelector.Body);
-
             var bindings = new[]
             {
-                BuildChangeEventPropertyBinding(ce => ce.ChangedAt, Expression.Property(jccProperty, nameof(IChange.ChangedAt))),
-                BuildChangeEventPropertyBinding(ce => ce.OldValue, pcValueSelector),
-                BuildChangeEventPropertyBinding(ce => ce.NewValue, cValueSelector)
-            }.Concat(GetAdditionalChangeEventPropertyBindings(jccProperty));
+                BuildChangeEventPropertyBinding(ce => ce.ChangedAt, Expression.Property(cpJoinProps.Current, nameof(IChange.ChangedAt))),
+                BuildChangeEventPropertyBinding(ce => ce.OldValue, selectors.Previous),
+                BuildChangeEventPropertyBinding(ce => ce.NewValue, selectors.Current)
+            }.Concat(GetAdditionalChangeEventPropertyBindings(cpJoinProps.Current));
 
             var changeEventInit = Expression.MemberInit(Expression.New(typeof(TChangeEvent)), bindings);
 
-            return ApplySelect(filteredExpression, changeEventInit, jcParameter);
+            return ApplySelect(filteredExpression, changeEventInit, cpJoinParam);
         }
 
-        private Expression BuildSelectMany(ParameterExpression outerParameter, Expression innerExpression)
-        {
-            var joinedChangesType = typeof(JoinedChanges<>).MakeGenericType(query.ElementType);
-            var joinedChangesConstructor = joinedChangesType.GetConstructor(Type.EmptyTypes)!;
-            var collectionSelector = Expression.Lambda(
-                typeof(Func<,>).MakeGenericType(query.ElementType, typeof(IEnumerable<>).MakeGenericType(query.ElementType)),
-                innerExpression,
-                outerParameter);
-
-            var c = Expression.Parameter(query.ElementType, "c");
-            var pc = Expression.Parameter(query.ElementType, "pc");
-            var joinedChangesInit = Expression.MemberInit(
-                Expression.New(joinedChangesConstructor),
-                Expression.Bind(joinedChangesType.GetProperty(nameof(JoinedChanges<object>.ChangeEntity))!, c),
-                Expression.Bind(joinedChangesType.GetProperty(nameof(JoinedChanges<object>.PreviousChangeEntity))!, pc)
-            );
-
-            var resultSelector = Expression.Lambda(joinedChangesInit, c, pc);
-
-            return Expression.Call(
-                typeof(Queryable),
-                nameof(Queryable.SelectMany),
-                [query.ElementType, query.ElementType, joinedChangesType],
-                query.Expression,
-                collectionSelector,
-                resultSelector);
-        }
-
-        private Expression ApplySelect(Expression source, Expression selector, ParameterExpression parameter)
+        private MethodCallExpression ApplySelect(Expression source, Expression selector, ParameterExpression parameter)
         {
             return Expression.Call(
                 typeof(Queryable),
@@ -162,7 +153,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
                 Expression.Lambda(selector, parameter));
         }
 
-        private Expression ApplyWhere(Expression source, Expression predicate, ParameterExpression parameter)
+        private MethodCallExpression ApplyWhere(Expression source, Expression predicate, ParameterExpression parameter)
         {
             return Expression.Call(
                 typeof(Queryable),
@@ -172,7 +163,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
                 Expression.Lambda(predicate, parameter));
         }
 
-        private Expression ApplyOrderByDescending(Expression source, PropertyInfo property, ParameterExpression parameter)
+        private MethodCallExpression ApplyOrderByDescending(Expression source, PropertyInfo property, ParameterExpression parameter)
         {
             return Expression.Call(
                 typeof(Queryable),
@@ -182,7 +173,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
                 Expression.Lambda(Expression.Property(parameter, property), parameter));
         }
 
-        private Expression ApplyTake(Expression source, int count)
+        private MethodCallExpression ApplyTake(Expression source, int count)
         {
             return Expression.Call(
                 typeof(Queryable),
