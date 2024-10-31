@@ -4,7 +4,7 @@ layout: home
 nav_order: 0
 ---
 
-EFCore.ChangeTriggers is an Entity Framework Core extension for storing and querying changes made to entities using SQL triggers and migrations.
+EFCore.ChangeTriggers is an Entity Framework Core extension that enables comprehensive entity history tracking using SQL triggers and migrations. Unlike traditional solutions that rely on SaveChanges() interceptors, which only capture changes made via the application, this library can track entity modifications from any source, ensuring that all changes, even those made directly in the database, are accurately recorded.
 
 ### Features
 
@@ -17,7 +17,7 @@ EFCore.ChangeTriggers is an Entity Framework Core extension for storing and quer
 Unlike EF Core interceptors, which only capture changes made through the EF context, SQL triggers can also capture updates made through direct SQL commands (including seed data from migrations). This means that no matter how data is modified, whether through an application or directly in the database, you can keep a complete history of entity modifications.
 
 ### What about SQL Server Temporal Tables?
-The main downside to temporal tables is that you can't add additional metadata columns to the history table (who made the change etc). EFCore.ChangeTriggers is able to inject metadata into the connection that the SQL trigger can then use when storing changes.
+The main downside to temporal tables is that you can't add additional metadata columns to the history table (who made the change etc). EFCore.ChangeTriggers is able to inject metadata into the DB connection, that the SQL trigger can then use when storing changes.
 
 ### Example populated change table
 

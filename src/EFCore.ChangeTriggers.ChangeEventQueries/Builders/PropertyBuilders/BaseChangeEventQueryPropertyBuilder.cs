@@ -1,11 +1,6 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.ChangeEventQueries.Exceptions;
 using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using EFCore.ChangeTriggers.Metadata;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.DependencyInjection;
 using System.Linq.Expressions;
 using System.Reflection;
 

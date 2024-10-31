@@ -23,7 +23,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
         public IQueryable<TChangeEvent> BuildChangeEventQuery()
         {
             var valueSelectors = configuration.Configurations[elementType];
-
             return valueSelectors.Select(propertyBuilder.BuildChangeEventQuery).Aggregate(Queryable.Union);
         }
     }
