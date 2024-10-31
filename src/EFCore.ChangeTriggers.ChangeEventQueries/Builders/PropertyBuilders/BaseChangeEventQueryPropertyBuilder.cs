@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 {
-    public abstract class BaseChangeEventQueryPropertyBuilder<TChangeEvent> : IChangeEventQueryPropertyBuilder<TChangeEvent>
+    internal abstract class BaseChangeEventQueryPropertyBuilder<TChangeEvent> : IChangeEventQueryPropertyBuilder<TChangeEvent>
         where TChangeEvent : ChangeEvent
     {
         private readonly IQueryable query;
@@ -33,14 +33,33 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
             cpJoinParam = Expression.Parameter(cpGenericType, "cp");
             cpJoinProps = new()
             {
-                Current = Expression.Property(cpJoinParam, nameof(ChangePair<object>.Current)),
-                Previous = Expression.Property(cpJoinParam, nameof(ChangePair<object>.Previous))
+                Current = Expression.Property(cpJoinParam, nameof(ChangePair<_>.Current)),
+                Previous = Expression.Property(cpJoinParam, nameof(ChangePair<_>.Previous))
             };
 
             changedAtProp = query.ElementType.GetProperty(nameof(IChange.ChangedAt))!;
             foreignKeyEqualityCondition = BuildForeignKeyEqualityCondition();
         }
 
+        /// <![CDATA[
+        /// this.query
+        ///     .SelectMany(c =>
+        ///         this.query
+        ///             .Where(pc => pc.ChangedAt < c.ChangedAt)
+        ///             .OrderByDescending(pc => pc.ChangedAt)
+        ///             .Take(1),
+        ///         (c, pc) => new ChangePair<TChange>
+        ///         {
+        ///             Current = c,
+        ///             Previous = pc
+        ///         })
+        ///     .Where(cp => cp.Current.Property != cp.Previous.Property)
+        ///     .Select(cp => new ChangeEvent
+        ///     {
+        ///         ChangedAt = cp.Current.ChangedAt,
+        ///         OldValue = cp.Previous.Property,
+        ///         NewValue = cp.Current.Property
+        ///     });
         public IQueryable<TChangeEvent> BuildChangeEventQuery(LambdaExpression valueSelector)
         {
             var selectors = new ChangePair<Expression>
@@ -89,8 +108,8 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 
             var joinedChangesInit = Expression.MemberInit(
                 Expression.New(cpConstructor),
-                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<object>.Current))!, changeParams.Current),
-                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<object>.Previous))!, changeParams.Previous)
+                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<_>.Current))!, changeParams.Current),
+                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<_>.Previous))!, changeParams.Previous)
             );
 
             var resultSelector = Expression.Lambda(joinedChangesInit, changeParams.Current, changeParams.Previous);
