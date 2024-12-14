@@ -1,4 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
+using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using EFCore.ChangeTriggers.Metadata;
 using System.Linq.Expressions;
@@ -60,25 +61,26 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
         ///         OldValue = cp.Previous.Property,
         ///         NewValue = cp.Current.Property
         ///     });
-        public IQueryable<TChangeEvent> BuildChangeEventQuery(LambdaExpression valueSelector)
+        public IQueryable<TChangeEvent> Build(ChangeEventEntityPropertyConfiguration propertyConfiguration)
         {
+            var selector = propertyConfiguration.ValueSelector;
             var selectors = new ChangePair<Expression>
             {
-                Current = new ParameterReplaceVisitor(valueSelector.Parameters[0], cpJoinProps.Current).Visit(valueSelector.Body),
-                Previous = new ParameterReplaceVisitor(valueSelector.Parameters[0], cpJoinProps.Previous).Visit(valueSelector.Body)
+                Current = new ParameterReplaceVisitor(selector.Parameters[0], cpJoinProps.Current).Visit(selector.Body),
+                Previous = new ParameterReplaceVisitor(selector.Parameters[0], cpJoinProps.Previous).Visit(selector.Body)
             };
 
             var selectManyExpression = BuildSelectManyExpression();
             var filteredExpression = BuildChangePairWhereClause(selectManyExpression, selectors);
-            var finalSelectExpression = BuildChangeEventProjection(filteredExpression, selectors);
+            var finalSelectExpression = BuildChangeEventProjection(filteredExpression, selectors, propertyConfiguration);
 
             return query.Provider.CreateQuery<TChangeEvent>(finalSelectExpression);
         }
 
-        protected MemberBinding BuildChangeEventPropertyBinding<TResult>(Expression<Func<TChangeEvent, TResult>> memberExpression, Expression selector)
+        protected MemberBinding BuildChangeEventPropertyBinding<TResult>(Expression<Func<TChangeEvent, TResult>> memberExpression, Expression valueExpression)
         {
             var memberInfo = ((MemberExpression)memberExpression.Body).Member;
-            return Expression.Bind(memberInfo, selector);
+            return Expression.Bind(memberInfo, valueExpression);
         }
 
         protected virtual IEnumerable<MemberBinding> GetAdditionalChangeEventPropertyBindings(MemberExpression changeEntity) => [];
@@ -143,13 +145,17 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
             return ApplyWhere(selectManyExpression, outerWhere.Body, cpJoinParam);
         }
 
-        private MethodCallExpression BuildChangeEventProjection(Expression filteredExpression, ChangePair<Expression> selectors)
+        private MethodCallExpression BuildChangeEventProjection(
+            Expression filteredExpression,
+            ChangePair<Expression> selectors,
+            ChangeEventEntityPropertyConfiguration propertyConfiguration)
         {
             var bindings = new[]
             {
+                BuildChangeEventPropertyBinding(ce => ce.Description, Expression.Constant(propertyConfiguration.Description)),
                 BuildChangeEventPropertyBinding(ce => ce.ChangedAt, Expression.Property(cpJoinProps.Current, nameof(IChange.ChangedAt))),
                 BuildChangeEventPropertyBinding(ce => ce.OldValue, selectors.Previous),
-                BuildChangeEventPropertyBinding(ce => ce.NewValue, selectors.Current)
+                BuildChangeEventPropertyBinding(ce => ce.NewValue, selectors.Current),
             }.Concat(GetAdditionalChangeEventPropertyBindings(cpJoinProps.Current));
 
             var changeEventInit = Expression.MemberInit(Expression.New(typeof(TChangeEvent)), bindings);

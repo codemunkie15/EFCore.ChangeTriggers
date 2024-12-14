@@ -2,8 +2,7 @@
 {
     public class ChangeEventQueryException : Exception
     {
-        public ChangeEventQueryException(string message)
-            : base(message)
+        public ChangeEventQueryException(string message) : base(message)
         {
 
         }

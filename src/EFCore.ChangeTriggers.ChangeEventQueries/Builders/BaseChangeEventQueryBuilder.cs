@@ -1,29 +1,47 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
+using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
 {
     internal abstract class BaseChangeEventQueryBuilder<TChangeEvent>
         where TChangeEvent : ChangeEvent
     {
-        private readonly ChangeEventQueryConfiguration configuration;
-        private readonly Type elementType;
+        private readonly ChangeEventConfiguration configuration;
+        private readonly IQueryable query;
         private readonly IChangeEventQueryPropertyBuilder<TChangeEvent> propertyBuilder;
 
         public BaseChangeEventQueryBuilder(
-            ChangeEventQueryConfiguration configuration,
-            Type elementType,
+            IQueryable query,
             IChangeEventQueryPropertyBuilder<TChangeEvent> propertyBuilder)
+            : this(query, propertyBuilder, GetConfigurationFromDbContext(query))
         {
-            this.configuration = configuration;
-            this.elementType = elementType;
-            this.propertyBuilder = propertyBuilder;
         }
 
-        public IQueryable<TChangeEvent> BuildChangeEventQuery()
+        public BaseChangeEventQueryBuilder(
+            IQueryable query,
+            IChangeEventQueryPropertyBuilder<TChangeEvent> propertyBuilder,
+            ChangeEventConfiguration configuration)
         {
-            var valueSelectors = configuration.Configurations[elementType];
-            return valueSelectors.Select(propertyBuilder.BuildChangeEventQuery).Aggregate(Queryable.Union);
+            this.query = query;
+            this.propertyBuilder = propertyBuilder;
+            this.configuration = configuration;
+        }
+
+        public IQueryable<TChangeEvent> Build()
+        {
+            var entityConfiguration = configuration.EntityConfigurations[query.ElementType];
+            return entityConfiguration.PropertyConfigurations
+                .Select(propertyBuilder.Build)
+                .Aggregate(Queryable.Union);
+        }
+
+        private static ChangeEventConfiguration GetConfigurationFromDbContext(IQueryable query)
+        {
+            return query.GetDbContext().GetInfrastructure().GetService<ChangeEventConfiguration>()
+                ?? throw new Exception(); // TODO: Exception message
         }
     }
 }

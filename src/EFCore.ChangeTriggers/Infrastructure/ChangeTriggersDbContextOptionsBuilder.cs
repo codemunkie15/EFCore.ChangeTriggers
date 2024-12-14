@@ -7,11 +7,11 @@ namespace EFCore.ChangeTriggers.Infrastructure
         where TBuilder : ChangeTriggersDbContextOptionsBuilder<TBuilder, TExtension>
         where TExtension : ChangeTriggersDbContextOptionsExtension, new()
     {
-        private DbContextOptionsBuilder optionsBuilder;
+        internal DbContextOptionsBuilder OptionsBuilder { get; }
 
         public ChangeTriggersDbContextOptionsBuilder(DbContextOptionsBuilder optionsBuilder)
         {
-            this.optionsBuilder = optionsBuilder;
+            this.OptionsBuilder = optionsBuilder;
         }
 
         /// <summary>
@@ -44,8 +44,8 @@ namespace EFCore.ChangeTriggers.Infrastructure
 
         protected virtual TBuilder WithOption(Func<TExtension, TExtension> setAction)
         {
-            var extension = setAction(optionsBuilder.GetOrCreateExtension<TExtension>());
-            optionsBuilder.AsInfrastructure().AddOrUpdateExtension(extension);
+            var extension = setAction(OptionsBuilder.GetOrCreateExtension<TExtension>());
+            OptionsBuilder.AsInfrastructure().AddOrUpdateExtension(extension);
 
             return (TBuilder)this;
         }

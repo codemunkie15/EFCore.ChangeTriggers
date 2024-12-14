@@ -27,8 +27,6 @@ namespace TestHarness
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
-            Debugger.Launch();
-
             configurationBuilder
                 .DefaultTypeMapping<ChangeSourceType>()
                 .HasConversion<string>();
@@ -41,6 +39,8 @@ namespace TestHarness
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.AutoConfigureChangeTriggers();
+
+            modelBuilder.Entity<User>().Property(x => x.Id);
 
             modelBuilder.Entity<User>(e =>
             {

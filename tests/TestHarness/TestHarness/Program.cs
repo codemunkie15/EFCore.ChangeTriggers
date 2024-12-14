@@ -1,4 +1,5 @@
-﻿using EFCore.ChangeTriggers.SqlServer;
+﻿using EFCore.ChangeTriggers.ChangeEventQueries;
+using EFCore.ChangeTriggers.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +24,8 @@ builder.Services
                 options
                     .UseTriggerNameFactory(tableName => $"{tableName}_GlobalCustomTriggerName")
                     .UseChangedBy<ChangedByProvider, User>()
-                    .UseChangeSource<ChangeSourceProvider, ChangeSourceType>();
+                    .UseChangeSource<ChangeSourceProvider, ChangeSourceType>()
+                    .UseChangeEventQueries(typeof(MyDbContext).Assembly);
             });
     })
     .AddScoped(services => new CurrentUserProvider(new User { Id = 7 }))
@@ -32,13 +34,17 @@ builder.Services
 
 var host = builder.Build();
 
-var dbContext = host.Services.GetRequiredService<MyDbContext>();
-var testDataService = host.Services.GetRequiredService<TestDataService>();
-var testChangeQueriesService = host.Services.GetRequiredService<TestChangeQueriesService>();
+for (int i = 0; i < 5; i++)
+{
+    var scope = host.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+    var testDataService = scope.ServiceProvider.GetRequiredService<TestDataService>();
+    var testChangeQueriesService = scope.ServiceProvider.GetRequiredService<TestChangeQueriesService>();
 
-//await testDataService.CreateAsync();
+    //await testDataService.CreateAsync();
 
-await testChangeQueriesService.RunAsync();
+    await testChangeQueriesService.RunAsync();
+}
 
 Console.ReadLine();
 

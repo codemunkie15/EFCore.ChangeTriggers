@@ -7,16 +7,24 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries
 {
     public static class IQueryableExtensions
     {
-        public static IQueryable<ChangeEvent> ToChangeEvents(this IQueryable query, ChangeEventQueryConfiguration configuration)
+        public static IQueryable<ChangeEvent> ToChangeEvents(this IQueryable query)
         {
-            var builder = new ChangeEventQueryBuilder(configuration, query);
-            return builder.BuildChangeEventQuery();
+            return new ChangeEventQueryBuilder(query).Build();
         }
 
-        public static IQueryable<ChangeEvent<TChangedBy, TChangeSource>> ToChangeEvents<TChangedBy, TChangeSource>(this IQueryable query, ChangeEventQueryConfiguration configuration)
+        public static IQueryable<ChangeEvent> ToChangeEvents(this IQueryable query, ChangeEventConfiguration configuration)
         {
-            var builder = new ChangeEventQueryBuilder<TChangedBy, TChangeSource>(configuration, query);
-            return builder.BuildChangeEventQuery();
+            return new ChangeEventQueryBuilder(query, configuration).Build();
+        }
+
+        public static IQueryable<ChangeEvent<TChangedBy, TChangeSource>> ToChangeEvents<TChangedBy, TChangeSource>(this IQueryable query)
+        {
+            return new ChangeEventQueryBuilder<TChangedBy, TChangeSource>(query).Build();
+        }
+
+        public static IQueryable<ChangeEvent<TChangedBy, TChangeSource>> ToChangeEvents<TChangedBy, TChangeSource>(this IQueryable query, ChangeEventConfiguration configuration)
+        {
+            return new ChangeEventQueryBuilder<TChangedBy, TChangeSource>(query, configuration).Build();
         }
     }
 }
@@ -28,10 +36,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy
     public static class IQueryableExtensions
     {
 
-        public static IQueryable<ChangeEvent<TChangedBy>> ToChangeEvents<TChangedBy>(this IQueryable query, ChangeEventQueryConfiguration configuration)
+        public static IQueryable<ChangeEvent<TChangedBy>> ToChangeEvents<TChangedBy>(this IQueryable query, ChangeEventConfiguration configuration)
         {
-            var builder = new ChangedByChangeEventQueryBuilder<TChangedBy>(configuration, query);
-            return builder.BuildChangeEventQuery();
+            return new ChangedByChangeEventQueryBuilder<TChangedBy>(query, configuration).Build();
         }
     }
 }
@@ -43,10 +50,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangeSource
     public static class IQueryableExtensions
     {
 
-        public static IQueryable<ChangeEvent<TChangeSource>> ToChangeEvents<TChangeSource>(this IQueryable query, ChangeEventQueryConfiguration configuration)
+        public static IQueryable<ChangeEvent<TChangeSource>> ToChangeEvents<TChangeSource>(this IQueryable query, ChangeEventConfiguration configuration)
         {
-            var builder = new ChangeSourceChangeEventQueryBuilder<TChangeSource>(configuration, query);
-            return builder.BuildChangeEventQuery();
+            return new ChangeSourceChangeEventQueryBuilder<TChangeSource>(query, configuration).Build();
         }
     }
 }

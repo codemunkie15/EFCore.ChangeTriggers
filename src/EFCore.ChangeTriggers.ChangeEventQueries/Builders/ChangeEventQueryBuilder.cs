@@ -6,10 +6,13 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
     internal class ChangeEventQueryBuilder
         : BaseChangeEventQueryBuilder<ChangeEvent>
     {
-        public ChangeEventQueryBuilder(
-            ChangeEventQueryConfiguration configuration,
-            IQueryable query)
-            : base(configuration, query.ElementType, new ChangeEventQueryPropertyBuilder(query))
+        public ChangeEventQueryBuilder(IQueryable query)
+            : base(query, new ChangeEventQueryPropertyBuilder(query))
+        {
+        }
+
+        public ChangeEventQueryBuilder(IQueryable query, ChangeEventConfiguration configuration)
+            : base(query, new ChangeEventQueryPropertyBuilder(query), configuration)
         {
         }
     }
