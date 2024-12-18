@@ -1,4 +1,4 @@
-﻿using EFCore.ChangeTriggers.ChangeEventQueries.Builders;
+﻿using EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 
 #pragma warning disable IDE0130 // Namespace does not match folder structure

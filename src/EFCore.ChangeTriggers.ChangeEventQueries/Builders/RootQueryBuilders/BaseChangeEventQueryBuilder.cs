@@ -7,7 +7,7 @@ using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
+namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
 {
     internal abstract class BaseChangeEventQueryBuilder<TChangeEvent>
         where TChangeEvent : ChangeEvent

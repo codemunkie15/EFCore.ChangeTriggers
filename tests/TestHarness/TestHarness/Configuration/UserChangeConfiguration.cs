@@ -8,10 +8,14 @@ namespace TestHarness.Configuration
     {
         public void Configure(ChangeEventEntityConfigurationBuilder<UserChange> builder)
         {
+            builder
+                .AddInserts()
+                .AddDeletes();
+
             builder.AddProperty(uc => uc.Name);
             builder.AddProperty(uc => uc.DateOfBirth);
-            builder.AddProperty(uc => uc.PrimaryPaymentMethod.Id.ToString())
-                .WithDescription("Primary payment method");
+            builder.AddProperty(uc => uc.PrimaryPaymentMethod!.Id.ToString())
+                .WithDescription("Primary payment method updated");
         }
     }
 }

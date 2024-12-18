@@ -28,7 +28,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Configuration.Builders
 
         public ChangeEventEntityConfigurationBuilder<TChangeEntity> AddDeletes()
         {
-            entityConfiguration.AddInserts = true;
+            entityConfiguration.AddDeletes = true;
             return this;
         }
     }

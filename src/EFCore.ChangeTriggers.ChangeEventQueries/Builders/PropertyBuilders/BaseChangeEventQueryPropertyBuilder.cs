@@ -145,7 +145,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
         {
             var bindings = new[]
             {
-                BuildChangeEventPropertyBinding(ce => ce.Description, Expression.Constant(propertyConfiguration.Description)),
+                BuildChangeEventPropertyBinding(ce => ce.Description, Expression.Constant(GetPropertyDescription(propertyConfiguration))),
                 BuildChangeEventPropertyBinding(ce => ce.ChangedAt, Expression.Property(cpJoinProps.Current, nameof(IChange.ChangedAt))),
                 BuildChangeEventPropertyBinding(ce => ce.OldValue, selectors.Previous),
                 BuildChangeEventPropertyBinding(ce => ce.NewValue, selectors.Current),
@@ -174,6 +174,12 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
                 [query.ElementType],
                 source,
                 Expression.Constant(count));
+        }
+
+        private string GetPropertyDescription(ChangeEventEntityPropertyConfiguration propertyConfiguration)
+        {
+            return propertyConfiguration.Description
+                ?? $"{propertyConfiguration.ValueSelector.GetRootMemberName()} updated";
         }
     }
 }

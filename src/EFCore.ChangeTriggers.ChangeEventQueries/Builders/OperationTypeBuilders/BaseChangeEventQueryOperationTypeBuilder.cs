@@ -59,9 +59,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.OperationTypeBuilder
             switch (operationType)
             {
                 case OperationType.Insert:
-                    return "Created";
+                    return "Entity created";
                 case OperationType.Delete:
-                    return "Deleted";
+                    return "Entity deleted";
                 default:
                     throw new ArgumentOutOfRangeException($"The builder does not support the operation type {operationType}.");
             }

@@ -3,7 +3,7 @@ using EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders;
 using EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 
-namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
+namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
 {
     internal class ChangedByChangeEventQueryBuilder<TChangedBy>
         : BaseChangeEventQueryBuilder<ChangeEvent<TChangedBy>>
