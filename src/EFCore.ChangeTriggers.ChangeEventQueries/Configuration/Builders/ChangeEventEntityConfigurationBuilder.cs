@@ -19,5 +19,17 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Configuration.Builders
 
             return new ChangeEventEntityPropertyConfigurationBuilder(propertyConfiguration);
         }
+
+        public ChangeEventEntityConfigurationBuilder<TChangeEntity> AddInserts()
+        {
+            entityConfiguration.AddInserts = true;
+            return this;
+        }
+
+        public ChangeEventEntityConfigurationBuilder<TChangeEntity> AddDeletes()
+        {
+            entityConfiguration.AddInserts = true;
+            return this;
+        }
     }
 }

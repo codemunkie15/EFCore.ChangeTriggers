@@ -1,4 +1,5 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.Configuration.Builders;
+using EFCore.ChangeTriggers.ChangeEventQueries.Exceptions;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Configuration
 {
@@ -21,7 +22,10 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Configuration
 
         internal void AddEntityConfigiration(ChangeEventEntityConfiguration entityConfiguration)
         {
-            entityConfigurations.Add(entityConfiguration.EntityType, entityConfiguration);
+            if (!entityConfigurations.TryAdd(entityConfiguration.EntityType, entityConfiguration))
+            {
+                throw new ChangeEventQueryException(ExceptionStrings.ConfigurationAlreadyAdded(entityConfiguration.EntityType.Name));
+            }
         }
     }
 }

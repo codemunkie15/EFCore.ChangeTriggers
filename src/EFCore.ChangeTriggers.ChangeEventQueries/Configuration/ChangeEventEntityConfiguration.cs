@@ -4,6 +4,10 @@
     {
         public Type EntityType { get; }
 
+        public bool AddInserts { get; internal set; }
+
+        public bool AddDeletes { get; }
+
         public IEnumerable<ChangeEventEntityPropertyConfiguration> PropertyConfigurations => propertyConfigurations.AsReadOnly();
 
         private readonly List<ChangeEventEntityPropertyConfiguration> propertyConfigurations = [];

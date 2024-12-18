@@ -2,12 +2,13 @@
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using EFCore.ChangeTriggers.Metadata;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 {
-    internal abstract class BaseChangeEventQueryPropertyBuilder<TChangeEvent> : IChangeEventQueryPropertyBuilder<TChangeEvent>
+    internal abstract class BaseChangeEventQueryPropertyBuilder<TChangeEvent> : BuilderBase<TChangeEvent>, IChangeEventQueryPropertyBuilder<TChangeEvent>
         where TChangeEvent : ChangeEvent
     {
         private readonly IQueryable query;
@@ -23,7 +24,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
             query.EnsureElementType<IChange>();
 
             this.query = query;
-
             changeParams = new()
             {
                 Current = Expression.Parameter(query.ElementType, "c"),
@@ -77,14 +77,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
             return query.Provider.CreateQuery<TChangeEvent>(finalSelectExpression);
         }
 
-        protected MemberBinding BuildChangeEventPropertyBinding<TResult>(Expression<Func<TChangeEvent, TResult>> memberExpression, Expression valueExpression)
-        {
-            var memberInfo = ((MemberExpression)memberExpression.Body).Member;
-            return Expression.Bind(memberInfo, valueExpression);
-        }
-
-        protected virtual IEnumerable<MemberBinding> GetAdditionalChangeEventPropertyBindings(MemberExpression changeEntity) => [];
-
         private MethodCallExpression BuildSelectManyExpression()
         {
             var whereCondition = Expression.LessThan(
@@ -92,7 +84,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
                 Expression.Property(changeParams.Current, changedAtProp));
 
             var combinedCondition = Expression.AndAlso(whereCondition, foreignKeyEqualityCondition);
-            var innerWhere = ApplyWhere(query.Expression, combinedCondition, changeParams.Previous);
+            var innerWhere = query.Expression.ApplyWhere(combinedCondition, changeParams.Previous);
 
             var innerOrderBy = ApplyOrderByDescending(innerWhere, changedAtProp, changeParams.Previous);
             var innerTake = ApplyTake(innerOrderBy, 1);
@@ -141,8 +133,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 
         private MethodCallExpression BuildChangePairWhereClause(Expression selectManyExpression, ChangePair<Expression> selectors)
         {
+            // TODO: Can the Expression.Lambda be removed here?
             var outerWhere = Expression.Lambda(Expression.NotEqual(selectors.Current, selectors.Previous), cpJoinParam);
-            return ApplyWhere(selectManyExpression, outerWhere.Body, cpJoinParam);
+            return selectManyExpression.ApplyWhere(outerWhere.Body, cpJoinParam);
         }
 
         private MethodCallExpression BuildChangeEventProjection(
@@ -160,27 +153,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 
             var changeEventInit = Expression.MemberInit(Expression.New(typeof(TChangeEvent)), bindings);
 
-            return ApplySelect(filteredExpression, changeEventInit, cpJoinParam);
-        }
-
-        private MethodCallExpression ApplySelect(Expression source, Expression selector, ParameterExpression parameter)
-        {
-            return Expression.Call(
-                typeof(Queryable),
-                nameof(Queryable.Select),
-                [parameter.Type, selector.Type],
-                source,
-                Expression.Lambda(selector, parameter));
-        }
-
-        private MethodCallExpression ApplyWhere(Expression source, Expression predicate, ParameterExpression parameter)
-        {
-            return Expression.Call(
-                typeof(Queryable),
-                nameof(Queryable.Where),
-                [parameter.Type],
-                source,
-                Expression.Lambda(predicate, parameter));
+            return filteredExpression.ApplySelect(changeEventInit, cpJoinParam);
         }
 
         private MethodCallExpression ApplyOrderByDescending(Expression source, PropertyInfo property, ParameterExpression parameter)

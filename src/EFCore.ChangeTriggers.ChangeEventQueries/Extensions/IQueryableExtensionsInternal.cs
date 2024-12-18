@@ -1,8 +1,5 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.Exceptions;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Extensions
 {
@@ -19,13 +16,29 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Extensions
 
         public static DbContext GetDbContext(this IQueryable query)
         {
-            if (query is IInfrastructure<IServiceProvider> infrastructure)
-            {
-                var dbContextServices = infrastructure.Instance.GetRequiredService<IDbContextServices>();
-                return dbContextServices.CurrentContext.Context;
-            }
+            var entityQueryProvider = query.Provider as DbContextAwareEntityQueryProvider
+                ?? throw new ChangeEventQueryException(
+                    "Queryable does not implement the correct provider to use ChangeEventQueries. Have you configured it on your DbContext?");
 
-            throw new ChangeEventQueryException("The provided query is not an EF Core queryable.");
+            return entityQueryProvider.DbContext;
         }
+
+        //public static DbContext GetDbContext(this IQueryable query)
+        //{
+        //    var compilerField = typeof(EntityQueryProvider).GetField("_queryCompiler", BindingFlags.NonPublic | BindingFlags.Instance)
+        //        ?? throw new ChangeEventQueryException("Could not find _queryCompiler private field on query provider.");
+
+        //    var compiler = compilerField.GetValue(query.Provider) as IQueryCompiler
+        //        ?? throw new ChangeEventQueryException("QueryCompiler fetched from query provider is null.");
+
+        //    var queryContextFactoryField = compiler.GetType().GetField("_queryContextFactory", BindingFlags.NonPublic | BindingFlags.Instance)
+        //        ?? throw new ChangeEventQueryException("Could not find _queryContextFactory private field on query complier.");
+
+        //    var queryContextFactory = queryContextFactoryField.GetValue(compiler) as IQueryContextFactory
+        //        ?? throw new ChangeEventQueryException("QueryContextFactory fetched from query compiler is null.");
+
+        //    var queryContext = queryContextFactory.Create();
+        //    return queryContext.Context;
+        //}
     }
 }

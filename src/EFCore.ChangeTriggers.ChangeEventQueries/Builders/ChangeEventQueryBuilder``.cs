@@ -1,4 +1,5 @@
-﻿using EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders;
+﻿using EFCore.ChangeTriggers.ChangeEventQueries.Builders.OperationTypeBuilders;
+using EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
@@ -7,12 +8,17 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
         : BaseChangeEventQueryBuilder<ChangeEvent<TChangedBy, TChangeSource>>
     {
         public ChangeEventQueryBuilder(IQueryable query)
-            : base(query, new ChangeEventQueryPropertyBuilder<TChangedBy, TChangeSource>(query))
+            : base(query,
+                  new ChangeEventQueryPropertyBuilder<TChangedBy, TChangeSource>(query),
+                  new ChangeEventQueryOperationTypeBuilder<TChangedBy, TChangeSource>(query))
         {
         }
 
         public ChangeEventQueryBuilder(IQueryable query, ChangeEventConfiguration configuration)
-            : base(query, new ChangeEventQueryPropertyBuilder<TChangedBy, TChangeSource>(query), configuration)
+            : base(query,
+                  new ChangeEventQueryPropertyBuilder<TChangedBy, TChangeSource>(query),
+                  new ChangeEventQueryOperationTypeBuilder<TChangedBy, TChangeSource>(query),
+                  configuration)
         {
         }
     }

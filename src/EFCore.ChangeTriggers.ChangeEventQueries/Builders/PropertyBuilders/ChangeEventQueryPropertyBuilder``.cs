@@ -13,7 +13,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
             query.EnsureElementType<IHasChangeSource<TChangeSource>>();
         }
 
-        protected override IEnumerable<MemberBinding> GetAdditionalChangeEventPropertyBindings(MemberExpression changeEntity)
+        protected override IEnumerable<MemberBinding> GetAdditionalChangeEventPropertyBindings(Expression changeEntity)
         {
             yield return BuildChangeEventPropertyBinding(ce => ce.ChangedBy, Expression.Property(changeEntity, nameof(IHasChangedBy<_>.ChangedBy)));
             yield return BuildChangeEventPropertyBinding(ce => ce.ChangeSource, Expression.Property(changeEntity, nameof(IHasChangeSource<_>.ChangeSource)));

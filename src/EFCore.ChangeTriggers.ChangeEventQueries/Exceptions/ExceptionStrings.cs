@@ -10,5 +10,11 @@
             var entityText = !string.IsNullOrEmpty(typeName) ? $" on the type {typeName}" : "";
             return $"The lambda expression does not refer to a valid member{entityText}.";
         }
+
+        public static string ConfigurationNotFound(string typeName)
+            => $"No configuration found for entity type {typeName}.";
+
+        public static string ConfigurationAlreadyAdded(string typeName)
+            => $"A configuration for entity type {typeName} has already been added.";
     }
 }

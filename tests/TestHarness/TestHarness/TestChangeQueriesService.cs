@@ -17,7 +17,7 @@ namespace TestHarness
 
         public async Task RunAsync()
         {
-            var query = await dbContext.UserChanges.ToChangeEvents<User, ChangeSourceType>(
+            var query = await dbContext.UserChanges.Where(uc => uc.Id == 1).ToChangeEvents<User, ChangeSourceType>(
                 //new ChangeEventConfiguration(builder =>
                 //{
                 //    builder.Configure<UserChange>(uc =>
@@ -27,7 +27,7 @@ namespace TestHarness
                 //            .WithDescription("Payment method changed");
                 //    });
                 //}))
-                ).ToListAsync();
+                ).OrderBy(ce => ce.ChangedAt).ToListAsync();
         }
     }
 }

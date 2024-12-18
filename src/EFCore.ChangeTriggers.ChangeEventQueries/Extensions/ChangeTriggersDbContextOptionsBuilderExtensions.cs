@@ -1,5 +1,6 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
 using EFCore.ChangeTriggers.Infrastructure;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Reflection;
 
 #pragma warning disable IDE0130 // Namespace does not match folder structure
@@ -18,6 +19,8 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries
                 .WithConfigurationsAssembly(configurationsAssembly);
 
             builder.OptionsBuilder.AsInfrastructure().AddOrUpdateExtension(extension);
+
+            builder.OptionsBuilder.ReplaceService<IAsyncQueryProvider, DbContextAwareEntityQueryProvider>();
         }
     }
 }

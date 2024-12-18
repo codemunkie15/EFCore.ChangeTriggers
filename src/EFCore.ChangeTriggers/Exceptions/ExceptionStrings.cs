@@ -21,5 +21,8 @@ namespace EFCore.ChangeTriggers.Exceptions
 
         public static string TriggerNameForEntityContainsFormatString(string entityName)
             => $"Change trigger name for entity type '{entityName}' cannot contain the value '{{0}}'.";
+
+        public static string InterceptorDbContextNotSet
+            => "No DbContext available to use in the DbConnectionInterceptor.";
     }
 }

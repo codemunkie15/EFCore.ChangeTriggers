@@ -1,4 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
+using EFCore.ChangeTriggers.Exceptions;
 using EFCore.ChangeTriggers.Infrastructure;
 using EFCore.ChangeTriggers.Metadata;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -23,8 +24,7 @@ namespace EFCore.ChangeTriggers.Interceptors
         {
             if (eventData.Context == null)
             {
-                // TODO: what exception?
-                throw new Exception("");
+                throw new ChangeTriggersException(ExceptionStrings.InterceptorDbContextNotSet);
             }
 
             var changeSource = changeTriggersExtensionContext.IsMigrationRunning
@@ -41,8 +41,7 @@ namespace EFCore.ChangeTriggers.Interceptors
         {
             if (eventData.Context == null)
             {
-                // TODO: what exception?
-                throw new Exception("");
+                throw new ChangeTriggersException(ExceptionStrings.InterceptorDbContextNotSet);
             }
 
             var changeSource = changeTriggersExtensionContext.IsMigrationRunning
