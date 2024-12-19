@@ -4,13 +4,13 @@ using System.Linq.Expressions;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.OperationTypeBuilders
 {
-    internal abstract class BaseChangeEventQueryOperationTypeBuilder<TChangeEvent> : BuilderBase<TChangeEvent>, IChangeEventQueryOperationTypeBuilder<TChangeEvent>
+    internal abstract class BaseOperationTypeQueryBuilder<TChangeEvent> : BaseQueryBuilder<TChangeEvent>, IOperationTypeQueryBuilder<TChangeEvent>
         where TChangeEvent : ChangeEvent
     {
         private readonly IQueryable query;
         private ParameterExpression c;
 
-        public BaseChangeEventQueryOperationTypeBuilder(IQueryable query)
+        public BaseOperationTypeQueryBuilder(IQueryable query)
         {
             this.query = query;
 

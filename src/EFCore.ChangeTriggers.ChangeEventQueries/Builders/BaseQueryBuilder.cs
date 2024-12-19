@@ -2,7 +2,7 @@
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
 {
-    internal abstract class BuilderBase<TChangeEvent>
+    internal abstract class BaseQueryBuilder<TChangeEvent>
     {
         protected MemberBinding BuildChangeEventPropertyBinding<TResult>(Expression<Func<TChangeEvent, TResult>> memberExpression, Expression valueExpression)
         {

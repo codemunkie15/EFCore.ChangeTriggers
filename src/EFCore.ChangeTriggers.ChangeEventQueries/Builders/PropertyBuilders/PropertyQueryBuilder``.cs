@@ -4,10 +4,10 @@ using System.Linq.Expressions;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 {
-    internal class ChangeEventQueryPropertyBuilder<TChangedBy, TChangeSource>
-        : BaseChangeEventQueryPropertyBuilder<ChangeEvent<TChangedBy, TChangeSource>>
+    internal class PropertyQueryBuilder<TChangedBy, TChangeSource>
+        : BasePropertyQueryBuilder<ChangeEvent<TChangedBy, TChangeSource>>
     {
-        public ChangeEventQueryPropertyBuilder(IQueryable query) : base(query)
+        public PropertyQueryBuilder(IQueryable query) : base(query)
         {
             query.EnsureElementType<IHasChangedBy<TChangedBy>>();
             query.EnsureElementType<IHasChangeSource<TChangeSource>>();

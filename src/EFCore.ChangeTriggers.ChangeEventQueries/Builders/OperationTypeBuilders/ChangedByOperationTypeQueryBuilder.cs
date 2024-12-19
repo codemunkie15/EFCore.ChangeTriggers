@@ -1,16 +1,14 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy;
-using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using System.Linq.Expressions;
 
-namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
+namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.OperationTypeBuilders
 {
-    internal class ChangedByChangeEventQueryPropertyBuilder<TChangedBy>
-        : BaseChangeEventQueryPropertyBuilder<ChangeEvent<TChangedBy>>
+    internal class ChangedByOperationTypeQueryBuilder<TChangedBy>
+        : BaseOperationTypeQueryBuilder<ChangeEvent<TChangedBy>>
     {
-        public ChangedByChangeEventQueryPropertyBuilder(IQueryable query) : base(query)
+        public ChangedByOperationTypeQueryBuilder(IQueryable query) : base(query)
         {
-            query.EnsureElementType<IHasChangedBy<TChangedBy>>();
         }
 
         protected override IEnumerable<MemberBinding> GetAdditionalChangeEventPropertyBindings(Expression changeEntity)

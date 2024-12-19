@@ -2,7 +2,7 @@
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 {
-    internal interface IChangeEventQueryPropertyBuilder<TChangeEvent>
+    internal interface IPropertyQueryBuilder<TChangeEvent>
     {
         IQueryable<TChangeEvent> Build(ChangeEventEntityPropertyConfiguration propertyConfiguration);
     }

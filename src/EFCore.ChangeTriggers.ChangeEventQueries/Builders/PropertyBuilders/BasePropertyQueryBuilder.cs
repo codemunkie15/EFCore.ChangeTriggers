@@ -2,13 +2,12 @@
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using EFCore.ChangeTriggers.Metadata;
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 {
-    internal abstract class BaseChangeEventQueryPropertyBuilder<TChangeEvent> : BuilderBase<TChangeEvent>, IChangeEventQueryPropertyBuilder<TChangeEvent>
+    internal abstract class BasePropertyQueryBuilder<TChangeEvent> : BaseQueryBuilder<TChangeEvent>, IPropertyQueryBuilder<TChangeEvent>
         where TChangeEvent : ChangeEvent
     {
         private readonly IQueryable query;
@@ -19,7 +18,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
         private readonly PropertyInfo changedAtProp;
         private readonly BinaryExpression foreignKeyEqualityCondition;
 
-        public BaseChangeEventQueryPropertyBuilder(IQueryable query)
+        public BasePropertyQueryBuilder(IQueryable query)
         {
             query.EnsureElementType<IChange>();
 

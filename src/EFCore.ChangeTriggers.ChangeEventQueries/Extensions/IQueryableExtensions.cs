@@ -9,22 +9,22 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries
     {
         public static IQueryable<ChangeEvent> ToChangeEvents(this IQueryable query)
         {
-            return new ChangeEventQueryBuilder(query).Build();
+            return new RootQueryBuilder(query).Build();
         }
 
         public static IQueryable<ChangeEvent> ToChangeEvents(this IQueryable query, ChangeEventConfiguration configuration)
         {
-            return new ChangeEventQueryBuilder(query, configuration).Build();
+            return new RootQueryBuilder(query, configuration).Build();
         }
 
         public static IQueryable<ChangeEvent<TChangedBy, TChangeSource>> ToChangeEvents<TChangedBy, TChangeSource>(this IQueryable query)
         {
-            return new ChangeEventQueryBuilder<TChangedBy, TChangeSource>(query).Build();
+            return new RootQueryBuilder<TChangedBy, TChangeSource>(query).Build();
         }
 
         public static IQueryable<ChangeEvent<TChangedBy, TChangeSource>> ToChangeEvents<TChangedBy, TChangeSource>(this IQueryable query, ChangeEventConfiguration configuration)
         {
-            return new ChangeEventQueryBuilder<TChangedBy, TChangeSource>(query, configuration).Build();
+            return new RootQueryBuilder<TChangedBy, TChangeSource>(query, configuration).Build();
         }
     }
 }
@@ -38,7 +38,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy
 
         public static IQueryable<ChangeEvent<TChangedBy>> ToChangeEvents<TChangedBy>(this IQueryable query, ChangeEventConfiguration configuration)
         {
-            return new ChangedByChangeEventQueryBuilder<TChangedBy>(query, configuration).Build();
+            return new ChangedByRootQueryBuilder<TChangedBy>(query, configuration).Build();
         }
     }
 }
@@ -52,7 +52,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangeSource
 
         public static IQueryable<ChangeEvent<TChangeSource>> ToChangeEvents<TChangeSource>(this IQueryable query, ChangeEventConfiguration configuration)
         {
-            return new ChangeSourceChangeEventQueryBuilder<TChangeSource>(query, configuration).Build();
+            return new ChangeSourceRootQueryBuilder<TChangeSource>(query, configuration).Build();
         }
     }
 }

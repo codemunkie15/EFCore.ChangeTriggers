@@ -5,33 +5,32 @@ using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 using EFCore.ChangeTriggers.ChangeEventQueries.Exceptions;
 using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
 {
-    internal abstract class BaseChangeEventQueryBuilder<TChangeEvent>
+    internal abstract class BaseRootQueryBuilder<TChangeEvent>
         where TChangeEvent : ChangeEvent
     {
         private readonly ChangeEventsDbContextOptionsExtension options;
         private readonly ChangeEventConfiguration configuration;
         private readonly IQueryable query;
-        private readonly IChangeEventQueryPropertyBuilder<TChangeEvent> propertyBuilder;
-        private readonly IChangeEventQueryOperationTypeBuilder<TChangeEvent> operationTypeBuilder;
+        private readonly IPropertyQueryBuilder<TChangeEvent> propertyBuilder;
+        private readonly IOperationTypeQueryBuilder<TChangeEvent> operationTypeBuilder;
 
-        public BaseChangeEventQueryBuilder(
+        public BaseRootQueryBuilder(
             IQueryable query,
-            IChangeEventQueryPropertyBuilder<TChangeEvent> propertyBuilder,
-            IChangeEventQueryOperationTypeBuilder<TChangeEvent> operationTypeBuilder)
+            IPropertyQueryBuilder<TChangeEvent> propertyBuilder,
+            IOperationTypeQueryBuilder<TChangeEvent> operationTypeBuilder)
             : this(query, propertyBuilder, operationTypeBuilder, GetConfigurationFromDbContext(query))
         {
         }
 
-        public BaseChangeEventQueryBuilder(
+        public BaseRootQueryBuilder(
             IQueryable query,
-            IChangeEventQueryPropertyBuilder<TChangeEvent> propertyBuilder,
-            IChangeEventQueryOperationTypeBuilder<TChangeEvent> operationTypeBuilder,
+            IPropertyQueryBuilder<TChangeEvent> propertyBuilder,
+            IOperationTypeQueryBuilder<TChangeEvent> operationTypeBuilder,
             ChangeEventConfiguration configuration)
         {
             query.EnsureElementType<IChange>();
