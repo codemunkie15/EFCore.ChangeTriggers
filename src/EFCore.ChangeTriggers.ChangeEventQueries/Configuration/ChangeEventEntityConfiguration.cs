@@ -6,7 +6,7 @@
 
         public bool AddInserts { get; internal set; }
 
-        public bool AddDeletes { get; }
+        public bool AddDeletes { get; internal set; }
 
         public IEnumerable<ChangeEventEntityPropertyConfiguration> PropertyConfigurations => propertyConfigurations.AsReadOnly();
 

@@ -1,5 +1,6 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
 using EFCore.ChangeTriggers.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Reflection;
 
@@ -11,7 +12,8 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries
     {
         public static void UseChangeEventQueries<TBuilder, TExtension>(
             this ChangeTriggersDbContextOptionsBuilder<TBuilder, TExtension> builder,
-            Assembly configurationsAssembly)
+            Assembly configurationsAssembly,
+            Action<ChangeEventsDbContextOptionsBuilder>? optionsAction = null)
         where TBuilder : ChangeTriggersDbContextOptionsBuilder<TBuilder, TExtension>
         where TExtension : ChangeTriggersDbContextOptionsExtension, new()
         {
@@ -20,7 +22,20 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries
 
             builder.OptionsBuilder.AsInfrastructure().AddOrUpdateExtension(extension);
 
-            builder.OptionsBuilder.ReplaceService<IAsyncQueryProvider, DbContextAwareEntityQueryProvider>();
+            builder.OptionsBuilder
+                .ApplyConfiguration(optionsAction)
+                .ReplaceService<IAsyncQueryProvider, DbContextAwareEntityQueryProvider>();
+        }
+
+        private static DbContextOptionsBuilder ApplyConfiguration(this DbContextOptionsBuilder optionsBuilder,
+            Action<ChangeEventsDbContextOptionsBuilder>? optionsAction)
+        {
+            optionsAction?.Invoke(new ChangeEventsDbContextOptionsBuilder(optionsBuilder));
+
+            var extension = optionsBuilder.GetOrCreateExtension<ChangeEventsDbContextOptionsExtension>();
+            optionsBuilder.AsInfrastructure().AddOrUpdateExtension(extension);
+
+            return optionsBuilder;
         }
     }
 }

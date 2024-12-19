@@ -25,7 +25,12 @@ builder.Services
                     .UseTriggerNameFactory(tableName => $"{tableName}_GlobalCustomTriggerName")
                     .UseChangedBy<ChangedByProvider, User>()
                     .UseChangeSource<ChangeSourceProvider, ChangeSourceType>()
-                    .UseChangeEventQueries(typeof(MyDbContext).Assembly);
+                    .UseChangeEventQueries(typeof(MyDbContext).Assembly, options =>
+                    {
+                        options
+                            .IncludeInserts()
+                            .IncludeDeletes();
+                    });
             });
     })
     .AddScoped(services => new CurrentUserProvider(new User { Id = 7 }))

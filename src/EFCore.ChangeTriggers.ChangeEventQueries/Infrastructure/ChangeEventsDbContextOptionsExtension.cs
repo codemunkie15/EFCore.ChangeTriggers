@@ -1,6 +1,4 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.Builders;
-using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
-using EFCore.ChangeTriggers.ChangeEventQueries.Configuration.Builders;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -10,6 +8,10 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure
     public class ChangeEventsDbContextOptionsExtension : IDbContextOptionsExtension
     {
         public Assembly? ConfigurationsAssembly { get; private set; }
+
+        public bool IncludeInserts { get; private set; }
+
+        public bool IncludeDeletes{ get; private set; }
 
         private ChangeEventsDbContextOptionsExtensionInfo? info;
 
@@ -24,6 +26,8 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure
         public ChangeEventsDbContextOptionsExtension(ChangeEventsDbContextOptionsExtension copyFrom)
         {
             ConfigurationsAssembly = copyFrom.ConfigurationsAssembly;
+            IncludeInserts = copyFrom.IncludeInserts;
+            IncludeDeletes = copyFrom.IncludeDeletes;
         }
 
         public virtual void ApplyServices(IServiceCollection services)
@@ -43,6 +47,20 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure
         {
             var clone = Clone();
             clone.ConfigurationsAssembly = configurationsAssembly;
+            return clone;
+        }
+
+        public ChangeEventsDbContextOptionsExtension WithIncludeInserts(bool include)
+        {
+            var clone = Clone();
+            clone.IncludeInserts = include;
+            return clone;
+        }
+
+        public ChangeEventsDbContextOptionsExtension WithIncludeDeletes(bool include)
+        {
+            var clone = Clone();
+            clone.IncludeDeletes = include;
             return clone;
         }
 
