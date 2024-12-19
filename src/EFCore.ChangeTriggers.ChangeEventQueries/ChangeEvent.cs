@@ -5,12 +5,24 @@
     /// </summary>
     public class ChangeEvent
     {
+        /// <summary>
+        /// The description of the change event
+        /// </summary>
         public required string Description { get; set; }
 
+        /// <summary>
+        /// Gets or sets the old/previous value.
+        /// </summary>
         public string? OldValue { get; set; }
 
+        /// <summary>
+        /// Gets or sets the new/next value.
+        /// </summary>
         public string? NewValue { get; set; }
 
+        /// <summary>
+        /// Gets or sets when the change occured.
+        /// </summary>
         public DateTimeOffset ChangedAt { get; set; }
     }
 
@@ -19,8 +31,14 @@
     /// </summary>
     public class ChangeEvent<TChangedBy, TChangeSource> : ChangeEvent
     {
+        /// <summary>
+        /// Gets or sets who made the change.
+        /// </summary>
         public TChangedBy? ChangedBy { get; set; }
 
+        /// <summary>
+        /// Gets or sets where the change originated from.
+        /// </summary>
         public TChangeSource? ChangeSource { get; set; }
     }
 }
@@ -34,6 +52,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy
     /// </summary>
     public class ChangeEvent<TChangedBy> : ChangeEvent
     {
+        /// <summary>
+        /// Gets or sets who made the change.
+        /// </summary>
         public TChangedBy? ChangedBy { get; set; }
     }
 }
@@ -47,6 +68,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangeSource
     /// </summary>
     public class ChangeEvent<TChangeSource> : ChangeEvent
     {
+        /// <summary>
+        /// Gets or sets where the change originated from.
+        /// </summary>
         public TChangeSource? ChangeSource { get; set; }
     }
 }

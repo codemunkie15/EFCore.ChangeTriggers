@@ -1,6 +1,5 @@
 ﻿using EFCore.ChangeTriggers;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using TestHarness.DbModels.PaymentMethods;
 using TestHarness.DbModels.Permissions;
 using TestHarness.DbModels.Users;

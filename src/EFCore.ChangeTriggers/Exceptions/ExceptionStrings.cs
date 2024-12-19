@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-namespace EFCore.ChangeTriggers.Exceptions
+﻿namespace EFCore.ChangeTriggers.Exceptions
 {
     internal class ExceptionStrings
     {

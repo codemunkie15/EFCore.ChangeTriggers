@@ -1,7 +1,5 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries;
-using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 using Microsoft.EntityFrameworkCore;
-using TestHarness.DbModels.Permissions;
 using TestHarness.DbModels.Users;
 
 namespace TestHarness
@@ -26,7 +24,7 @@ namespace TestHarness
                 //        uc.AddProperty(uc => uc.PrimaryPaymentMethod.Name)
                 //            .WithDescription("Payment method changed");
                 //    });
-                //}))
+                //})
                 ).OrderBy(ce => ce.ChangedAt).ToListAsync();
         }
     }

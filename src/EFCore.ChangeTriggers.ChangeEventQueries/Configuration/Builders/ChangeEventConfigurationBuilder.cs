@@ -1,5 +1,8 @@
 ﻿namespace EFCore.ChangeTriggers.ChangeEventQueries.Configuration.Builders
 {
+    /// <summary>
+    /// Provides an API for configuring change events.
+    /// </summary>
     public class ChangeEventConfigurationBuilder
     {
         private ChangeEventConfiguration changeEventConfiguration;
@@ -14,6 +17,12 @@
         {
         }
 
+        /// <summary>
+        /// Configures an entity for change events.
+        /// </summary>
+        /// <typeparam name="TChangeEntity">The change entity type to configure.</typeparam>
+        /// <param name="configureEntity">An action to configure the entity.</param>
+        /// <returns></returns>
         public ChangeEventConfigurationBuilder Configure<TChangeEntity>(Action<ChangeEventEntityConfigurationBuilder<TChangeEntity>> configureEntity)
         {
             var entityConfiguration = new ChangeEventEntityConfiguration(typeof(TChangeEntity));

@@ -8,21 +8,26 @@ using System.Reflection;
 namespace EFCore.ChangeTriggers.ChangeEventQueries
 #pragma warning restore IDE0130 // Namespace does not match folder structure
 {
-    public static class ChangeTriggersDbContextOptionsBuilderExtensions
+    public static class DbContextOptionsBuilderExtensions
     {
+        /// <summary>
+        /// Configures the DbContext to use change event queries.
+        /// </summary>
+        /// <param name="optionsBuilder">The builder being used to configure the context.</param>
+        /// <returns>The options builder so that further configuration can be chained.</returns>
         public static void UseChangeEventQueries<TBuilder, TExtension>(
-            this ChangeTriggersDbContextOptionsBuilder<TBuilder, TExtension> builder,
+            this ChangeTriggersDbContextOptionsBuilder<TBuilder, TExtension> optionsBuilder,
             Assembly configurationsAssembly,
             Action<ChangeEventsDbContextOptionsBuilder>? optionsAction = null)
         where TBuilder : ChangeTriggersDbContextOptionsBuilder<TBuilder, TExtension>
         where TExtension : ChangeTriggersDbContextOptionsExtension, new()
         {
-            var extension = builder.OptionsBuilder.GetOrCreateExtension<ChangeEventsDbContextOptionsExtension>()
+            var extension = optionsBuilder.OptionsBuilder.GetOrCreateExtension<ChangeEventsDbContextOptionsExtension>()
                 .WithConfigurationsAssembly(configurationsAssembly);
 
-            builder.OptionsBuilder.AsInfrastructure().AddOrUpdateExtension(extension);
+            optionsBuilder.OptionsBuilder.AsInfrastructure().AddOrUpdateExtension(extension);
 
-            builder.OptionsBuilder
+            optionsBuilder.OptionsBuilder
                 .ApplyConfiguration(optionsAction)
                 .ReplaceService<IAsyncQueryProvider, DbContextAwareEntityQueryProvider>();
         }
