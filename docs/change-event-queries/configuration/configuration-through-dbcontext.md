@@ -22,7 +22,7 @@ public class UserChangeConfiguration : IChangeEventEntityConfiguration<UserChang
 }
 ```
 
-2. Modify your UseChangeEventQueries() call to include the assembly where your configurations are located.
+2. Modify your `UseChangeEventQueries()` call to include the assembly where your configurations are stored.
 ```c#
 services.AddDbContext<MyDbContext>(options =>
 {
