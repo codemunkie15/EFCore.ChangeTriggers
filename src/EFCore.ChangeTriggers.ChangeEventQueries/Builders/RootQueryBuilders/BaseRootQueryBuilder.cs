@@ -36,7 +36,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
             query.EnsureElementType<IChange>();
 
             this.options = query.GetDbContext().GetService<IDbContextOptions>().FindExtension<ChangeEventsDbContextOptionsExtension>()
-                ?? throw new ChangeEventQueryException("");
+                ?? throw new ChangeEventQueryException(ExceptionStrings.ChangeEventsDbContextOptionsExtensionNotFound());
             this.query = query;
             this.propertyBuilder = propertyBuilder;
             this.operationTypeBuilder = operationTypeBuilder;
@@ -45,7 +45,8 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
 
         public IQueryable<TChangeEvent> Build()
         {
-            var entityConfiguration = configuration.EntityConfigurations[query.ElementType];
+            var entityConfiguration = configuration.EntityConfigurations.GetValueOrDefault(query.ElementType)
+                ?? throw new ChangeEventQueryException(ExceptionStrings.EntityConfigurationNotFound(query.ElementType.Name));
 
             var changeEventsQuery = entityConfiguration.PropertyConfigurations
                 .Select(propertyBuilder.Build)
@@ -69,7 +70,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
         private static ChangeEventConfiguration GetConfigurationFromDbContext(IQueryable query)
         {
             return query.GetDbContext().GetInfrastructure().GetService<ChangeEventConfiguration>()
-                ?? throw new ChangeEventQueryException(ExceptionStrings.ConfigurationNotFound(query.ElementType.Name));
+                ?? throw new ChangeEventQueryException(ExceptionStrings.ConfigurationNotFoundFromDbContext());
         }
     }
 }

@@ -10,9 +10,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
         {
             var builder = new ChangeEventConfigurationBuilder();
 
-            var test = builder.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                .Where(m => m.Name == nameof(ChangeEventConfigurationBuilder.Configure)).ToList();
-
             var builderConfigureMethod = builder.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
                 .Single(m => m.Name == nameof(ChangeEventConfigurationBuilder.Configure) &&
                              m.GetParameters().SingleOrDefault()?.ParameterType.GetGenericTypeDefinition() == typeof(IChangeEventEntityConfiguration<>));

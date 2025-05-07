@@ -13,7 +13,7 @@ namespace TestHarness.Configuration
             builder.AddProperty(uc => uc.Name);
             builder.AddProperty(uc => uc.DateOfBirth);
             builder.AddProperty(uc => uc.PrimaryPaymentMethod!.Id.ToString())
-                .WithDescription("Primary payment method updated");
+                .WithDescription("Primary payment method changed");
         }
 
         public void Configure(EntityTypeBuilder<UserChange> builder)

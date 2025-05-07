@@ -178,7 +178,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
         private string GetPropertyDescription(ChangeEventEntityPropertyConfiguration propertyConfiguration)
         {
             return propertyConfiguration.Description
-                ?? $"{propertyConfiguration.ValueSelector.GetRootMemberName()} updated";
+                ?? $"{propertyConfiguration.ValueSelector.GetRootMemberName()} changed";
         }
     }
 }

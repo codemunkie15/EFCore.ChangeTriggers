@@ -11,7 +11,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure
 
         public bool IncludeInserts { get; private set; }
 
-        public bool IncludeDeletes{ get; private set; }
+        public bool IncludeDeletes { get; private set; }
 
         private ChangeEventsDbContextOptionsExtensionInfo? info;
 

@@ -31,7 +31,7 @@ public class UserChange : IChange<User>
 [assembly: DesignTimeServicesReference("EFCore.ChangeTriggers.ChangeTriggersDesignTimeServices, EFCore.ChangeTriggers")]
 ```
 
-5. Use ChangeTriggers on your your `DbContext`:
+5. Enable ChangeTriggers on your `DbContext`:
 ```c#
 services.AddDbContext<MyDbContext>(options =>
 {
