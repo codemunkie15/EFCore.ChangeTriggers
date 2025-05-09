@@ -9,12 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="New\**" />
-    <EmbeddedResource Remove="New\**" />
-    <None Remove="New\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
@@ -29,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\EFCore.ChangeTriggers.SqlServer\EFCore.ChangeTriggers.SqlServer.csproj" />
+    <ProjectReference Include="..\EFCore.ChangeTriggers.Tests.Common\EFCore.ChangeTriggers.Tests.Integration.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Infrastructure;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Domain;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Infrastructure;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;

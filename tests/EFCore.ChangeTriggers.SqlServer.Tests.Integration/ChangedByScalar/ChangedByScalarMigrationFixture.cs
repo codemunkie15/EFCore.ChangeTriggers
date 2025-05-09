@@ -1,5 +1,4 @@
-﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Infrastructure;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Persistence;
+﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Persistence;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar
 {

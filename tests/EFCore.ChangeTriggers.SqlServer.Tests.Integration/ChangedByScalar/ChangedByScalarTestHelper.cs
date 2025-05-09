@@ -1,6 +1,6 @@
-﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Infrastructure;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Persistence;
+﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Persistence;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Domain;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

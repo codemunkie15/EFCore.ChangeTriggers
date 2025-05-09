@@ -1,5 +1,4 @@
-﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Domain;
+﻿using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -29,11 +28,11 @@ public class ChangeSourceEntityDbContext : DbContext
 
             // Seed users for migration tests
             u.HasData(
-                new ChangedByEntityUser(0, "System"),
-                new ChangedByEntityUser(100, "TestUser100"),
-                new ChangedByEntityUser(101, "TestUser101"),
-                new ChangedByEntityUser(102, "TestUser102"),
-                new ChangedByEntityUser(103, "TestUser103"));
+                new ChangeSourceEntityUser(0, "System"),
+                new ChangeSourceEntityUser(100, "TestUser100"),
+                new ChangeSourceEntityUser(101, "TestUser101"),
+                new ChangeSourceEntityUser(102, "TestUser102"),
+                new ChangeSourceEntityUser(103, "TestUser103"));
         });
 
         modelBuilder.Entity<ChangeSourceEntityUserChange>(uc =>

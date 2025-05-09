@@ -1,4 +1,4 @@
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Domain;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Domain;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 

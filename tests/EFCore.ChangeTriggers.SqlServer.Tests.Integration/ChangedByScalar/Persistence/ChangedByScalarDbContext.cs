@@ -1,5 +1,4 @@
-﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Domain;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Domain;
+﻿using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -27,11 +26,11 @@ public class ChangedByScalarDbContext : DbContext
 
             // Seed users for migration tests
             u.HasData(
-                new ChangedByEntityUser(0, "System"),
-                new ChangedByEntityUser(100, "TestUser100"),
-                new ChangedByEntityUser(101, "TestUser101"),
-                new ChangedByEntityUser(102, "TestUser102"),
-                new ChangedByEntityUser(103, "TestUser103"));
+                new ChangedByScalarUser(0, "System"),
+                new ChangedByScalarUser(100, "TestUser100"),
+                new ChangedByScalarUser(101, "TestUser101"),
+                new ChangedByScalarUser(102, "TestUser102"),
+                new ChangedByScalarUser(103, "TestUser103"));
         });
 
         modelBuilder.Entity<ChangedByScalarUserChange>(uc =>
