@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar;
 
-[Collection("SharedContainer")]
+[Collection("ChangeSourceScalar")]
 public class ChangeSourceScalarTests : IClassFixture<ChangeSourceScalarFixture>, IAsyncLifetime
 {
     private readonly ChangeSourceScalarFixture fixture;

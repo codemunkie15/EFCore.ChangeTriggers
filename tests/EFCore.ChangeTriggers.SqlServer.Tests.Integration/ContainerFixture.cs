@@ -2,10 +2,6 @@
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
 {
-    [CollectionDefinition("SharedContainer")]
-    public class ContainerCollection : ICollectionFixture<ContainerFixture>
-    {
-    }
     public class ContainerFixture : IAsyncLifetime
     {
         public MsSqlContainer MsSqlContainer { get; private set; }
