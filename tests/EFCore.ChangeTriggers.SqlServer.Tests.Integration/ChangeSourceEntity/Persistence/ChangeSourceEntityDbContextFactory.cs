@@ -7,8 +7,11 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.P
     {
         public ChangeSourceEntityDbContext CreateDbContext(string[] args)
         {
-            var serviceProvider = ChangeSourceEntityServiceProviderBuilder.Build("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;");
-            return serviceProvider.GetRequiredService<ChangeSourceEntityDbContext>();
+            var services = new ServiceCollection()
+                .AddChangeSourceEntity("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;")
+                .BuildServiceProvider();
+
+            return services.GetRequiredService<ChangeSourceEntityDbContext>();
         }
     }
 }

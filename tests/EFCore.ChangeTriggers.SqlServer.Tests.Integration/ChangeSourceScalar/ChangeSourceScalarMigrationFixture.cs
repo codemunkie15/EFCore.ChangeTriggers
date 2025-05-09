@@ -1,14 +1,21 @@
 ﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Persistence;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar
 {
-    public class ChangeSourceScalarMigrationFixture : ContainerFixture<ChangeSourceScalarDbContext>
+    public class ChangeSourceScalarMigrationFixture : TestFixture<ChangeSourceScalarDbContext>
     {
+        public override string DatabaseName => "ChangeSourceScalarMigration";
+
         public override bool MigrateDatabase => false;
 
-        protected override IServiceProvider BuildServiceProvider(string connectionString)
+        public ChangeSourceScalarMigrationFixture(ContainerFixture sharedContainerFixture) : base(sharedContainerFixture)
         {
-            return ChangeSourceScalarServiceProviderBuilder.Build(connectionString);
+        }
+
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddChangeSourceScalar(GetConnectionString());
         }
     }
 }

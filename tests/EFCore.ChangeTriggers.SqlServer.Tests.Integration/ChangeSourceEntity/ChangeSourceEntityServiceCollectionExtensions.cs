@@ -6,11 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity
 {
-    internal static class ChangeSourceEntityServiceProviderBuilder
+    internal static class ChangeSourceEntityServiceCollectionExtensions
     {
-        public static ServiceProvider Build(string connectionString)
+        public static IServiceCollection AddChangeSourceEntity(this IServiceCollection services, string connectionString)
         {
-            return new ServiceCollection()
+            return services
                 .AddDbContext<ChangeSourceEntityDbContext>(options =>
                 {
                     options
@@ -20,8 +20,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity
                             options.UseChangeSource<ChangeSourceEntityProvider, ChangeSource>();
                         });
                 })
-                .AddScoped<EntityChangeSourceProvider>()
-                .BuildServiceProvider();
+                .AddScoped<EntityChangeSourceProvider>();
         }
     }
 }

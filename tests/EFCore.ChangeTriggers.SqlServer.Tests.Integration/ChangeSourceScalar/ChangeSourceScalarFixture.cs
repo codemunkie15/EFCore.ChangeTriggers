@@ -5,13 +5,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar
 {
-    public class ChangeSourceScalarFixture : ContainerFixture<ChangeSourceScalarDbContext>
+    public class ChangeSourceScalarFixture : TestFixture<ChangeSourceScalarDbContext>
     {
+        public override string DatabaseName => "ChangeSourceScalar";
+
         public override bool MigrateDatabase => true;
 
-        protected override IServiceProvider BuildServiceProvider(string connectionString)
+        public ChangeSourceScalarFixture(ContainerFixture sharedContainerFixture) : base(sharedContainerFixture)
         {
-            return ChangeSourceScalarServiceProviderBuilder.Build(connectionString);
+        }
+
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddChangeSourceScalar(GetConnectionString());
         }
 
         protected override void SetMigrationChangeContext()

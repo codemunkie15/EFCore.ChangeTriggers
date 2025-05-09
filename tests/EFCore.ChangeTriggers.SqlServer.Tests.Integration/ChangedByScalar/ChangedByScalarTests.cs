@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar;
 
+[Collection("SharedContainer")]
 public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>, IAsyncLifetime
 {
     private readonly ChangedByScalarFixture fixture;

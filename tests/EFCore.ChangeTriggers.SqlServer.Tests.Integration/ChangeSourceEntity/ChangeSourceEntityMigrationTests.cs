@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity;
 
+[Collection("SharedContainer")]
 public class ChangeSourceEntityMigrationTests : IClassFixture<ChangeSourceEntityMigrationFixture>, IAsyncLifetime
 {
     private readonly ChangeSourceEntityMigrationFixture fixture;

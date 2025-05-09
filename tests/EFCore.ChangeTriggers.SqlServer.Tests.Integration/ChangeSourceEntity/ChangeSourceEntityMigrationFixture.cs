@@ -1,14 +1,21 @@
 ﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Persistence;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity
 {
-    public class ChangeSourceEntityMigrationFixture : ContainerFixture<ChangeSourceEntityDbContext>
+    public class ChangeSourceEntityMigrationFixture : TestFixture<ChangeSourceEntityDbContext>
     {
+        public override string DatabaseName => "ChangeSourceEntityMigration";
+
         public override bool MigrateDatabase => false;
 
-        protected override IServiceProvider BuildServiceProvider(string connectionString)
+        public ChangeSourceEntityMigrationFixture(ContainerFixture sharedContainerFixture) : base(sharedContainerFixture)
         {
-            return ChangeSourceEntityServiceProviderBuilder.Build(connectionString);
+        }
+
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddChangeSourceEntity(GetConnectionString());
         }
     }
 }

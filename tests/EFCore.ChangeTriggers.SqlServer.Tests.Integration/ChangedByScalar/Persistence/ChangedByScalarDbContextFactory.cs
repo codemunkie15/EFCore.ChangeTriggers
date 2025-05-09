@@ -7,9 +7,11 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Pers
     {
         public ChangedByScalarDbContext CreateDbContext(string[] args)
         {
-            var serviceProvider = ChangedByScalarServiceProviderBuilder.Build("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;");
+            var services = new ServiceCollection()
+                .AddChangedByScalar("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;")
+                .BuildServiceProvider();
 
-            return serviceProvider.GetRequiredService<ChangedByScalarDbContext>();
+            return services.GetRequiredService<ChangedByScalarDbContext>();
         }
     }
 }

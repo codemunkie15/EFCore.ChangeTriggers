@@ -5,13 +5,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity
 {
-    public class ChangedByEntityFixture : ContainerFixture<ChangedByEntityDbContext>
+    public class ChangedByEntityFixture : TestFixture<ChangedByEntityDbContext>
     {
+        public override string DatabaseName => "ChangedByEntity";
+
         public override bool MigrateDatabase => true;
 
-        protected override IServiceProvider BuildServiceProvider(string connectionString)
+        public ChangedByEntityFixture(ContainerFixture sharedContainerFixture) : base(sharedContainerFixture)
         {
-            return ChangedByEntityServiceProviderBuilder.Build(connectionString);
+        }
+
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddChangedByEntity(GetConnectionString());
         }
 
         protected override void SetMigrationChangeContext()

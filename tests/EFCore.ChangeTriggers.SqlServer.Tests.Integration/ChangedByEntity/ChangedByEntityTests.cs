@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity;
 
+[Collection("SharedContainer")]
 public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>, IAsyncLifetime
 {
     private readonly ChangedByEntityFixture fixture;

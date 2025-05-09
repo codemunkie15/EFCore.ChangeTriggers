@@ -7,8 +7,11 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.P
     {
         public ChangeSourceScalarDbContext CreateDbContext(string[] args)
         {
-            var serviceProvider = ChangeSourceScalarServiceProviderBuilder.Build("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;");
-            return serviceProvider.GetRequiredService<ChangeSourceScalarDbContext>();
+            var services = new ServiceCollection()
+                .AddChangeSourceScalar("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;")
+                .BuildServiceProvider();
+
+            return services.GetRequiredService<ChangeSourceScalarDbContext>();
         }
     }
 }

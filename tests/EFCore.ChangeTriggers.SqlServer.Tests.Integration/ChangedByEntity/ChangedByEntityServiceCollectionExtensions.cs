@@ -6,11 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity
 {
-    internal static class ChangedByEntityServiceProviderBuilder
+    internal static class ChangedByEntityServiceCollectionExtensions
     {
-        public static ServiceProvider Build(string connectionString)
+        public static IServiceCollection AddChangedByEntity(this IServiceCollection serviceCollection, string connectionString)
         {
-            return new ServiceCollection()
+            return serviceCollection
                 .AddDbContext<ChangedByEntityDbContext>(options =>
                 {
                     options
@@ -20,8 +20,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity
                             options.UseChangedBy<ChangedByEntityProvider, ChangedByEntityUser>();
                         });
                 })
-                .AddScoped<EntityCurrentUserProvider>()
-                .BuildServiceProvider();
+                .AddScoped<EntityCurrentUserProvider>();
         }
     }
 }

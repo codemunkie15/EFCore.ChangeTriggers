@@ -5,11 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar
 {
-    internal static class ChangedByScalarServiceProviderBuilder
+    internal static class ChangedByScalarServiceCollectionExtensions
     {
-        public static ServiceProvider Build(string connectionString)
+        public static IServiceCollection AddChangedByScalar(this IServiceCollection services, string connectionString)
         {
-            return new ServiceCollection()
+            return services
                 .AddDbContext<ChangedByScalarDbContext>(options =>
                 {
                     options
@@ -19,8 +19,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar
                             options.UseChangedBy<ChangedByScalarProvider, string>();
                         });
                 })
-                .AddScoped<ScalarCurrentUserProvider>()
-                .BuildServiceProvider();
+                .AddScoped<ScalarCurrentUserProvider>();
         }
     }
 }
