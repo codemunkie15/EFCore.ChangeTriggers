@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.SqlSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.Tests.Integration.Common", "tests\EFCore.ChangeTriggers.Tests.Common\EFCore.ChangeTriggers.Tests.Integration.Common.csproj", "{C93C273B-1A6D-434D-A616-985A7BE2FE2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration", "tests\EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration\EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.csproj", "{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{C93C273B-1A6D-434D-A616-985A7BE2FE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C93C273B-1A6D-434D-A616-985A7BE2FE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C93C273B-1A6D-434D-A616-985A7BE2FE2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{13B0C4F0-A80C-4CF9-AF3B-F33243958492} = {163D18F2-0582-4FDC-BDF5-F424389F7154}
 		{C93C273B-1A6D-434D-A616-985A7BE2FE2C} = {163D18F2-0582-4FDC-BDF5-F424389F7154}
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E} = {163D18F2-0582-4FDC-BDF5-F424389F7154}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9BE8BE84-B419-4B5B-BD62-A97FE7E5DF36}
