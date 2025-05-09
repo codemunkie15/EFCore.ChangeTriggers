@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{163D18F2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.SqlServer.Tests.Integration", "tests\EFCore.ChangeTriggers.SqlServer.Tests.Integration\EFCore.ChangeTriggers.SqlServer.Tests.Integration.csproj", "{13B0C4F0-A80C-4CF9-AF3B-F33243958492}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.Tests.Integration.Common", "tests\EFCore.ChangeTriggers.Tests.Common\EFCore.ChangeTriggers.Tests.Integration.Common.csproj", "{C93C273B-1A6D-434D-A616-985A7BE2FE2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.Tests.Integration.Common", "tests\EFCore.ChangeTriggers.Tests.Integration.Common\EFCore.ChangeTriggers.Tests.Integration.Common.csproj", "{C93C273B-1A6D-434D-A616-985A7BE2FE2C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration", "tests\EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration\EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.csproj", "{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}"
 EndProject

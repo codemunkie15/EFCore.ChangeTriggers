@@ -1,0 +1,1 @@
+& (Join-Path $PSScriptRoot "..\..\Scripts\add-migration.ps1") -Context "ChangeSourceEntityDbContext"

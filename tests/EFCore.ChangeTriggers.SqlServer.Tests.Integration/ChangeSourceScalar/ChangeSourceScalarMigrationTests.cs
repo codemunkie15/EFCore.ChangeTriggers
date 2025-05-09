@@ -1,4 +1,6 @@
 using EFCore.ChangeTriggers.Abstractions;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Fixtures;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Infrastructure;
 using FluentAssertions;

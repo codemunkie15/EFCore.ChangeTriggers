@@ -1,3 +1,5 @@
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Fixtures;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Domain;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

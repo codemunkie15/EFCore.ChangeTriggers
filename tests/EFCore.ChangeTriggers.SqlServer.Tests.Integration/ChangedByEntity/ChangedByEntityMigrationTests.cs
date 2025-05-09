@@ -1,4 +1,6 @@
 using EFCore.ChangeTriggers.Abstractions;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Fixtures;
+using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Infrastructure;
 using FluentAssertions;
