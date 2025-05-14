@@ -3,8 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-
+    <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
@@ -23,6 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\src\EFCore.ChangeTriggers.ChangeEventQueries\EFCore.ChangeTriggers.ChangeEventQueries.csproj" />
 		<ProjectReference Include="..\..\src\EFCore.ChangeTriggers.SqlServer\EFCore.ChangeTriggers.SqlServer.csproj" />
 		<ProjectReference Include="..\EFCore.ChangeTriggers.Tests.Integration.Common\EFCore.ChangeTriggers.Tests.Integration.Common.csproj" />
 	</ItemGroup>

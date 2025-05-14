@@ -1,23 +1,24 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
+namespace EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures
 {
-    public abstract class TestFixture<TDbContext> : IAsyncLifetime
+    public abstract class DbContextFixture<TDbContext> : IAsyncLifetime
         where TDbContext : DbContext
     {
+        public DbContainerFixture DbContainerFixture { get; }
+
         public ServiceProvider Services { get; private set; }
 
         public abstract string DatabaseName { get; }
 
         public abstract bool MigrateDatabase { get; }
 
-        public ContainerFixture ContainerFixture { get; }
-
-        protected TestFixture(ContainerFixture sharedContainerFixture)
+        protected DbContextFixture(DbContainerFixture dbContainerFixture)
         {
-            ContainerFixture = sharedContainerFixture;
+            DbContainerFixture = dbContainerFixture;
         }
 
         public virtual async Task InitializeAsync()
@@ -45,7 +46,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
 
         protected string GetConnectionString()
         {
-            var builder = new SqlConnectionStringBuilder(ContainerFixture.MsSqlContainer.GetConnectionString())
+            var builder = new SqlConnectionStringBuilder(DbContainerFixture.GetConnectionString())
             {
                 InitialCatalog = DatabaseName
             };

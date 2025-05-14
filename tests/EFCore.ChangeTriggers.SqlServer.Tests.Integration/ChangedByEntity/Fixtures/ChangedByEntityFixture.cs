@@ -2,17 +2,18 @@
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Infrastructure;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Persistence;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Fixtures
 {
-    public class ChangedByEntityFixture : TestFixture<ChangedByEntityDbContext>
+    public class ChangedByEntityFixture : DbContextFixture<ChangedByEntityDbContext>
     {
         public override string DatabaseName => "ChangedByEntity";
 
         public override bool MigrateDatabase => true;
 
-        public ChangedByEntityFixture(ContainerFixture sharedContainerFixture) : base(sharedContainerFixture)
+        public ChangedByEntityFixture(MsSqlContainerFixture msSqlContainerFixture) : base(msSqlContainerFixture)
         {
         }
 

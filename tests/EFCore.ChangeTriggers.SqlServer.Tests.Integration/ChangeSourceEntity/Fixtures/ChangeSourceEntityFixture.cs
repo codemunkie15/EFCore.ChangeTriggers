@@ -2,17 +2,18 @@
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Infrastructure;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Persistence;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Fixtures
 {
-    public class ChangeSourceEntityFixture : TestFixture<ChangeSourceEntityDbContext>
+    public class ChangeSourceEntityFixture : DbContextFixture<ChangeSourceEntityDbContext>
     {
         public override string DatabaseName => "ChangeSourceEntity";
 
         public override bool MigrateDatabase => true;
 
-        public ChangeSourceEntityFixture(ContainerFixture sharedContainerFixture) : base(sharedContainerFixture)
+        public ChangeSourceEntityFixture(MsSqlContainerFixture msSqlContainerFixture) : base(msSqlContainerFixture)
         {
         }
 

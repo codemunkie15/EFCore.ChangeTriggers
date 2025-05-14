@@ -2,17 +2,18 @@
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Infrastructure;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Persistence;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Fixtures
 {
-    public class ChangeSourceScalarFixture : TestFixture<ChangeSourceScalarDbContext>
+    public class ChangeSourceScalarFixture : DbContextFixture<ChangeSourceScalarDbContext>
     {
         public override string DatabaseName => "ChangeSourceScalar";
 
         public override bool MigrateDatabase => true;
 
-        public ChangeSourceScalarFixture(ContainerFixture sharedContainerFixture) : base(sharedContainerFixture)
+        public ChangeSourceScalarFixture(MsSqlContainerFixture msSqlContainerFixture) : base(msSqlContainerFixture)
         {
         }
 
