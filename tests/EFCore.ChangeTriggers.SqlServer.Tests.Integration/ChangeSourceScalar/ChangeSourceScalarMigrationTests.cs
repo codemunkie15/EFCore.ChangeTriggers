@@ -66,7 +66,7 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
     }
 
     [Fact]
-    public async void MigrateDatabase_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task MigrateDatabase_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSource.Tests;
 
@@ -86,7 +86,7 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
     }
 
     [Fact]
-    public async void MigrateDatabase_UsingMigrationChangeSource_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task MigrateDatabase_UsingMigrationChangeSource_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         var changeSourceProvider = (ChangeSourceScalarProvider)testHelper.DbContext.GetService<IChangeSourceProvider<ChangeSource>>();
         changeSourceProvider.UseCustomGetMigrationChangeSource = true;
@@ -121,9 +121,9 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
             $"EXEC sp_set_session_context N'ChangeContext.ChangeSource', {(int)testHelper.ChangeSourceProvider.CurrentChangeSource};");
     }
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         var migrator = testHelper.DbContext.Database.GetService<IMigrator>();
         await migrator.MigrateAsync("0");

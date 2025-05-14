@@ -36,7 +36,7 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     }
 
     [Fact]
-    public async void AddEntity_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task AddEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = 2 };
 
@@ -129,7 +129,7 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     }
 
     [Fact]
-    public async void UpdateEntity_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task UpdateEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = 2 };
 
@@ -169,7 +169,7 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     }
 
     [Fact]
-    public async void DeleteEntity_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task DeleteEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = 2 };
 
@@ -188,9 +188,9 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
         userChange.TrackedEntity.Should().BeNull();
     }
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = 2 };
 

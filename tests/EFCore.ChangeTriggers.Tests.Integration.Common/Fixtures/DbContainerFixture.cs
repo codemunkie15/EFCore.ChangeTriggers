@@ -13,14 +13,14 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures
     {
         public TDatabaseContainer DbContainer { get; private set; }
 
-        public virtual async Task InitializeAsync()
+        public virtual async ValueTask InitializeAsync()
         {
             DbContainer = BuildDbContainer();
 
             await DbContainer.StartAsync();
         }
 
-        public virtual async Task DisposeAsync()
+        public virtual async ValueTask DisposeAsync()
         {
             await DbContainer.DisposeAsync().AsTask();
         }

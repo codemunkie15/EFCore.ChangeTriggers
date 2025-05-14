@@ -21,7 +21,7 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures
             DbContainerFixture = dbContainerFixture;
         }
 
-        public virtual async Task InitializeAsync()
+        public virtual async ValueTask InitializeAsync()
         {
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
@@ -35,7 +35,7 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures
             }
         }
 
-        public virtual async Task DisposeAsync()
+        public virtual async ValueTask DisposeAsync()
         {
             await Services.DisposeAsync();
         }

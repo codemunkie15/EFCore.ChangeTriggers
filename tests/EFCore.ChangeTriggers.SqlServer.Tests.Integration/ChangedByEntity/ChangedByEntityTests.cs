@@ -36,7 +36,7 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>, IAsyn
     }
 
     [Fact]
-    public async void AddEntity_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task AddEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.CurrentUserProvider.CurrentUserAsync = new ChangedByEntityUser { Id = 1 };
 
@@ -129,7 +129,7 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>, IAsyn
     }
 
     [Fact]
-    public async void UpdateEntity_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task UpdateEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.CurrentUserProvider.CurrentUserAsync = new ChangedByEntityUser { Id = 1 };
 
@@ -172,7 +172,7 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>, IAsyn
     }
 
     [Fact]
-    public async void DeleteEntity_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task DeleteEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.CurrentUserProvider.CurrentUserAsync = new ChangedByEntityUser { Id = 1 };
 
@@ -194,9 +194,9 @@ public class ChangedByEntityTests : IClassFixture<ChangedByEntityFixture>, IAsyn
         userChangeEntry.Property("ChangedById").CurrentValue.Should().Be(user.Id);
     }
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         testHelper.CurrentUserProvider.CurrentUserAsync = new ChangedByEntityUser { Id = 1 };
 

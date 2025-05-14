@@ -65,7 +65,7 @@ public class ChangedByScalarMigrationTests : IClassFixture<ChangedByScalarMigrat
     }
 
     [Fact]
-    public async void MigrateDatabase_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task MigrateDatabase_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         testHelper.CurrentUserProvider.CurrentUserAsync = 0.ToString();
 
@@ -85,7 +85,7 @@ public class ChangedByScalarMigrationTests : IClassFixture<ChangedByScalarMigrat
     }
 
     [Fact]
-    public async void MigrateDatabase_UsingMigrationChangedBy_InsertsChangeEntity_WithCorrectProperties_Async()
+    public async Task MigrateDatabase_UsingMigrationChangedBy_InsertsChangeEntity_WithCorrectProperties_Async()
     {
         var changedByProvider = (ChangedByScalarProvider)testHelper.DbContext.GetService<IChangedByProvider<string>>();
         changedByProvider.UseCustomGetMigrationChangedBy = true;
@@ -120,9 +120,9 @@ public class ChangedByScalarMigrationTests : IClassFixture<ChangedByScalarMigrat
             $"EXEC sp_set_session_context N'ChangeContext.ChangedBy', N'{testHelper.CurrentUserProvider.CurrentUser}';");
     }
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         var migrator = testHelper.DbContext.Database.GetService<IMigrator>();
         await migrator.MigrateAsync("0");
