@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity;
 
-[Collection("MsSqlContainer")]
 public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>, IAsyncLifetime
 {
     private readonly ChangeSourceEntityFixture fixture;

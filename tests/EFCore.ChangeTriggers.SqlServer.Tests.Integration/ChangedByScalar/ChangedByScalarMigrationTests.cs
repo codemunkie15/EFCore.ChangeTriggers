@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar;
 
-[Collection("MsSqlContainer")]
 public class ChangedByScalarMigrationTests : IClassFixture<ChangedByScalarMigrationFixture>, IAsyncLifetime
 {
     private readonly ChangedByScalarMigrationFixture fixture;

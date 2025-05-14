@@ -1,13 +1,11 @@
-﻿using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
+﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
 using Testcontainers.MsSql;
+
+[assembly: AssemblyFixture(typeof(MsSqlContainerFixture))]
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
 {
-    [CollectionDefinition("MsSqlContainer")]
-    public class MsSqlContainerCollection : ICollectionFixture<MsSqlContainerFixture>
-    {
-    }
-
     public class MsSqlContainerFixture : DbContainerFixture<MsSqlContainer>
     {
         protected override MsSqlContainer BuildDbContainer()
