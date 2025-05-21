@@ -44,7 +44,7 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures
 
         protected virtual void SetMigrationChangeContext() { }
 
-        protected string GetConnectionString()
+        public string GetConnectionString()
         {
             var builder = new SqlConnectionStringBuilder(DbContainerFixture.GetConnectionString())
             {

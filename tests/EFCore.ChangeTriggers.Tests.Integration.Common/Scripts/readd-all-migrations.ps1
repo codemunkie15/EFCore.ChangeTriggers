@@ -1,7 +1,7 @@
 $global:NoBuild = $false
 
 # Find all add-migration.ps1 files at least one level below $PSScriptRoot
-$addMigrationScripts = Get-ChildItem -Path "../" -Recurse -Filter "add-migration.ps1" | Where-Object {
+$addMigrationScripts = Get-ChildItem -Path "..\..\" -Recurse -Filter "add-migration.ps1" | Where-Object {
     $_.DirectoryName -ne $PSScriptRoot  # Exclude top-level scripts as name could be the same
 }
 

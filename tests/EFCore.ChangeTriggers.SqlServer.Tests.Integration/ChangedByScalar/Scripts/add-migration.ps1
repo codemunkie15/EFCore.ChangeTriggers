@@ -1,1 +1,1 @@
-& (Join-Path $PSScriptRoot "..\..\Scripts\add-migration.ps1") -Context "ChangedByScalarDbContext"
+& (Join-Path $PSScriptRoot "..\..\..\EFCore.ChangeTriggers.Tests.Integration.Common\Scripts\add-migration.ps1") -Context "ChangedByScalarDbContext"
