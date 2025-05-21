@@ -15,5 +15,5 @@ Write-Host "Scaffolding new migration for $Context..."
 dotnet ef migrations add Initial `
 	--context $Context `
 	--output-dir $OutputDir `
-	--project (Join-Path $PSScriptRoot "..\..\EFCore.ChangeTriggers.SqlServer.Tests.Integration\EFCore.ChangeTriggers.SqlServer.Tests.Integration.csproj") `
+	--project (Join-Path $PSScriptRoot "..\EFCore.ChangeTriggers.Tests.Integration.Common.csproj") `
 	@(if ($Global:NoBuild) { "--no-build" } else { $null })
