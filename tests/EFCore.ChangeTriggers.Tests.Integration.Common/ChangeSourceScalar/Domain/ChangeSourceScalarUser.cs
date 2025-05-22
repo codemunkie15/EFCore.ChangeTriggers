@@ -2,22 +2,9 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Domain;
 
-public class ChangeSourceScalarUser : ITracked<ChangeSourceScalarUserChange>
+public class ChangeSourceScalarUser : BaseUser, ITracked<ChangeSourceScalarUserChange>
 {
-    public int Id { get; set; }
-
-    public string Username { get; set; }
-
     public ICollection<ChangeSourceScalarUserChange> Changes { get; set; }
 
-    public ChangeSourceScalarUser()
-    {
-
-    }
-
-    public ChangeSourceScalarUser(int id, string username)
-    {
-        Id = id;
-        Username = username;
-    }
+    public static ChangeSourceScalarUser SystemUser { get; } = new ChangeSourceScalarUser { Id = 1 };
 }

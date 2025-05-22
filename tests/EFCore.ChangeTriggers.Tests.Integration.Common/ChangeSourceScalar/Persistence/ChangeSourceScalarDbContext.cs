@@ -1,4 +1,5 @@
-﻿using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Domain;
+﻿using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Domain;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -21,15 +22,13 @@ public class ChangeSourceScalarDbContext : DbContext
 
         modelBuilder.Entity<ChangeSourceScalarUser>(u =>
         {
-            u.Property(u => u.Id).ValueGeneratedNever();
-
             // Seed users for migration tests
             u.HasData(
-                new ChangeSourceScalarUser(0, "System"),
-                new ChangeSourceScalarUser(100, "TestUser100"),
-                new ChangeSourceScalarUser(101, "TestUser101"),
-                new ChangeSourceScalarUser(102, "TestUser102"),
-                new ChangeSourceScalarUser(103, "TestUser103"));
+                ChangeSourceScalarUser.SystemUser,
+                new ChangeSourceScalarUser { Id = 2, Username = "Test User 1" },
+                new ChangeSourceScalarUser { Id = 3, Username = "Test User 2" },
+                new ChangeSourceScalarUser { Id = 4, Username = "Test User 3" },
+                new ChangeSourceScalarUser { Id = 5, Username = "Test User 4" });
         });
 
         modelBuilder.Entity<ChangeSourceScalarUserChange>(uc =>

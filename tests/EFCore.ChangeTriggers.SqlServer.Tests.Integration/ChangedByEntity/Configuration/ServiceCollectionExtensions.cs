@@ -14,6 +14,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Conf
                 {
                     options.UseChangedBy<ChangedByEntityProvider, ChangedByEntityUser>();
                 })
+                // Register a service to provide the current user, to test that application dependencies are resolvable inside the EF Core service provider.
                 .AddScoped<EntityCurrentUserProvider>();
         }
     }

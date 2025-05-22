@@ -25,7 +25,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.F
         protected override void SetMigrationChangeContext()
         {
             var provider = Services.GetRequiredService<EntityChangeSourceProvider>();
-            provider.CurrentChangeSourceAsync = new ChangeSource { Id = 0 };
+            provider.CurrentChangeSourceAsync = new ChangeSource { Id = 1 };
         }
     }
 }

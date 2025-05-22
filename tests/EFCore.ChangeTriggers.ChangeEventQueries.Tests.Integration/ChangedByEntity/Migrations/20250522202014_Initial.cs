@@ -18,8 +18,12 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEn
                 name: "TestUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAdmin = table.Column<bool>(type: "bit", nullable: false),
+                    LastUpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,11 +36,14 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEn
                 {
                     ChangeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OperationTypeId = table.Column<int>(type: "int", nullable: false),
                     ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ChangedById = table.Column<int>(type: "int", nullable: true)
+                    ChangedById = table.Column<int>(type: "int", nullable: true),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAdmin = table.Column<bool>(type: "bit", nullable: false),
+                    LastUpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,21 +73,21 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEn
                 changeTableName: "TestUserChanges",
                 triggerName: "TestUsers_ChangeTrigger",
                 trackedTablePrimaryKeyColumns: new[] { "Id" },
-                changeTableDataColumns: new[] { "Id", "Username" },
+                changeTableDataColumns: new[] { "DateOfBirth", "Id", "IsAdmin", "LastUpdatedAt", "Username" },
                 operationTypeColumn: new ChangeContextColumn("OperationTypeId", "int"),
                 changedAtColumn: new ChangeContextColumn("ChangedAt"),
                 changedByColumn: new ChangeContextColumn("ChangedById", "int"));
 
             migrationBuilder.InsertData(
                 table: "TestUsers",
-                columns: new[] { "Id", "Username" },
+                columns: new[] { "Id", "DateOfBirth", "IsAdmin", "LastUpdatedAt", "Username" },
                 values: new object[,]
                 {
-                    { 0, "System" },
-                    { 100, "TestUser100" },
-                    { 101, "TestUser101" },
-                    { 102, "TestUser102" },
-                    { 103, "TestUser103" }
+                    { 1, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "b2e713f0-7fbd-45e4-a2d0-aaa7eca97077" },
+                    { 2, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Test User 1" },
+                    { 3, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Test User 2" },
+                    { 4, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Test User 3" },
+                    { 5, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Test User 4" }
                 });
 
             migrationBuilder.CreateIndex(

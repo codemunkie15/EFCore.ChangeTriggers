@@ -2,13 +2,9 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Domain;
 
-public class ChangedByScalarUserChange : IChange<ChangedByScalarUser>, IHasChangedBy<string>
+public class ChangedByScalarUserChange : BaseUser, IChange<ChangedByScalarUser>, IHasChangedBy<string>
 {
     public int ChangeId { get; set; }
-
-    public int Id { get; set; }
-
-    public string Username { get; set; }
 
     public OperationType OperationType { get; set; }
 

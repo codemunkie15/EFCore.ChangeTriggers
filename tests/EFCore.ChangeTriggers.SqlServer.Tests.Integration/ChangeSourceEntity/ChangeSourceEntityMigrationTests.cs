@@ -1,7 +1,7 @@
 using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Fixtures;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Domain;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Infrastructure;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +28,7 @@ public class ChangeSourceEntityMigrationTests : IClassFixture<ChangeSourceEntity
 
         testHelper.DbContext.Database.Migrate();
 
-        var testUsers = testHelper.GetAllTestUsers().ToList();
+        var testUsers = testHelper.GetTestUsers().ToList();
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -51,7 +51,7 @@ public class ChangeSourceEntityMigrationTests : IClassFixture<ChangeSourceEntity
 
         testHelper.DbContext.Database.Migrate();
 
-        var testUsers = testHelper.GetAllTestUsers().ToList();
+        var testUsers = testHelper.GetTestUsers().ToList();
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -69,9 +69,9 @@ public class ChangeSourceEntityMigrationTests : IClassFixture<ChangeSourceEntity
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = 1 };
 
-        await testHelper.DbContext.Database.MigrateAsync();
+        await testHelper.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
 
-        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+        var testUsers = await testHelper.GetTestUsers().ToListAsync(TestContext.Current.CancellationToken);
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -92,9 +92,9 @@ public class ChangeSourceEntityMigrationTests : IClassFixture<ChangeSourceEntity
 
         testHelper.ChangeSourceProvider.MigrationChangeSourceAsync = new ChangeSource { Id = 1 };
 
-        await testHelper.DbContext.Database.MigrateAsync();
+        await testHelper.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
 
-        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+        var testUsers = await testHelper.GetTestUsers().ToListAsync(TestContext.Current.CancellationToken);
 
         testUsers.Should().AllSatisfy(u =>
         {

@@ -1,6 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Persistence;
 
@@ -23,15 +22,13 @@ public class ChangeSourceEntityDbContext : DbContext
 
         modelBuilder.Entity<ChangeSourceEntityUser>(u =>
         {
-            u.Property(u => u.Id).ValueGeneratedNever();
-
             // Seed users for migration tests
             u.HasData(
-                new ChangeSourceEntityUser(0, "System"),
-                new ChangeSourceEntityUser(100, "TestUser100"),
-                new ChangeSourceEntityUser(101, "TestUser101"),
-                new ChangeSourceEntityUser(102, "TestUser102"),
-                new ChangeSourceEntityUser(103, "TestUser103"));
+                ChangeSourceEntityUser.SystemUser,
+                new ChangeSourceEntityUser { Id = 2, Username = "Test User 1" },
+                new ChangeSourceEntityUser { Id = 3, Username = "Test User 2" },
+                new ChangeSourceEntityUser { Id = 4, Username = "Test User 3" },
+                new ChangeSourceEntityUser { Id = 5, Username = "Test User 4" });
         });
 
         modelBuilder.Entity<ChangeSourceEntityUserChange>(uc =>

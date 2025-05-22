@@ -2,13 +2,9 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Domain;
 
-public class ChangedByEntityUserChange : IChange<ChangedByEntityUser>, IHasChangedBy<ChangedByEntityUser>
+public class ChangedByEntityUserChange : BaseUser, IChange<ChangedByEntityUser>, IHasChangedBy<ChangedByEntityUser>
 {
     public int ChangeId { get; set; }
-
-    public int Id { get; set; }
-
-    public string Username { get; set; }
 
     public OperationType OperationType { get; set; }
 

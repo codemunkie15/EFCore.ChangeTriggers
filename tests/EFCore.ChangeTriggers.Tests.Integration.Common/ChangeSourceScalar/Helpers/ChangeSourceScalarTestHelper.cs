@@ -4,9 +4,9 @@ using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Persiste
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Helpers
+namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Helpers
 {
-    internal class ChangeSourceScalarTestHelper : IDisposable
+    public class ChangeSourceScalarTestHelper : IDisposable
     {
         public ChangeSourceScalarDbContext DbContext { get; }
 
@@ -21,20 +21,27 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.H
             ChangeSourceProvider = scope.ServiceProvider.GetRequiredService<ScalarChangeSourceProvider>();
         }
 
-        public ChangeSourceScalarUser AddTestUser(int id)
+        public ChangeSourceScalarUser AddTestUser()
         {
-            var user = new ChangeSourceScalarUser(id, $"TestUser{id}");
+            var user = new ChangeSourceScalarUser();
             DbContext.TestUsers.Add(user);
             return user;
         }
 
-        public IQueryable<ChangeSourceScalarUser> GetAllTestUsers()
+        public IEnumerable<ChangeSourceScalarUser> AddTestUsers(int count)
+        {
+            var users = Enumerable.Range(1, count).Select(i => new ChangeSourceScalarUser()).ToList();
+            DbContext.TestUsers.AddRange(users);
+            return users;
+        }
+
+        public IQueryable<ChangeSourceScalarUser> GetTestUsers()
         {
             return DbContext.TestUsers
                 .Include(u => u.Changes);
         }
 
-        public IQueryable<ChangeSourceScalarUserChange> GetAllTestUserChanges()
+        public IQueryable<ChangeSourceScalarUserChange> GetTestUserChanges()
         {
             return DbContext.TestUserChanges
                 .Include(uc => uc.TrackedEntity);

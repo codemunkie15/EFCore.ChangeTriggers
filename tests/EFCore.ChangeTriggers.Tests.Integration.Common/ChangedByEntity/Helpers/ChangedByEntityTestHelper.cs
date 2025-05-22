@@ -4,9 +4,9 @@ using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Persistence
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Helpers
+namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Helpers
 {
-    internal class ChangedByEntityTestHelper : IDisposable
+    public class ChangedByEntityTestHelper : IDisposable
     {
         public ChangedByEntityDbContext DbContext { get; }
 
@@ -21,21 +21,28 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Help
             CurrentUserProvider = scope.ServiceProvider.GetRequiredService<EntityCurrentUserProvider>();
         }
 
-        public ChangedByEntityUser AddTestUser(int id)
+        public ChangedByEntityUser AddTestUser()
         {
-            var user = new ChangedByEntityUser(id, $"TestUser{id}");
+            var user = new ChangedByEntityUser();
             DbContext.TestUsers.Add(user);
             return user;
         }
 
-        public IQueryable<ChangedByEntityUser> GetAllTestUsers()
+        public IEnumerable<ChangedByEntityUser> AddTestUsers(int count)
+        {
+            var users = Enumerable.Range(1, count).Select(i => new ChangedByEntityUser()).ToList();
+            DbContext.TestUsers.AddRange(users);
+            return users;
+        }
+
+        public IQueryable<ChangedByEntityUser> GetTestUsers()
         {
             return DbContext.TestUsers
                 .Include(u => u.Changes)
                 .ThenInclude(c => c.ChangedBy);
         }
 
-        public IQueryable<ChangedByEntityUserChange> GetAllTestUserChanges()
+        public IQueryable<ChangedByEntityUserChange> GetTestUserChanges()
         {
             return DbContext.TestUserChanges
                 .Include(uc => uc.TrackedEntity)

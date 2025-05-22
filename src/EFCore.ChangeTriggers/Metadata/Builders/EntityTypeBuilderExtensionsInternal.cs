@@ -37,6 +37,7 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
 
             foreach (var foreignKey in builder.Metadata.GetForeignKeys())
             {
+                // TODO: Make these optional?
                 foreignKey.HasNoCheck(); // Stops cascade delete from removing the change entities if the source entity is deleted
                 foreignKey.IsRequired = false; // Forces a LEFT JOIN so change entities can still be queried if the source entity is deleted
             }
@@ -82,7 +83,6 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
             if (changeSourceEntity != null)
             {
                 // Configure ChangeSource as a relationship with navigation
-
                 changeSourceEntity.EnsureSinglePrimaryKey();
 
                 builder

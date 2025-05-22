@@ -1,7 +1,7 @@
 using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Fixtures;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Domain;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Infrastructure;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -18,17 +18,17 @@ public class ChangedByEntityMigrationTests : IClassFixture<ChangedByEntityMigrat
     public ChangedByEntityMigrationTests(ChangedByEntityMigrationFixture fixture)
     {
         this.fixture = fixture;
-        testHelper = new ChangedByEntityTestHelper(fixture.Services);
+        testHelper = new ChangedByEntityTestHelper(fixture.Services); // Use a new helper per test method
     }
 
     [Fact]
     public void MigrateDatabase_InsertsChangeEntity_WithCorrectProperties()
     {
-        testHelper.CurrentUserProvider.CurrentUser = new ChangedByEntityUser { Id = 0 };
+        testHelper.CurrentUserProvider.CurrentUser = ChangedByEntityUser.SystemUser;
 
         testHelper.DbContext.Database.Migrate();
 
-        var testUsers = testHelper.GetAllTestUsers().ToList();
+        var testUsers = testHelper.GetTestUsers().ToList();
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -47,11 +47,11 @@ public class ChangedByEntityMigrationTests : IClassFixture<ChangedByEntityMigrat
         var changedByProvider = (ChangedByEntityProvider)testHelper.DbContext.GetService<IChangedByProvider<ChangedByEntityUser>>();
         changedByProvider.UseCustomGetMigrationChangedBy = true;
 
-        testHelper.CurrentUserProvider.MigrationCurrentUser = new ChangedByEntityUser { Id = 0 };
+        testHelper.CurrentUserProvider.MigrationCurrentUser = ChangedByEntityUser.SystemUser;
 
         testHelper.DbContext.Database.Migrate();
 
-        var testUsers = testHelper.GetAllTestUsers().ToList();
+        var testUsers = testHelper.GetTestUsers().ToList();
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -67,11 +67,11 @@ public class ChangedByEntityMigrationTests : IClassFixture<ChangedByEntityMigrat
     [Fact]
     public async Task MigrateDatabase_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        testHelper.CurrentUserProvider.CurrentUserAsync = new ChangedByEntityUser { Id = 0 };
+        testHelper.CurrentUserProvider.CurrentUserAsync = ChangedByEntityUser.SystemUser;
 
-        await testHelper.DbContext.Database.MigrateAsync();
+        await testHelper.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
 
-        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+        var testUsers = await testHelper.GetTestUsers().ToListAsync(TestContext.Current.CancellationToken);
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -90,11 +90,11 @@ public class ChangedByEntityMigrationTests : IClassFixture<ChangedByEntityMigrat
         var changedByProvider = (ChangedByEntityProvider)testHelper.DbContext.GetService<IChangedByProvider<ChangedByEntityUser>>();
         changedByProvider.UseCustomGetMigrationChangedBy = true;
 
-        testHelper.CurrentUserProvider.MigrationCurrentUserAsync = new ChangedByEntityUser { Id = 0 };
+        testHelper.CurrentUserProvider.MigrationCurrentUserAsync = ChangedByEntityUser.SystemUser;
 
-        await testHelper.DbContext.Database.MigrateAsync();
+        await testHelper.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
 
-        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+        var testUsers = await testHelper.GetTestUsers().ToListAsync(TestContext.Current.CancellationToken);
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -110,7 +110,7 @@ public class ChangedByEntityMigrationTests : IClassFixture<ChangedByEntityMigrat
     [Fact]
     public void ScriptMigration_GeneratesSetContextOperation_WithCorrectValuesAndInCorrectPosition()
     {
-        testHelper.CurrentUserProvider.CurrentUser = new ChangedByEntityUser { Id = 0 };
+        testHelper.CurrentUserProvider.CurrentUser = ChangedByEntityUser.SystemUser;
 
         var migrator = testHelper.DbContext.Database.GetService<IMigrator>();
         var script = migrator.GenerateScript();

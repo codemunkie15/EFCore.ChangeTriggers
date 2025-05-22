@@ -4,9 +4,9 @@ using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Persiste
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Helpers
+namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Helpers
 {
-    internal class ChangeSourceEntityTestHelper : IDisposable
+    public class ChangeSourceEntityTestHelper : IDisposable
     {
         public ChangeSourceEntityDbContext DbContext { get; }
 
@@ -21,21 +21,28 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.H
             ChangeSourceProvider = scope.ServiceProvider.GetRequiredService<EntityChangeSourceProvider>();
         }
 
-        public ChangeSourceEntityUser AddTestUser(int id)
+        public ChangeSourceEntityUser AddTestUser()
         {
-            var user = new ChangeSourceEntityUser(id, $"TestUser{id}");
+            var user = new ChangeSourceEntityUser();
             DbContext.TestUsers.Add(user);
             return user;
         }
 
-        public IQueryable<ChangeSourceEntityUser> GetAllTestUsers()
+        public IEnumerable<ChangeSourceEntityUser> AddTestUsers(int count)
+        {
+            var users = Enumerable.Range(1, count).Select(i => new ChangeSourceEntityUser()).ToList();
+            DbContext.TestUsers.AddRange(users);
+            return users;
+        }
+
+        public IQueryable<ChangeSourceEntityUser> GetTestUsers()
         {
             return DbContext.TestUsers
                 .Include(u => u.Changes)
                 .ThenInclude(c => c.ChangeSource);
         }
 
-        public IQueryable<ChangeSourceEntityUserChange> GetAllTestUserChanges()
+        public IQueryable<ChangeSourceEntityUserChange> GetTestUserChanges()
         {
             return DbContext.TestUserChanges
                 .Include(uc => uc.TrackedEntity)

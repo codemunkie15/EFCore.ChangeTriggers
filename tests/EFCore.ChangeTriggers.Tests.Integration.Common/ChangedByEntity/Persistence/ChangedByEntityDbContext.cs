@@ -21,15 +21,13 @@ public class ChangedByEntityDbContext : DbContext
 
         modelBuilder.Entity<ChangedByEntityUser>(u =>
         {
-            u.Property(u => u.Id).ValueGeneratedNever();
-
             // Seed users for migration tests
             u.HasData(
-                new ChangedByEntityUser(0, "System"),
-                new ChangedByEntityUser(100, "TestUser100"),
-                new ChangedByEntityUser(101, "TestUser101"),
-                new ChangedByEntityUser(102, "TestUser102"),
-                new ChangedByEntityUser(103, "TestUser103"));
+                ChangedByEntityUser.SystemUser,
+                new ChangedByEntityUser { Id = 2, Username = "Test User 1" },
+                new ChangedByEntityUser { Id = 3, Username = "Test User 2" },
+                new ChangedByEntityUser { Id = 4, Username = "Test User 3" },
+                new ChangedByEntityUser { Id = 5, Username = "Test User 4" });
         });
 
         modelBuilder.Entity<ChangedByEntityUserChange>(uc =>

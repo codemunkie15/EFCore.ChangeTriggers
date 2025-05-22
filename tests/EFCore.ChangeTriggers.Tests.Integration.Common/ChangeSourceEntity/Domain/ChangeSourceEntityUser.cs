@@ -2,22 +2,9 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Domain;
 
-public class ChangeSourceEntityUser : ITracked<ChangeSourceEntityUserChange>
+public class ChangeSourceEntityUser : BaseUser, ITracked<ChangeSourceEntityUserChange>
 {
-    public int Id { get; set; }
-
-    public string Username { get; set; }
-
     public ICollection<ChangeSourceEntityUserChange> Changes { get; set; }
 
-    public ChangeSourceEntityUser()
-    {
-
-    }
-
-    public ChangeSourceEntityUser(int id, string username)
-    {
-        Id = id;
-        Username = username;
-    }
+    public static ChangeSourceEntityUser SystemUser { get; } = new ChangeSourceEntityUser { Id = 1 };
 }

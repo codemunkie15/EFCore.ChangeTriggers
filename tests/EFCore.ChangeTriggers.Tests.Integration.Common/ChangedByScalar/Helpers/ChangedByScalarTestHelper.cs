@@ -4,9 +4,9 @@ using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Persistence
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Helpers
+namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Helpers
 {
-    internal class ChangedByScalarTestHelper : IDisposable
+    public class ChangedByScalarTestHelper : IDisposable
     {
         public ChangedByScalarDbContext DbContext { get; }
 
@@ -21,20 +21,27 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Help
             CurrentUserProvider = scope.ServiceProvider.GetRequiredService<ScalarCurrentUserProvider>();
         }
 
-        public ChangedByScalarUser AddTestUser(int id)
+        public ChangedByScalarUser AddTestUser()
         {
-            var user = new ChangedByScalarUser(id, $"TestUser{id}");
+            var user = new ChangedByScalarUser();
             DbContext.TestUsers.Add(user);
             return user;
         }
 
-        public IQueryable<ChangedByScalarUser> GetAllTestUsers()
+        public IEnumerable<ChangedByScalarUser> AddTestUsers(int count)
+        {
+            var users = Enumerable.Range(1, count).Select(i => new ChangedByScalarUser()).ToList();
+            DbContext.TestUsers.AddRange(users);
+            return users;
+        }
+
+        public IQueryable<ChangedByScalarUser> GetTestUsers()
         {
             return DbContext.TestUsers
                 .Include(u => u.Changes);
         }
 
-        public IQueryable<ChangedByScalarUserChange> GetAllTestUserChanges()
+        public IQueryable<ChangedByScalarUserChange> GetTestUserChanges()
         {
             return DbContext.TestUserChanges
                 .Include(uc => uc.TrackedEntity);

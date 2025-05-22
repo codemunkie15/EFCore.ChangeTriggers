@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEntity.Migrations
 {
     [DbContext(typeof(ChangedByEntityDbContext))]
-    [Migration("20250521231335_Initial")]
+    [Migration("20250522202014_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -28,7 +28,19 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEn
             modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Domain.ChangedByEntityUser", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateOfBirth")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset>("LastUpdatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
@@ -47,28 +59,38 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEn
                     b.HasData(
                         new
                         {
-                            Id = 0,
-                            Username = "System"
+                            Id = 1,
+                            IsAdmin = false,
+                            LastUpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Username = "b2e713f0-7fbd-45e4-a2d0-aaa7eca97077"
                         },
                         new
                         {
-                            Id = 100,
-                            Username = "TestUser100"
+                            Id = 2,
+                            IsAdmin = false,
+                            LastUpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Username = "Test User 1"
                         },
                         new
                         {
-                            Id = 101,
-                            Username = "TestUser101"
+                            Id = 3,
+                            IsAdmin = false,
+                            LastUpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Username = "Test User 2"
                         },
                         new
                         {
-                            Id = 102,
-                            Username = "TestUser102"
+                            Id = 4,
+                            IsAdmin = false,
+                            LastUpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Username = "Test User 3"
                         },
                         new
                         {
-                            Id = 103,
-                            Username = "TestUser103"
+                            Id = 5,
+                            IsAdmin = false,
+                            LastUpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Username = "Test User 4"
                         });
                 });
 
@@ -87,8 +109,17 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEn
                     b.Property<int?>("ChangedById")
                         .HasColumnType("int");
 
+                    b.Property<string>("DateOfBirth")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Id")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset>("LastUpdatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("OperationType")
                         .HasColumnType("int")

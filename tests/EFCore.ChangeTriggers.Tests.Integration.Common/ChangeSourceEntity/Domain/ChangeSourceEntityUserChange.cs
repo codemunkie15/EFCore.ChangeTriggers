@@ -2,13 +2,9 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Domain;
 
-public class ChangeSourceEntityUserChange : IChange<ChangeSourceEntityUser>, IHasChangeSource<ChangeSource>
+public class ChangeSourceEntityUserChange : BaseUser, IChange<ChangeSourceEntityUser>, IHasChangeSource<ChangeSource>
 {
     public int ChangeId { get; set; }
-
-    public int Id { get; set; }
-
-    public string Username { get; set; }
 
     public OperationType OperationType { get; set; }
 

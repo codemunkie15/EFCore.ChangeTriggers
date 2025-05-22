@@ -1,4 +1,5 @@
 ﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Configuration;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Infrastructure;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Persistence;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
@@ -24,7 +25,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Fixt
         protected override void SetMigrationChangeContext()
         {
             var provider = Services.GetRequiredService<ScalarCurrentUserProvider>();
-            provider.CurrentUserAsync = 0.ToString();
+            provider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
         }
     }
 }

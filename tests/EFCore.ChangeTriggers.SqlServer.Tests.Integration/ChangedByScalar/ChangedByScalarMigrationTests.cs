@@ -1,6 +1,7 @@
 using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Fixtures;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByScalar.Helpers;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Domain;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Infrastructure;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -23,11 +24,11 @@ public class ChangedByScalarMigrationTests : IClassFixture<ChangedByScalarMigrat
     [Fact]
     public void MigrateDatabase_InsertsChangeEntity_WithCorrectProperties()
     {
-        testHelper.CurrentUserProvider.CurrentUser = 0.ToString();
+        testHelper.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
 
         testHelper.DbContext.Database.Migrate();
 
-        var testUsers = testHelper.GetAllTestUsers().ToList();
+        var testUsers = testHelper.GetTestUsers().ToList();
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -46,11 +47,11 @@ public class ChangedByScalarMigrationTests : IClassFixture<ChangedByScalarMigrat
         var changedByProvider = (ChangedByScalarProvider)testHelper.DbContext.GetService<IChangedByProvider<string>>();
         changedByProvider.UseCustomGetMigrationChangedBy = true;
 
-        testHelper.CurrentUserProvider.MigrationCurrentUser = 0.ToString();
+        testHelper.CurrentUserProvider.MigrationCurrentUser = ChangedByScalarUser.SystemUser.Username;
 
         testHelper.DbContext.Database.Migrate();
 
-        var testUsers = testHelper.GetAllTestUsers().ToList();
+        var testUsers = testHelper.GetTestUsers().ToList();
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -66,11 +67,11 @@ public class ChangedByScalarMigrationTests : IClassFixture<ChangedByScalarMigrat
     [Fact]
     public async Task MigrateDatabase_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        testHelper.CurrentUserProvider.CurrentUserAsync = 0.ToString();
+        testHelper.CurrentUserProvider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
 
-        await testHelper.DbContext.Database.MigrateAsync();
+        await testHelper.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
 
-        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+        var testUsers = await testHelper.GetTestUsers().ToListAsync(TestContext.Current.CancellationToken);
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -89,11 +90,11 @@ public class ChangedByScalarMigrationTests : IClassFixture<ChangedByScalarMigrat
         var changedByProvider = (ChangedByScalarProvider)testHelper.DbContext.GetService<IChangedByProvider<string>>();
         changedByProvider.UseCustomGetMigrationChangedBy = true;
 
-        testHelper.CurrentUserProvider.MigrationCurrentUserAsync = 0.ToString();
+        testHelper.CurrentUserProvider.MigrationCurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
 
-        await testHelper.DbContext.Database.MigrateAsync();
+        await testHelper.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
 
-        var testUsers = await testHelper.GetAllTestUsers().ToListAsync();
+        var testUsers = await testHelper.GetTestUsers().ToListAsync(TestContext.Current.CancellationToken);
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -109,7 +110,7 @@ public class ChangedByScalarMigrationTests : IClassFixture<ChangedByScalarMigrat
     [Fact]
     public void ScriptMigration_GeneratesSetContextOperation_WithCorrectValuesAndInCorrectPosition()
     {
-        testHelper.CurrentUserProvider.CurrentUser = 0.ToString();
+        testHelper.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
 
         var migrator = testHelper.DbContext.Database.GetService<IMigrator>();
         var script = migrator.GenerateScript();

@@ -1,12 +1,14 @@
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Fixtures;
-using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity.Helpers;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Domain;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Domain;
+using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceEntity;
 
-public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>, IAsyncLifetime
+public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>
 {
     private readonly ChangeSourceEntityFixture fixture;
     private readonly ChangeSourceEntityTestHelper testHelper;
@@ -22,10 +24,10 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     {
         testHelper.ChangeSourceProvider.CurrentChangeSource = new ChangeSource { Id = 2 };
 
-        var user = testHelper.AddTestUser(1);
+        var user = testHelper.AddTestUser();
         testHelper.DbContext.SaveChanges();
 
-        var userChanges = testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1).ToList();
+        var userChanges = testHelper.GetTestUserChanges().Where(uc => uc.Id == user.Id).ToList();
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
@@ -39,10 +41,10 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = 2 };
 
-        var user = testHelper.AddTestUser(1);
-        await testHelper.DbContext.SaveChangesAsync();
+        var user = testHelper.AddTestUser();
+        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var userChanges = await testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1).ToListAsync();
+        var userChanges = await testHelper.GetTestUserChanges().Where(uc => uc.Id == user.Id).ToListAsync(TestContext.Current.CancellationToken);
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
@@ -54,27 +56,31 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     [Fact]
     public void AddEntity_WithMultipleScopes_InsertsChangeEntity_WithCorrectProperties()
     {
-        const int numberOfScopes = 10;
+        var changeSources = testHelper.DbContext.ChangeSources.ToList();
 
-        for (int i = 1; i <= numberOfScopes; i++)
+        var userLookup = new Dictionary<int, int>();
+
+        foreach (var changeSource in changeSources)
         {
             using var testHelperScoped = new ChangeSourceEntityTestHelper(fixture.Services);
-            testHelperScoped.ChangeSourceProvider.CurrentChangeSource = new ChangeSource { Id = i };
+            testHelperScoped.ChangeSourceProvider.CurrentChangeSource = changeSource;
 
-            testHelperScoped.AddTestUser(i);
+            var user = testHelperScoped.AddTestUser();
             testHelperScoped.DbContext.SaveChanges();
+
+            userLookup.Add(user.Id, changeSource.Id);
         }
 
-        var testUsers = testHelper.GetAllTestUsers().Where(u => u.Id >= 1 && u.Id <= numberOfScopes).ToList();
+        var usersFromDb = testHelper.GetTestUsers().Where(u => userLookup.Keys.Contains(u.Id)).ToList();
 
-        testUsers.Should().HaveCount(numberOfScopes);
-        testUsers.Should().AllSatisfy(u =>
+        usersFromDb.Should().HaveCount(10);
+        usersFromDb.Should().AllSatisfy(u =>
         {
             var userChange = u.Changes.Should().ContainSingle().Which;
 
             userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
             userChange.OperationType.Should().Be(OperationType.Insert);
-            userChange.ChangeSource.Id.Should().Be(u.Id);
+            userChange.ChangeSource.Id.Should().Be(userLookup[u.Id]);
             userChange.TrackedEntity.Id.Should().Be(u.Id);
         });
     }
@@ -82,27 +88,31 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     [Fact]
     public async Task AddEntity_WithMultipleScopes_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        const int numberOfScopes = 10;
+        var changeSources = await testHelper.DbContext.ChangeSources.ToListAsync(TestContext.Current.CancellationToken);
 
-        for (int i = 1; i <= numberOfScopes; i++)
+        var userLookup = new Dictionary<int, int>();
+
+        foreach (var changeSource in changeSources)
         {
             using var testHelperScoped = new ChangeSourceEntityTestHelper(fixture.Services);
-            testHelperScoped.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = i };
+            testHelperScoped.ChangeSourceProvider.CurrentChangeSourceAsync = changeSource;
 
-            testHelperScoped.AddTestUser(i);
-            await testHelperScoped.DbContext.SaveChangesAsync();
+            var user = testHelperScoped.AddTestUser();
+            await testHelperScoped.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+            userLookup.Add(user.Id, changeSource.Id);
         }
 
-        var testUsers = await testHelper.GetAllTestUsers().Where(u => u.Id >= 1 && u.Id <= numberOfScopes).ToListAsync();
+        var usersFromDb = await testHelper.GetTestUsers().Where(u => userLookup.Keys.Contains(u.Id)).ToListAsync(TestContext.Current.CancellationToken);
 
-        testUsers.Should().HaveCount(numberOfScopes);
-        testUsers.Should().AllSatisfy(u =>
+        usersFromDb.Should().HaveCount(10);
+        usersFromDb.Should().AllSatisfy(u =>
         {
             var userChange = u.Changes.Should().ContainSingle().Which;
 
             userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
             userChange.OperationType.Should().Be(OperationType.Insert);
-            userChange.ChangeSource.Id.Should().Be(u.Id);
+            userChange.ChangeSource.Id.Should().Be(userLookup[u.Id]);
             userChange.TrackedEntity.Id.Should().Be(u.Id);
         });
     }
@@ -112,13 +122,15 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     {
         testHelper.ChangeSourceProvider.CurrentChangeSource = new ChangeSource { Id = 2 };
 
-        var user = testHelper.AddTestUser(1);
+        var user = testHelper.AddTestUser();
         testHelper.DbContext.SaveChanges();
 
         user.Username = "Modified";
         testHelper.DbContext.SaveChanges();
 
-        var userChanges = testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1 && uc.OperationType == OperationType.Update).ToList();
+        var userChanges = testHelper.GetTestUserChanges()
+            .Where(uc => uc.Id == user.Id && uc.OperationType == OperationType.Update)
+            .ToList();
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
@@ -132,13 +144,15 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = 2 };
 
-        var user = testHelper.AddTestUser(1);
-        await testHelper.DbContext.SaveChangesAsync();
+        var user = testHelper.AddTestUser();
+        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         user.Username = "Modified";
-        await testHelper.DbContext.SaveChangesAsync();
+        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var userChanges = await testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1 && uc.OperationType == OperationType.Update).ToListAsync();
+        var userChanges = await testHelper.GetTestUserChanges()
+            .Where(uc => uc.Id == user.Id && uc.OperationType == OperationType.Update)
+            .ToListAsync(TestContext.Current.CancellationToken);
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
@@ -152,13 +166,15 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     {
         testHelper.ChangeSourceProvider.CurrentChangeSource = new ChangeSource { Id = 2 };
 
-        var user = testHelper.AddTestUser(1);
+        var user = testHelper.AddTestUser();
         testHelper.DbContext.SaveChanges();
 
         testHelper.DbContext.TestUsers.Remove(user);
         testHelper.DbContext.SaveChanges();
 
-        var userChanges = testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1 && uc.OperationType == OperationType.Delete).ToList();
+        var userChanges = testHelper.GetTestUserChanges()
+            .Where(uc => uc.Id == user.Id && uc.OperationType == OperationType.Delete)
+            .ToList();
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
@@ -172,31 +188,20 @@ public class ChangeSourceEntityTests : IClassFixture<ChangeSourceEntityFixture>,
     {
         testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = 2 };
 
-        var user = testHelper.AddTestUser(1);
-        await testHelper.DbContext.SaveChangesAsync();
+        var user = testHelper.AddTestUser();
+        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         testHelper.DbContext.TestUsers.Remove(user);
-        await testHelper.DbContext.SaveChangesAsync();
+        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var userChanges = await testHelper.GetAllTestUserChanges().Where(uc => uc.Id == 1 && uc.OperationType == OperationType.Delete).ToListAsync();
+        var userChanges = await testHelper.GetTestUserChanges()
+            .Where(uc => uc.Id == user.Id && uc.OperationType == OperationType.Delete)
+            .ToListAsync(TestContext.Current.CancellationToken);
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
         userChange.OperationType.Should().Be(OperationType.Delete);
         userChange.ChangeSource.Id.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSourceAsync.Id);
         userChange.TrackedEntity.Should().BeNull();
-    }
-
-    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
-
-    public async ValueTask DisposeAsync()
-    {
-        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = new ChangeSource { Id = 2 };
-
-        // Clear database
-        await testHelper.DbContext.TestUsers.ExecuteDeleteAsync();
-        await testHelper.DbContext.TestUserChanges.ExecuteDeleteAsync();
-
-        testHelper.Dispose();
     }
 }

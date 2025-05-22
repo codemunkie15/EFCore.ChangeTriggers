@@ -25,7 +25,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEn
         protected override void SetMigrationChangeContext()
         {
             var provider = Services.GetRequiredService<EntityCurrentUserProvider>();
-            //provider.CurrentUserAsync = new ChangedByEntityUser { Id = 0 };
+            provider.CurrentUserAsync = ChangedByEntityUser.SystemUser;
         }
     }
 }
