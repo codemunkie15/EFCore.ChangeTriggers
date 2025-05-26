@@ -1,6 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Persistence;
 

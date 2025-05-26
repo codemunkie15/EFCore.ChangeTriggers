@@ -1,11 +1,11 @@
-﻿using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
+﻿using EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy;
+using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
+using EFCore.ChangeTriggers.ChangeEventQueries.Exceptions;
 using EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEntity.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Helpers;
-using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Persistence;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEntity
 {
@@ -58,9 +58,11 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEn
 
             await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
+            var changedByUser = await testHelper.DbContext.TestUsers
+                .FirstAsync(u => u.Id == testHelper.CurrentUserProvider.CurrentUserAsync.Id, TestContext.Current.CancellationToken);
             var changeEvents = await testHelper.DbContext.TestUserChanges
                 .Where(uc => uc.Id == user.Id)
-                .ToChangeEvents(new ChangeEventConfiguration(builder =>
+                .ToChangeEvents<ChangedByEntityUser>(new ChangeEventConfiguration(builder =>
                 {
                     builder.Configure<ChangedByEntityUserChange>(uc =>
                     {
@@ -73,27 +75,51 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEn
 
             changeEvents.Should().BeEquivalentTo(
             [
-                new ChangeEvent
+                new ChangeEvent<ChangedByEntityUser>
                 { 
                     Description = $"{nameof(ChangedByEntityUser.Username)} changed",
                     OldValue = oldUser.Username,
-                    NewValue = newUser.Username
+                    NewValue = newUser.Username,
+                    ChangedBy = changedByUser
+
                 },
-                new ChangeEvent
+                new ChangeEvent<ChangedByEntityUser>
                 {
                     Description = $"{nameof(ChangedByEntityUser.IsAdmin)} changed",
                     OldValue = oldUser.IsAdmin.ToString(),
-                    NewValue = newUser.IsAdmin.ToString()
+                    NewValue = newUser.IsAdmin.ToString(),
+                    ChangedBy = changedByUser
                 },
-                new ChangeEvent
+                new ChangeEvent<ChangedByEntityUser>
                 {
                     Description = $"{nameof(ChangedByEntityUser.LastUpdatedAt)} changed",
                     OldValue = oldUser.LastUpdatedAt.ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz"), // SQL Server format
-                    NewValue = newUser.LastUpdatedAt.ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz") }, // SQL Server format
+                    NewValue = newUser.LastUpdatedAt.ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz"), // SQL Server format
+                    ChangedBy = changedByUser
+                }
             ], options => options.Excluding(ce => ce.ChangedAt));
         }
 
+        [Fact]
         // Test exceptions
+        public void ToChangeEvents_WithNoConfiguration_ThrowsException()
+        {
+            var changeEvents = () => testHelper.DbContext.TestUserChanges.ToChangeEvents();
+
+            changeEvents.Should()
+                .Throw<ChangeEventQueryException>()
+                .WithMessage("No configuration found.*");
+        }
+
+        [Fact]
+        public void ToChangeEvents_WithNoConfigurationForEntity_ThrowsException()
+        {
+            var changeEvents = () => testHelper.DbContext.TestUserChanges.ToChangeEvents(new ChangeEventConfiguration());
+
+            changeEvents.Should()
+                .Throw<ChangeEventQueryException>()
+                .WithMessage("No configuration found for entity type ChangedByEntityUserChange.");
+        }
 
         // Test passed in config
 

@@ -96,6 +96,7 @@ namespace EFCore.ChangeTriggers.Infrastructure
             where TImplementation : class, TService
         {
             // Attempt to resolve/create the service from the application service provider, incase it has application specific dependencies
+            // TODO: Support non-DI scenarios?
             serviceDescriptors.Add(new ServiceDescriptor(
                 typeof(TService),
                 services =>
