@@ -1,6 +1,6 @@
 ﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Configuration;
-using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Persistence;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Fixtures

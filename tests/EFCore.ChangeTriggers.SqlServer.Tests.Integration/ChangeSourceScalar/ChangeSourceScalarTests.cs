@@ -1,7 +1,6 @@
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangeSourceScalar.Fixtures;
-using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceEntity.Helpers;
-using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Domain;
-using EFCore.ChangeTriggers.Tests.Integration.Common.ChangeSourceScalar.Helpers;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 

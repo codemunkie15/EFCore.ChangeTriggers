@@ -1,4 +1,4 @@
-﻿using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByScalar.Persistence;
+﻿using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 

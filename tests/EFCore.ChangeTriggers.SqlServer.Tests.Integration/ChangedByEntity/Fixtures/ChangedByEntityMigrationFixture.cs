@@ -1,6 +1,6 @@
 ﻿using EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Configuration;
-using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Persistence;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.ChangedByEntity.Fixtures

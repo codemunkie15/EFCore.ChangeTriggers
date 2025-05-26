@@ -2,8 +2,8 @@
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 using EFCore.ChangeTriggers.ChangeEventQueries.Exceptions;
 using EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.ChangedByEntity.Fixtures;
-using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Domain;
-using EFCore.ChangeTriggers.Tests.Integration.Common.ChangedByEntity.Helpers;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
