@@ -20,8 +20,13 @@ public class TestDbContext : DbContext
 
         modelBuilder.Entity<User>(u =>
         {
+            // Seed users for migration tests
             u.HasData(
-                User.SystemUser);
+                User.SystemUser,
+                new User { Id = 2, Username = "Test User 1" },
+                new User { Id = 3, Username = "Test User 2" },
+                new User { Id = 4, Username = "Test User 3" },
+                new User { Id = 5, Username = "Test User 4" });
         });
 
         modelBuilder.Entity<UserChange>(uc =>

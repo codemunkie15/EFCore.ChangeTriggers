@@ -2,7 +2,7 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity;
 
-public class ChangedByEntityUser : BaseUser, ITracked<ChangedByEntityUserChange>
+public class ChangedByEntityUser : UserBase, ITracked<ChangedByEntityUserChange>
 {
     public ICollection<ChangedByEntityUserChange> Changes { get; set; }
 

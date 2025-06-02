@@ -1,12 +1,12 @@
 # Find all initial-migration scripts in test projects
-$scripts = Get-ChildItem -Path "..\..\" -Recurse -Filter "initial-migration.ps1" | Where-Object {
+$scripts = Get-ChildItem -Path "..\..\" -Recurse -Filter "*-initial-migration.ps1" | Where-Object {
     $_.DirectoryName -ne $PSScriptRoot  # Exclude scripts in this directory
 }
 
 Write-Host "Found $($scripts.Count) scripts to process..."
 
 # Group by test project path
-$scriptsByProject = $scripts | Group-Object { (Resolve-Path (Join-Path $_.Directory.FullName "..\..\")).Path }
+$scriptsByProject = $scripts | Group-Object { (Resolve-Path (Join-Path $_.Directory.FullName "..\")).Path }
 
 foreach ($group in $scriptsByProject) {
     $projectPath = $group.Name

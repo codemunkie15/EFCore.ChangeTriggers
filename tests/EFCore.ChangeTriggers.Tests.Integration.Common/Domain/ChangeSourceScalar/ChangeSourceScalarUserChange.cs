@@ -2,7 +2,7 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar;
 
-public class ChangeSourceScalarUserChange : BaseUser, IChange<ChangeSourceScalarUser>, IHasChangeSource<ChangeSource>
+public class ChangeSourceScalarUserChange : UserBase, IHasChangeId, IChange<ChangeSourceScalarUser>, IHasChangeSource<ChangeSourceType>
 {
     public int ChangeId { get; set; }
 
@@ -12,5 +12,5 @@ public class ChangeSourceScalarUserChange : BaseUser, IChange<ChangeSourceScalar
 
     public ChangeSourceScalarUser TrackedEntity { get; set; }
 
-    public ChangeSource ChangeSource { get; set; }
+    public ChangeSourceType ChangeSource { get; set; }
 }

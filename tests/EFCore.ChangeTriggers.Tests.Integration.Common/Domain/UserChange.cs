@@ -2,7 +2,7 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.Domain
 {
-    public class UserChange : BaseUser, IChange<User>
+    public class UserChange : UserBase, IHasChangeId, IChange<User>
     {
         public int ChangeId { get; set; }
 

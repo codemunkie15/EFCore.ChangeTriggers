@@ -4,11 +4,11 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangeSourceS
 
 public class ScalarChangeSourceProvider
 {
-    public ChangeSource CurrentChangeSource { get; set; }
+    public ChangeSourceType CurrentChangeSource { get; set; }
 
-    public ChangeSource CurrentChangeSourceAsync { get; set; }
+    public ChangeSourceType CurrentChangeSourceAsync { get; set; }
 
-    public ChangeSource MigrationChangeSource { get; set; }
+    public ChangeSourceType MigrationChangeSource { get; set; }
 
-    public ChangeSource MigrationChangeSourceAsync { get; set; }
+    public ChangeSourceType MigrationChangeSourceAsync { get; set; }
 }

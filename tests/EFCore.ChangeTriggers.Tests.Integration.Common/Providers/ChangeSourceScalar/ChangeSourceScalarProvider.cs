@@ -3,7 +3,7 @@ using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar;
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangeSourceScalar;
 
-public class ChangeSourceScalarProvider : ChangeSourceProvider<ChangeSource>
+public class ChangeSourceScalarProvider : ChangeSourceProvider<ChangeSourceType>
 {
     public bool UseCustomGetMigrationChangeSource { get; set; }
 
@@ -14,17 +14,17 @@ public class ChangeSourceScalarProvider : ChangeSourceProvider<ChangeSource>
         this.changeSourceProvider = changeSourceProvider;
     }
 
-    public override Task<ChangeSource> GetChangeSourceAsync()
+    public override Task<ChangeSourceType> GetChangeSourceAsync()
     {
         return Task.FromResult(changeSourceProvider.CurrentChangeSourceAsync);
     }
 
-    public override ChangeSource GetChangeSource()
+    public override ChangeSourceType GetChangeSource()
     {
         return changeSourceProvider.CurrentChangeSource;
     }
 
-    public override ChangeSource GetMigrationChangeSource()
+    public override ChangeSourceType GetMigrationChangeSource()
     {
         if (UseCustomGetMigrationChangeSource)
         {
@@ -34,7 +34,7 @@ public class ChangeSourceScalarProvider : ChangeSourceProvider<ChangeSource>
         return base.GetMigrationChangeSource();
     }
 
-    public override Task<ChangeSource> GetMigrationChangeSourceAsync()
+    public override Task<ChangeSourceType> GetMigrationChangeSourceAsync()
     {
         if (UseCustomGetMigrationChangeSource)
         {

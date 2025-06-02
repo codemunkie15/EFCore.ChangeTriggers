@@ -121,11 +121,12 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
             var dbContext = query.GetDbContext();
             var changeEntityType = dbContext.Model.FindEntityType(query.ElementType)!;
 
+            // TODO: Exception if entities don't have the same properties? Should this be caught earlier, when the DbContext is configured?
             return changeEntityType
                 .GetTrackedEntityForeignKey()
                 .Properties
                 .Select(prop => Expression.Equal(
-                    Expression.Property(changeParams.Current, prop.PropertyInfo!),
+                    Expression.Property(changeParams.Current, prop.Name),
                     Expression.Property(changeParams.Previous, prop.Name)))
                 .Aggregate(Expression.AndAlso);
         }

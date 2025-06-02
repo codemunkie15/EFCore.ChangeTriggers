@@ -6,8 +6,12 @@ param (
 )
 
 $scriptRoot = $MyInvocation.PSScriptRoot
-$projectDir = Join-Path $scriptRoot "..\.."
-$migrationDir = Join-Path $scriptRoot "..\Migrations"
+$projectDir = Join-Path $scriptRoot "..\"
+
+# Remove trailing "DbContext" using a regular expression
+$migrationSubDir = $ContextName -replace "DbContext$",""
+
+$migrationDir = Join-Path (Join-Path $scriptRoot "..\Migrations") $migrationSubDir
 
 # Clean out old migrations
 if (Test-Path $migrationDir) {

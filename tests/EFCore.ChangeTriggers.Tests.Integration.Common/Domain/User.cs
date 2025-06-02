@@ -2,7 +2,7 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.Domain
 {
-    public class User : BaseUser, ITracked<UserChange>
+    public class User : UserBase, ITracked<UserChange>
     {
         public ICollection<UserChange> Changes { get; set; }
 

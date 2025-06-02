@@ -2,7 +2,7 @@
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByScalar;
 
-public class ChangedByScalarUser : BaseUser, ITracked<ChangedByScalarUserChange>
+public class ChangedByScalarUser : UserBase, ITracked<ChangedByScalarUserChange>
 {
     public ICollection<ChangedByScalarUserChange> Changes { get; set; }
 
