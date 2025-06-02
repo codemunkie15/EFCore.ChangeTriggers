@@ -3,12 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 
-public class ChangeSourceScalarDbContext : DbContext
+public class ChangeSourceScalarDbContext : TestDbContext<ChangeSourceScalarUser, ChangeSourceScalarUserChange>
 {
-    public DbSet<ChangeSourceScalarUser> TestUsers { get; set; }
-
-    public DbSet<ChangeSourceScalarUserChange> TestUserChanges { get; set; }
-
     public ChangeSourceScalarDbContext(DbContextOptions<ChangeSourceScalarDbContext> options)
         : base(options)
     {
@@ -16,22 +12,16 @@ public class ChangeSourceScalarDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.AutoConfigureChangeTriggers();
+        base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<ChangeSourceScalarUser>(u =>
         {
-            // Seed users for migration tests
             u.HasData(
                 ChangeSourceScalarUser.SystemUser,
                 new ChangeSourceScalarUser { Id = 2, Username = "Test User 1" },
                 new ChangeSourceScalarUser { Id = 3, Username = "Test User 2" },
                 new ChangeSourceScalarUser { Id = 4, Username = "Test User 3" },
                 new ChangeSourceScalarUser { Id = 5, Username = "Test User 4" });
-        });
-
-        modelBuilder.Entity<ChangeSourceScalarUserChange>(uc =>
-        {
-            uc.HasKey(uc => uc.ChangeId);
         });
     }
 }
