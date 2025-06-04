@@ -1,4 +1,5 @@
 ﻿using EFCore.ChangeTriggers.SqlServer.Infrastructure;
+using EFCore.ChangeTriggers.Tests.Integration.Common;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceEntity;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar;
@@ -8,6 +9,7 @@ using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByScalar;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangeSourceEntity;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangeSourceScalar;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 

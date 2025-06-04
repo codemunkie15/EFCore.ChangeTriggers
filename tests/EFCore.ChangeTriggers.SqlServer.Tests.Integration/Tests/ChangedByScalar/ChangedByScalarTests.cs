@@ -1,6 +1,8 @@
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.Tests.ChangedByScalar.Fixtures;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByScalar;
-using EFCore.ChangeTriggers.Tests.Integration.Common.Helpers;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Scopes;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,47 +11,51 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Tests.ChangedByScala
 public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>
 {
     private readonly ChangedByScalarFixture fixture;
-    private readonly ChangedByScalarTestHelper testHelper;
+    private readonly ChangedByScalarTestScope testScope;
 
     public ChangedByScalarTests(ChangedByScalarFixture fixture)
     {
         this.fixture = fixture;
-        testHelper = new ChangedByScalarTestHelper(fixture.Services);
+
+        // Create a new service scope for each test method
+        testScope = fixture.CreateTestScope();
     }
 
     [Fact]
     public void AddEntity_InsertsChangeEntity_WithCorrectProperties()
     {
-        testHelper.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
+        testScope.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
 
-        var user = testHelper.AddTestUser();
-        testHelper.DbContext.SaveChanges();
+        var user = new ChangedByScalarUser();
+        testScope.DbContext.TestUsers.Add(user);
+        testScope.DbContext.SaveChanges();
 
-        var userChanges = testHelper.GetTestUserChanges().Where(uc => uc.Id == user.Id).ToList();
+        var userChanges = testScope.DbContext.TestUserChanges.Where(uc => uc.Id == user.Id).ToList();
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
         userChange.OperationType.Should().Be(OperationType.Insert);
-        userChange.ChangedBy.Should().Be(testHelper.CurrentUserProvider.CurrentUser);
+        userChange.ChangedBy.Should().Be(testScope.CurrentUserProvider.CurrentUser);
         userChange.TrackedEntity.Id.Should().Be(user.Id);
     }
 
     [Fact]
     public async Task AddEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        testHelper.CurrentUserProvider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
+        testScope.CurrentUserProvider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
 
-        var user = testHelper.AddTestUser();
-        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+        var user = new ChangedByScalarUser();
+        testScope.DbContext.TestUsers.Add(user);
+        await testScope.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var userChanges = await testHelper.GetTestUserChanges()
+        var userChanges = await testScope.DbContext.TestUserChanges
             .Where(uc => uc.Id == user.Id)
             .ToListAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
         userChange.OperationType.Should().Be(OperationType.Insert);
-        userChange.ChangedBy.Should().Be(testHelper.CurrentUserProvider.CurrentUserAsync);
+        userChange.ChangedBy.Should().Be(testScope.CurrentUserProvider.CurrentUserAsync);
         userChange.TrackedEntity.Id.Should().Be(user.Id);
     }
 
@@ -59,9 +65,10 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>
         const int numberOfScopes = 50;
 
         // Create users to use as change context
-        testHelper.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
-        var changedByUsers = testHelper.AddTestUsers(numberOfScopes);
-        testHelper.DbContext.SaveChanges();
+        testScope.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
+        var changedByUsers = Enumerable.Range(1, numberOfScopes).Select(i => new ChangedByScalarUser()).ToList();
+        testScope.DbContext.TestUsers.AddRange(changedByUsers);
+        testScope.DbContext.SaveChanges();
 
         // Dictionary to store user/changedby values to assert later
         var userLookup = new Dictionary<int, string>();
@@ -69,16 +76,18 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>
         // Create users in new scopes
         foreach (var changedByUser in changedByUsers)
         {
-            using var testHelperScoped = new ChangedByScalarTestHelper(fixture.Services);
-            testHelperScoped.CurrentUserProvider.CurrentUser = changedByUser.Username;
+            using var loopScope = fixture.CreateTestScope();
+            loopScope.CurrentUserProvider.CurrentUser = changedByUser.Username;
 
-            var testUser = testHelperScoped.AddTestUser();
-            testHelperScoped.DbContext.SaveChanges();
+            var testUser = new ChangedByScalarUser();
+            loopScope.DbContext.TestUsers.Add(testUser);
+            loopScope.DbContext.SaveChanges();
 
             userLookup.Add(testUser.Id, changedByUser.Username);
         }
 
-        var testUsersFromDb = testHelper.GetTestUsers()
+        var testUsersFromDb = testScope.DbContext.TestUsers
+            .Include(u => u.Changes)
             .Where(u => userLookup.Keys.Contains(u.Id))
             .ToList();
 
@@ -100,9 +109,10 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>
         const int numberOfScopes = 50;
 
         // Create users to use as change context
-        testHelper.CurrentUserProvider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
-        var changedByUsers = testHelper.AddTestUsers(numberOfScopes);
-        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+        testScope.CurrentUserProvider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
+        var changedByUsers = Enumerable.Range(1, numberOfScopes).Select(i => new ChangedByScalarUser()).ToList();
+        testScope.DbContext.TestUsers.AddRange(changedByUsers);
+        await testScope.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Dictionary to store user/changedby values to assert later
         var userLookup = new Dictionary<int, string>();
@@ -110,16 +120,18 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>
         // Create users in new scopes
         foreach (var changedByUser in changedByUsers)
         {
-            using var testHelperScoped = new ChangedByScalarTestHelper(fixture.Services);
-            testHelperScoped.CurrentUserProvider.CurrentUserAsync = changedByUser.Username;
+            using var loopScope = fixture.CreateTestScope();
+            loopScope.CurrentUserProvider.CurrentUserAsync = changedByUser.Username;
 
-            var testUser = testHelperScoped.AddTestUser();
-            await testHelperScoped.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+            var testUser = new ChangedByScalarUser();
+            loopScope.DbContext.TestUsers.Add(testUser);
+            await loopScope.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
             userLookup.Add(testUser.Id, changedByUser.Username);
         }
 
-        var testUsersFromDb = await testHelper.GetTestUsers()
+        var testUsersFromDb = await testScope.DbContext.TestUsers
+            .Include(u => u.Changes)
             .Where(u => userLookup.Keys.Contains(u.Id))
             .ToListAsync(TestContext.Current.CancellationToken);
 
@@ -138,37 +150,39 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>
     [Fact]
     public void UpdateEntity_InsertsChangeEntity_WithCorrectProperties()
     {
-        testHelper.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
+        testScope.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
 
-        var user = testHelper.AddTestUser();
-        testHelper.DbContext.SaveChanges();
+        var user = new ChangedByScalarUser();
+        testScope.DbContext.TestUsers.Add(user);
+        testScope.DbContext.SaveChanges();
 
         user.Username = "Modified";
-        testHelper.DbContext.SaveChanges();
+        testScope.DbContext.SaveChanges();
 
-        var userChanges = testHelper.GetTestUserChanges()
+        var userChanges = testScope.DbContext.TestUserChanges
             .Where(uc => uc.Id == user.Id && uc.OperationType == OperationType.Update)
             .ToList();
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
         userChange.OperationType.Should().Be(OperationType.Update);
-        userChange.ChangedBy.Should().Be(testHelper.CurrentUserProvider.CurrentUser);
+        userChange.ChangedBy.Should().Be(testScope.CurrentUserProvider.CurrentUser);
         userChange.TrackedEntity.Id.Should().Be(user.Id);
     }
 
     [Fact]
     public async Task UpdateEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        testHelper.CurrentUserProvider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
+        testScope.CurrentUserProvider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
 
-        var user = testHelper.AddTestUser();
-        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+        var user = new ChangedByScalarUser();
+        testScope.DbContext.TestUsers.Add(user);
+        await testScope.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         user.Username = "Modified";
-        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+        await testScope.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var userChanges = await testHelper.GetTestUserChanges()
+        var userChanges = await testScope.DbContext.TestUserChanges
             .Where(uc => uc.Id == user.Id && uc.OperationType == OperationType.Update)
             .ToListAsync(TestContext.Current.CancellationToken);
 
@@ -177,51 +191,53 @@ public class ChangedByScalarTests : IClassFixture<ChangedByScalarFixture>
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
         userChange.OperationType.Should().Be(OperationType.Update);
-        userChange.ChangedBy.Should().Be(testHelper.CurrentUserProvider.CurrentUserAsync);
+        userChange.ChangedBy.Should().Be(testScope.CurrentUserProvider.CurrentUserAsync);
         userChange.TrackedEntity.Id.Should().Be(user.Id);
     }
 
     [Fact]
     public void DeleteEntity_InsertsChangeEntity_WithCorrectProperties()
     {
-        testHelper.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
+        testScope.CurrentUserProvider.CurrentUser = ChangedByScalarUser.SystemUser.Username;
 
-        var user = testHelper.AddTestUser();
-        testHelper.DbContext.SaveChanges();
+        var user = new ChangedByScalarUser();
+        testScope.DbContext.TestUsers.Add(user);
+        testScope.DbContext.SaveChanges();
 
-        testHelper.DbContext.TestUsers.Remove(user);
-        testHelper.DbContext.SaveChanges();
+        testScope.DbContext.TestUsers.Remove(user);
+        testScope.DbContext.SaveChanges();
 
-        var userChanges = testHelper.GetTestUserChanges()
+        var userChanges = testScope.DbContext.TestUserChanges
             .Where(uc => uc.Id == user.Id && uc.OperationType == OperationType.Delete)
             .ToList();
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
         userChange.OperationType.Should().Be(OperationType.Delete);
-        userChange.ChangedBy.Should().Be(testHelper.CurrentUserProvider.CurrentUser);
+        userChange.ChangedBy.Should().Be(testScope.CurrentUserProvider.CurrentUser);
         userChange.TrackedEntity.Should().BeNull();
     }
 
     [Fact]
     public async Task DeleteEntity_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        testHelper.CurrentUserProvider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
+        testScope.CurrentUserProvider.CurrentUserAsync = ChangedByScalarUser.SystemUser.Username;
 
-        var user = testHelper.AddTestUser();
-        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+        var user = new ChangedByScalarUser();
+        testScope.DbContext.TestUsers.Add(user);
+        await testScope.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        testHelper.DbContext.TestUsers.Remove(user);
-        await testHelper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+        testScope.DbContext.TestUsers.Remove(user);
+        await testScope.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var userChanges = await testHelper.GetTestUserChanges()
+        var userChanges = await testScope.DbContext.TestUserChanges
             .Where(uc => uc.Id == user.Id && uc.OperationType == OperationType.Delete)
             .ToListAsync(TestContext.Current.CancellationToken);
 
         var userChange = userChanges.Should().ContainSingle().Which;
         userChange.Should().BeEquivalentTo(user, options => options.ExcludingMissingMembers());
         userChange.OperationType.Should().Be(OperationType.Delete);
-        userChange.ChangedBy.Should().Be(testHelper.CurrentUserProvider.CurrentUserAsync);
+        userChange.ChangedBy.Should().Be(testScope.CurrentUserProvider.CurrentUserAsync);
         userChange.TrackedEntity.Should().BeNull();
     }
 }

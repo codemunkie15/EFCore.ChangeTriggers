@@ -1,8 +1,8 @@
 using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.SqlServer.Tests.Integration.Tests.ChangeSourceScalar.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar;
-using EFCore.ChangeTriggers.Tests.Integration.Common.Helpers;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangeSourceScalar;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Scopes;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -13,22 +13,24 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Tests.ChangeSourceSc
 public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalarMigrationFixture>, IAsyncLifetime
 {
     private readonly ChangeSourceScalarMigrationFixture fixture;
-    private readonly ChangeSourceScalarTestHelper testHelper;
+    private readonly ChangeSourceScalarTestScope testScope;
 
     public ChangeSourceScalarMigrationTests(ChangeSourceScalarMigrationFixture fixture)
     {
         this.fixture = fixture;
-        testHelper = new ChangeSourceScalarTestHelper(fixture.Services);
+        testScope = fixture.CreateTestScope();
     }
 
     [Fact]
     public void MigrateDatabase_InsertsChangeEntity_WithCorrectProperties()
     {
-        testHelper.ChangeSourceProvider.CurrentChangeSource = ChangeSourceType.Tests;
+        testScope.ChangeSourceProvider.CurrentChangeSource = ChangeSourceType.Tests;
 
-        testHelper.DbContext.Database.Migrate();
+        testScope.DbContext.Database.Migrate();
 
-        var testUsers = testHelper.GetTestUsers().ToList();
+        var testUsers = testScope.DbContext.TestUsers
+            .Include(u => u.Changes)
+            .ToList();
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -36,7 +38,7 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
 
             userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
             userChange.OperationType.Should().Be(OperationType.Insert);
-            userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSource);
+            userChange.ChangeSource.Should().Be(testScope.ChangeSourceProvider.CurrentChangeSource);
             userChange.TrackedEntity.Id.Should().Be(u.Id);
         });
     }
@@ -44,14 +46,16 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
     [Fact]
     public void MigrateDatabase_UsingMigrationChangeSource_InsertsChangeEntity_WithCorrectProperties()
     {
-        var changeSourceProvider = (ChangeSourceScalarProvider)testHelper.DbContext.GetService<IChangeSourceProvider<ChangeSourceType>>();
+        var changeSourceProvider = (ChangeSourceScalarProvider)testScope.DbContext.GetService<IChangeSourceProvider<ChangeSourceType>>();
         changeSourceProvider.UseCustomGetMigrationChangeSource = true;
 
-        testHelper.ChangeSourceProvider.MigrationChangeSource = ChangeSourceType.Tests;
+        testScope.ChangeSourceProvider.MigrationChangeSource = ChangeSourceType.Tests;
 
-        testHelper.DbContext.Database.Migrate();
+        testScope.DbContext.Database.Migrate();
 
-        var testUsers = testHelper.GetTestUsers().ToList();
+        var testUsers = testScope.DbContext.TestUsers
+            .Include(u => u.Changes)
+            .ToList();
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -59,7 +63,7 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
 
             userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
             userChange.OperationType.Should().Be(OperationType.Insert);
-            userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.MigrationChangeSource);
+            userChange.ChangeSource.Should().Be(testScope.ChangeSourceProvider.MigrationChangeSource);
             userChange.TrackedEntity.Id.Should().Be(u.Id);
         });
     }
@@ -67,11 +71,13 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
     [Fact]
     public async Task MigrateDatabase_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        testHelper.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSourceType.Tests;
+        testScope.ChangeSourceProvider.CurrentChangeSourceAsync = ChangeSourceType.Tests;
 
-        await testHelper.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
+        await testScope.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
 
-        var testUsers = await testHelper.GetTestUsers().ToListAsync(TestContext.Current.CancellationToken);
+        var testUsers = await testScope.DbContext.TestUsers
+            .Include(u => u.Changes)
+            .ToListAsync(TestContext.Current.CancellationToken);
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -79,7 +85,7 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
 
             userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
             userChange.OperationType.Should().Be(OperationType.Insert);
-            userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.CurrentChangeSourceAsync);
+            userChange.ChangeSource.Should().Be(testScope.ChangeSourceProvider.CurrentChangeSourceAsync);
             userChange.TrackedEntity.Id.Should().Be(u.Id);
         });
     }
@@ -87,14 +93,16 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
     [Fact]
     public async Task MigrateDatabase_UsingMigrationChangeSource_InsertsChangeEntity_WithCorrectProperties_Async()
     {
-        var changeSourceProvider = (ChangeSourceScalarProvider)testHelper.DbContext.GetService<IChangeSourceProvider<ChangeSourceType>>();
+        var changeSourceProvider = (ChangeSourceScalarProvider)testScope.DbContext.GetService<IChangeSourceProvider<ChangeSourceType>>();
         changeSourceProvider.UseCustomGetMigrationChangeSource = true;
 
-        testHelper.ChangeSourceProvider.MigrationChangeSourceAsync = ChangeSourceType.Tests;
+        testScope.ChangeSourceProvider.MigrationChangeSourceAsync = ChangeSourceType.Tests;
 
-        await testHelper.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
+        await testScope.DbContext.Database.MigrateAsync(TestContext.Current.CancellationToken);
 
-        var testUsers = await testHelper.GetTestUsers().ToListAsync(TestContext.Current.CancellationToken);
+        var testUsers = await testScope.DbContext.TestUsers
+            .Include(u => u.Changes)
+            .ToListAsync(TestContext.Current.CancellationToken);
 
         testUsers.Should().AllSatisfy(u =>
         {
@@ -102,7 +110,7 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
 
             userChange.Should().BeEquivalentTo(u, options => options.ExcludingMissingMembers());
             userChange.OperationType.Should().Be(OperationType.Insert);
-            userChange.ChangeSource.Should().Be(testHelper.ChangeSourceProvider.MigrationChangeSourceAsync);
+            userChange.ChangeSource.Should().Be(testScope.ChangeSourceProvider.MigrationChangeSourceAsync);
             userChange.TrackedEntity.Id.Should().Be(u.Id);
         });
     }
@@ -110,23 +118,23 @@ public class ChangeSourceScalarMigrationTests : IClassFixture<ChangeSourceScalar
     [Fact]
     public void ScriptMigration_GeneratesSetContextOperation_WithCorrectValuesAndInCorrectPosition()
     {
-        testHelper.ChangeSourceProvider.CurrentChangeSource = ChangeSourceType.Tests;
+        testScope.ChangeSourceProvider.CurrentChangeSource = ChangeSourceType.Tests;
 
-        var migrator = testHelper.DbContext.Database.GetService<IMigrator>();
+        var migrator = testScope.DbContext.Database.GetService<IMigrator>();
         var script = migrator.GenerateScript();
         var scriptLines = script.Split(Environment.NewLine);
 
         scriptLines.FirstOrDefault().Should().Be(
-            $"EXEC sp_set_session_context N'ChangeContext.ChangeSource', {(int)testHelper.ChangeSourceProvider.CurrentChangeSource};");
+            $"EXEC sp_set_session_context N'ChangeContext.ChangeSource', {(int)testScope.ChangeSourceProvider.CurrentChangeSource};");
     }
 
     public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
     public async ValueTask DisposeAsync()
     {
-        var migrator = testHelper.DbContext.Database.GetService<IMigrator>();
+        var migrator = testScope.DbContext.Database.GetService<IMigrator>();
         await migrator.MigrateAsync("0");
 
-        testHelper.Dispose();
+        testScope.Dispose();
     }
 }

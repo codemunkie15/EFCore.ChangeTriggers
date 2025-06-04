@@ -16,6 +16,7 @@ public class TestDbContext<TUser, TUserChange> : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.AutoConfigureChangeTriggers();
+
         modelBuilder.Entity<TUserChange>().HasKey(x => x.ChangeId);
     }
 }

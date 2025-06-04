@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EFCore.ChangeTriggers
 {
-    internal class ChangeTriggersModelCustomizer : RelationalModelCustomizer
+    public class ChangeTriggersModelCustomizer : RelationalModelCustomizer
     {
         public ChangeTriggersModelCustomizer(ModelCustomizerDependencies dependencies) : base(dependencies)
         {
@@ -14,6 +14,8 @@ namespace EFCore.ChangeTriggers
 
         public override void Customize(ModelBuilder modelBuilder, DbContext context)
         {
+            // TODO: Is this the right way to configure ChangeTriggers without worry about the order of execution?
+
             base.Customize(modelBuilder, context);
             // Delay ChangeTriggers entity config until after context.OnModelCreating() has ran
 
