@@ -4,8 +4,6 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByScal
 
 public class ChangedByScalarProvider : ChangedByProvider<string>
 {
-    public bool UseCustomGetMigrationChangedBy { get; set; }
-
     private readonly ScalarCurrentUserProvider currentUserProvider;
 
     public ChangedByScalarProvider(ScalarCurrentUserProvider currentUserProvider)
@@ -25,17 +23,12 @@ public class ChangedByScalarProvider : ChangedByProvider<string>
 
     public override string GetMigrationChangedBy()
     {
-        if (UseCustomGetMigrationChangedBy)
-        {
-            return currentUserProvider.MigrationCurrentUser.SyncValue;
-        }
-
-        return base.GetMigrationChangedBy();
+        return currentUserProvider.MigrationCurrentUser.SyncValue ?? base.GetMigrationChangedBy();
     }
 
     public override Task<string> GetMigrationChangedByAsync()
     {
-        if (UseCustomGetMigrationChangedBy)
+        if (currentUserProvider.MigrationCurrentUser.AsyncValue is not null)
         {
             return Task.FromResult(currentUserProvider.MigrationCurrentUser.AsyncValue);
         }

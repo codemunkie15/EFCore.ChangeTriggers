@@ -31,8 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Tests\ChangedByScalar\" />
-    <Folder Include="Tests\ChangeSourceEntity\" />
     <Folder Include="Tests\ChangeSourceScalar\" />
   </ItemGroup>
 	

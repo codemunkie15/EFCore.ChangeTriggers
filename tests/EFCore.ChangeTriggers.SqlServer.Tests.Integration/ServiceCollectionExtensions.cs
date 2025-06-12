@@ -46,8 +46,8 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
                 })
                 // Register a service to provide the current user, to test that application dependencies are resolvable inside the EF Core service provider.
                 .AddScoped<ScalarCurrentUserProvider>()
-                .AddScoped<IUserReadRepository<ChangedByScalarUser, ChangedByScalarUserChange>, UserReadRepository<ChangedByScalarDbContext,
-                    ChangedByScalarUser, ChangedByScalarUserChange>>();
+                .AddScoped<IUserReadRepository<ChangedByScalarUser, ChangedByScalarUserChange>,
+                    UserReadRepository<ChangedByScalarDbContext, ChangedByScalarUser, ChangedByScalarUserChange>>();
         }
 
         public static IServiceCollection AddChangeSourceEntity(this IServiceCollection services, string connectionString)
@@ -58,7 +58,8 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
                     options.UseChangeSource<ChangeSourceEntityProvider, ChangeSource>();
                 })
                 // Register a service to provide the change source, to test that application dependencies are resolvable inside the EF Core service provider.
-                .AddScoped<EntityChangeSourceProvider>();
+                .AddScoped<EntityChangeSourceProvider>()
+                .AddScoped<IUserReadRepository<ChangeSourceEntityUser, ChangeSourceEntityUserChange>, ChangeSourceEntityUserReadRepository>();
         }
 
         public static IServiceCollection AddChangeSourceScalar(this IServiceCollection services, string connectionString)
@@ -69,7 +70,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
                     options.UseChangeSource<ChangeSourceScalarProvider, ChangeSourceType>();
                 })
                 // Register a service to provide the change source, to test that application dependencies are resolvable inside the EF Core service provider.
-                .AddScoped<ScalarChangeSourceProvider>();
+                .AddScoped<ScalarChangeSourceProvider>()
+                .AddScoped<IUserReadRepository<ChangeSourceScalarUser, ChangeSourceScalarUserChange>,
+                    UserReadRepository<ChangeSourceScalarDbContext, ChangeSourceScalarUser, ChangeSourceScalarUserChange>>();
         }
 
         private static IServiceCollection AddSqlServerChangeTriggers<TDbContext>(

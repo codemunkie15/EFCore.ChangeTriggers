@@ -5,8 +5,6 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangeSourceE
 
 public class ChangeSourceEntityProvider : ChangeSourceProvider<ChangeSource>
 {
-    public bool UseCustomGetMigrationChangeSource { get; set; }
-
     private readonly EntityChangeSourceProvider changeSourceProvider;
 
     public ChangeSourceEntityProvider(EntityChangeSourceProvider changeSourceProvider)
@@ -26,17 +24,12 @@ public class ChangeSourceEntityProvider : ChangeSourceProvider<ChangeSource>
 
     public override ChangeSource GetMigrationChangeSource()
     {
-        if (UseCustomGetMigrationChangeSource)
-        {
-            return changeSourceProvider.MigrationChangeSource.SyncValue;
-        }
-
-        return base.GetMigrationChangeSource();
+        return changeSourceProvider.MigrationChangeSource.SyncValue ?? base.GetMigrationChangeSource();
     }
 
     public override Task<ChangeSource> GetMigrationChangeSourceAsync()
     {
-        if (UseCustomGetMigrationChangeSource)
+        if (changeSourceProvider.MigrationChangeSource.AsyncValue is not null)
         {
             return Task.FromResult(changeSourceProvider.MigrationChangeSource.AsyncValue);
         }

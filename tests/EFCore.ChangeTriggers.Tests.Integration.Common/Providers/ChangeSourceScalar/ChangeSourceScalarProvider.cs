@@ -26,7 +26,7 @@ public class ChangeSourceScalarProvider : ChangeSourceProvider<ChangeSourceType>
 
     public override ChangeSourceType GetMigrationChangeSource()
     {
-        if (UseCustomGetMigrationChangeSource)
+        if (changeSourceProvider.MigrationChangeSource.SyncValue != ChangeSourceType.None)
         {
             return changeSourceProvider.MigrationChangeSource.SyncValue;
         }
@@ -36,7 +36,7 @@ public class ChangeSourceScalarProvider : ChangeSourceProvider<ChangeSourceType>
 
     public override Task<ChangeSourceType> GetMigrationChangeSourceAsync()
     {
-        if (UseCustomGetMigrationChangeSource)
+        if (changeSourceProvider.MigrationChangeSource.AsyncValue != ChangeSourceType.None)
         {
             return Task.FromResult(changeSourceProvider.MigrationChangeSource.AsyncValue);
         }
