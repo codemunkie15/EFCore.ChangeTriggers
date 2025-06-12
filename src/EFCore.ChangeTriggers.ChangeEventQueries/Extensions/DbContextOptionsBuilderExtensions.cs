@@ -2,7 +2,6 @@
 using EFCore.ChangeTriggers.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.Extensions.Options;
 using System.Reflection;
 
 #pragma warning disable IDE0130 // Namespace does not match folder structure

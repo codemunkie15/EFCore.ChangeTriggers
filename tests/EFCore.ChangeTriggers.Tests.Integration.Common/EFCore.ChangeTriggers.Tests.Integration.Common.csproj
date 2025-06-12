@@ -9,6 +9,7 @@
     <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="Testcontainers" />
     <PackageReference Include="xunit.v3.extensibility.core" />
+	<PackageReference Include="FluentAssertions" />
   </ItemGroup>
 
   <ItemGroup>

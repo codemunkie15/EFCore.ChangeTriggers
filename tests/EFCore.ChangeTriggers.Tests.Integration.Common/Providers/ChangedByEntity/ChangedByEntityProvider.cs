@@ -5,8 +5,6 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByEnti
 
 public class ChangedByEntityProvider : ChangedByProvider<ChangedByEntityUser>
 {
-    public bool UseCustomGetMigrationChangedBy { get; set; }
-
     private readonly EntityCurrentUserProvider currentUserProvider;
 
     public ChangedByEntityProvider(EntityCurrentUserProvider currentUserProvider)
@@ -16,29 +14,24 @@ public class ChangedByEntityProvider : ChangedByProvider<ChangedByEntityUser>
 
     public override Task<ChangedByEntityUser> GetChangedByAsync()
     {
-        return Task.FromResult(currentUserProvider.CurrentUserAsync);
+        return Task.FromResult(currentUserProvider.CurrentUser.AsyncValue);
     }
 
     public override ChangedByEntityUser GetChangedBy()
     {
-        return currentUserProvider.CurrentUser;
+        return currentUserProvider.CurrentUser.SyncValue;
     }
 
     public override ChangedByEntityUser GetMigrationChangedBy()
     {
-        if (UseCustomGetMigrationChangedBy)
-        {
-            return currentUserProvider.MigrationCurrentUser;
-        }
-
-        return base.GetMigrationChangedBy();
+        return currentUserProvider.MigrationCurrentUser.SyncValue ?? base.GetMigrationChangedBy();
     }
 
     public override Task<ChangedByEntityUser> GetMigrationChangedByAsync()
     {
-        if (UseCustomGetMigrationChangedBy)
+        if (currentUserProvider.MigrationCurrentUser.AsyncValue is not null)
         {
-            return Task.FromResult(currentUserProvider.MigrationCurrentUserAsync);
+            return Task.FromResult(currentUserProvider.MigrationCurrentUser.AsyncValue);
         }
 
         return base.GetMigrationChangedByAsync();

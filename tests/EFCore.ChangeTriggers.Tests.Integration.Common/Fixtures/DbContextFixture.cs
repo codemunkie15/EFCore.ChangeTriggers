@@ -12,7 +12,9 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures
 
         public ServiceProvider Services { get; private set; }
 
-        public abstract string DatabaseName { get; }
+        public abstract string DatabaseNamePrefix { get; }
+
+        public virtual string DatabaseName => $"{DatabaseNamePrefix}.{GetType().Name.Replace("Fixture", "Tests")}";
 
         public abstract bool MigrateDatabase { get; }
 

@@ -15,19 +15,19 @@ public class ChangedByScalarProvider : ChangedByProvider<string>
 
     public override Task<string> GetChangedByAsync()
     {
-        return Task.FromResult(currentUserProvider.CurrentUserAsync);
+        return Task.FromResult(currentUserProvider.CurrentUser.AsyncValue);
     }
 
     public override string GetChangedBy()
     {
-        return currentUserProvider.CurrentUser;
+        return currentUserProvider.CurrentUser.SyncValue;
     }
 
     public override string GetMigrationChangedBy()
     {
         if (UseCustomGetMigrationChangedBy)
         {
-            return currentUserProvider.MigrationCurrentUser;
+            return currentUserProvider.MigrationCurrentUser.SyncValue;
         }
 
         return base.GetMigrationChangedBy();
@@ -37,7 +37,7 @@ public class ChangedByScalarProvider : ChangedByProvider<string>
     {
         if (UseCustomGetMigrationChangedBy)
         {
-            return Task.FromResult(currentUserProvider.MigrationCurrentUserAsync);
+            return Task.FromResult(currentUserProvider.MigrationCurrentUser.AsyncValue);
         }
 
         return base.GetMigrationChangedByAsync();

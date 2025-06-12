@@ -4,11 +4,7 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangeSourceE
 
 public class EntityChangeSourceProvider
 {
-    public ChangeSource CurrentChangeSource { get; set; }
+    public SyncOrAsyncValue<ChangeSource> CurrentChangeSource { get; } = new();
 
-    public ChangeSource CurrentChangeSourceAsync { get; set; }
-
-    public ChangeSource MigrationChangeSource { get; set; }
-
-    public ChangeSource MigrationChangeSourceAsync { get; set; }
+    public SyncOrAsyncValue<ChangeSource> MigrationChangeSource { get; } = new();
 }

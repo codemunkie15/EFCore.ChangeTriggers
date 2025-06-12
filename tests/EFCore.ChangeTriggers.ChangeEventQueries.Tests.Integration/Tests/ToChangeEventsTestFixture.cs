@@ -1,14 +1,12 @@
-﻿using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity;
-using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
+﻿using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
-using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByEntity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
 {
     public class ToChangeEventsTestFixture : DbContextFixture<TestDbContext>
     {
-        public override string DatabaseName => "ToChangeEvents";
+        public override string DatabaseNamePrefix => "Tests";
 
         public override bool MigrateDatabase => true;
 

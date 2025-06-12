@@ -4,11 +4,7 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByEnti
 
 public class EntityCurrentUserProvider
 {
-    public ChangedByEntityUser CurrentUser { get; set; }
+    public SyncOrAsyncValue<ChangedByEntityUser> CurrentUser { get; } = new();
 
-    public ChangedByEntityUser CurrentUserAsync { get; set; }
-
-    public ChangedByEntityUser MigrationCurrentUser { get; set; }
-
-    public ChangedByEntityUser MigrationCurrentUserAsync { get; set; }
+    public SyncOrAsyncValue<ChangedByEntityUser> MigrationCurrentUser { get; } = new();
 }

@@ -2,11 +2,7 @@
 
 public class ScalarCurrentUserProvider
 {
-    public string CurrentUser { get; set; }
+    public SyncOrAsyncValue<string> CurrentUser { get; } = new();
 
-    public string CurrentUserAsync { get; set; }
-
-    public string MigrationCurrentUser { get; set; }
-
-    public string MigrationCurrentUserAsync { get; set; }
+    public SyncOrAsyncValue<string> MigrationCurrentUser { get; } = new();
 }

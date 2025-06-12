@@ -9,7 +9,7 @@
     public interface IHasTrackedEntity<TTracked>
     {
         /// <summary>
-        /// Gets or sets the source tracked entity
+        /// Gets or sets the source tracked entity.
         /// </summary>
         TTracked TrackedEntity { get; set; }
     }

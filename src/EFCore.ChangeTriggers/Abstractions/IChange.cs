@@ -9,12 +9,12 @@
     public interface IChange
     {
         /// <summary>
-        /// Gets or sets the change operation type
+        /// Gets or sets the change operation type.
         /// </summary>
         OperationType OperationType { get; set; }
 
         /// <summary>
-        /// Gets or sets when the change occured
+        /// Gets or sets when the change occured.
         /// </summary>
         DateTimeOffset ChangedAt { get; set; }
     }

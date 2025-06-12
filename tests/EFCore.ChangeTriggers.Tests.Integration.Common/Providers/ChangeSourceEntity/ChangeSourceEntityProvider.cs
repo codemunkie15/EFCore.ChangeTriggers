@@ -16,19 +16,19 @@ public class ChangeSourceEntityProvider : ChangeSourceProvider<ChangeSource>
 
     public override Task<ChangeSource> GetChangeSourceAsync()
     {
-        return Task.FromResult(changeSourceProvider.CurrentChangeSourceAsync);
+        return Task.FromResult(changeSourceProvider.CurrentChangeSource.AsyncValue);
     }
 
     public override ChangeSource GetChangeSource()
     {
-        return changeSourceProvider.CurrentChangeSource;
+        return changeSourceProvider.CurrentChangeSource.SyncValue;
     }
 
     public override ChangeSource GetMigrationChangeSource()
     {
         if (UseCustomGetMigrationChangeSource)
         {
-            return changeSourceProvider.MigrationChangeSource;
+            return changeSourceProvider.MigrationChangeSource.SyncValue;
         }
 
         return base.GetMigrationChangeSource();
@@ -38,7 +38,7 @@ public class ChangeSourceEntityProvider : ChangeSourceProvider<ChangeSource>
     {
         if (UseCustomGetMigrationChangeSource)
         {
-            return Task.FromResult(changeSourceProvider.MigrationChangeSourceAsync);
+            return Task.FromResult(changeSourceProvider.MigrationChangeSource.AsyncValue);
         }
 
         return base.GetMigrationChangeSourceAsync();

@@ -8,7 +8,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Chang
 {
     public class ChangedByEntityFixture : DbContextFixture<ChangedByEntityDbContext>
     {
-        public override string DatabaseName => "ChangedByEntity";
+        public override string DatabaseNamePrefix => "ChangedByEntity";
 
         public override bool MigrateDatabase => true;
 
@@ -24,7 +24,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Chang
         protected override void SetMigrationChangeContext()
         {
             var provider = Services.GetRequiredService<EntityCurrentUserProvider>();
-            provider.CurrentUserAsync = ChangedByEntityUser.SystemUser;
+            provider.CurrentUser.AsyncValue = ChangedByEntityUser.SystemUser;
         }
     }
 }
