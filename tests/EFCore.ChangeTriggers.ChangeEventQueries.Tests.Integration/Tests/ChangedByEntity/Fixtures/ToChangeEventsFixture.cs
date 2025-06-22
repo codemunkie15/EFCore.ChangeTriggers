@@ -6,13 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.ChangedByEntity.Fixtures
 {
-    public class ChangedByEntityFixture : DbContextFixture<ChangedByEntityDbContext>
+    public class ToChangeEventsFixture : DbContextFixture<ChangedByEntityDbContext>
     {
         public override string DatabaseNamePrefix => "ChangedByEntity";
 
         public override bool MigrateDatabase => true;
 
-        public ChangedByEntityFixture(MsSqlContainerFixture msSqlContainerFixture) : base(msSqlContainerFixture)
+        public ToChangeEventsFixture(MsSqlContainerFixture msSqlContainerFixture) : base(msSqlContainerFixture)
         {
         }
 

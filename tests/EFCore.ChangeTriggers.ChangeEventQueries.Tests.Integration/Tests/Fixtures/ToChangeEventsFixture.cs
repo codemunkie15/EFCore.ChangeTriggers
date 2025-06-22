@@ -2,21 +2,21 @@
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
+namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Fixtures
 {
-    public class ToChangeEventsTestFixture : DbContextFixture<TestDbContext>
+    public class ToChangeEventsFixture : DbContextFixture<TestDbContext>
     {
         public override string DatabaseNamePrefix => "Tests";
 
         public override bool MigrateDatabase => true;
 
-        public ToChangeEventsTestFixture(MsSqlContainerFixture msSqlContainerFixture) : base(msSqlContainerFixture)
+        public ToChangeEventsFixture(MsSqlContainerFixture msSqlContainerFixture) : base(msSqlContainerFixture)
         {
         }
 
         protected override void ConfigureServices(IServiceCollection services)
         {
-            services.AddSqlServerChangeEventQueries<TestDbContext>(GetConnectionString());
+            services.AddTestInfrastructure(GetConnectionString());
         }
     }
 }
