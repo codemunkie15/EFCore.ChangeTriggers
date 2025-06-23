@@ -1,12 +1,18 @@
-﻿using EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.ChangedByEntity.Fixtures;
+﻿using EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy;
+using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
+using EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.ChangedByEntity.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByEntity;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.ChangedByEntity
 {
-    public class ToChangeEventsTests : ToChangeEventsTestBase<ChangedByEntityUser, ChangedByEntityUserChange, ChangedByEntityDbContext>, IClassFixture<ToChangeEventsFixture>
+    public class ToChangeEventsTests :
+        ToChangeEventsTestBase<ChangedByEntityUser, ChangedByEntityUserChange, ChangedByEntityDbContext, ChangeEvent<ChangedByEntityUser>>,
+        IClassFixture<ToChangeEventsFixture>
     {
         private readonly EntityCurrentUserProvider currentUserProvider;
 
@@ -15,10 +21,20 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Chang
             currentUserProvider = scope.ServiceProvider.GetRequiredService<EntityCurrentUserProvider>();
         }
 
-        protected override Task SetChangeContext(bool useAsync)
+        protected override async Task SetChangeContext(bool useAsync)
         {
-            currentUserProvider.CurrentUser.Set(useAsync, ChangedByEntityUser.SystemUser);
-            return Task.CompletedTask;
+            var systemUser = await dbContext.TestUsers.SingleAsync(u => u.Id == ChangedByEntityUser.SystemUser.Id);
+            currentUserProvider.CurrentUser.Set(useAsync, systemUser);
+        }
+
+        protected override IQueryable<ChangeEvent<ChangedByEntityUser>> ToChangeEvents(IQueryable query, ChangeEventConfiguration configuration)
+        {
+            return query.ToChangeEvents<ChangedByEntityUser>(configuration);
+        }
+
+        protected override void PopulateAssertProperties(ChangeEvent<ChangedByEntityUser> changeEvent)
+        {
+            changeEvent.ChangedBy = currentUserProvider.CurrentUser.AsyncValue;
         }
     }
 }

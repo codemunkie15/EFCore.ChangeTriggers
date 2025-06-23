@@ -7,6 +7,7 @@ using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq.Expressions;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
 {
@@ -48,23 +49,37 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
             var entityConfiguration = configuration.EntityConfigurations.GetValueOrDefault(query.ElementType)
                 ?? throw new ChangeEventQueryException(ExceptionStrings.EntityConfigurationNotFound(query.ElementType.Name));
 
-            var changeEventsQuery = entityConfiguration.PropertyConfigurations
-                .Select(propertyBuilder.Build)
-                .Aggregate(Queryable.Union);
+            IQueryable<TChangeEvent>? changeEventsQuery = null;
 
+            // Add property queries
+            foreach (var propertyConfig in entityConfiguration.PropertyConfigurations)
+            {
+                var propertyQuery = propertyBuilder.Build(propertyConfig);
+                changeEventsQuery = changeEventsQuery == null
+                    ? propertyQuery
+                    : changeEventsQuery.Union(propertyQuery);
+            }
+
+            // Add inserts
             if (options.IncludeInserts || entityConfiguration.AddInserts)
             {
                 var insertQuery = operationTypeBuilder.Build(OperationType.Insert);
-                changeEventsQuery = insertQuery.Union(changeEventsQuery);
+                changeEventsQuery = changeEventsQuery == null
+                    ? insertQuery
+                    : insertQuery.Union(changeEventsQuery);
             }
 
+            // Add deletes
             if (options.IncludeDeletes || entityConfiguration.AddDeletes)
             {
                 var deleteQuery = operationTypeBuilder.Build(OperationType.Delete);
-                changeEventsQuery = changeEventsQuery.Union(deleteQuery);
+                changeEventsQuery = changeEventsQuery == null
+                    ? deleteQuery
+                    : changeEventsQuery.Union(deleteQuery);
             }
 
-            return changeEventsQuery;
+            return changeEventsQuery
+                ?? throw new Exception("Change this");
         }
 
         private static ChangeEventConfiguration GetConfigurationFromDbContext(IQueryable query)

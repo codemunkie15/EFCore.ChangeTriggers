@@ -7,11 +7,16 @@ using FluentAssertions;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
 {
-    public class ToChangeEventsTests : ToChangeEventsTestBase<User, UserChange, TestDbContext>, IClassFixture<ToChangeEventsFixture>
+    public class ToChangeEventsTests : ToChangeEventsTestBase<User, UserChange, TestDbContext, ChangeEvent>, IClassFixture<ToChangeEventsFixture>
     {
 
         public ToChangeEventsTests(ToChangeEventsFixture fixture) : base(fixture.Services)
         {
+        }
+
+        protected override IQueryable<ChangeEvent> ToChangeEvents(IQueryable query, ChangeEventConfiguration configuration)
+        {
+            return query.ToChangeEvents(configuration);
         }
 
         [Fact]

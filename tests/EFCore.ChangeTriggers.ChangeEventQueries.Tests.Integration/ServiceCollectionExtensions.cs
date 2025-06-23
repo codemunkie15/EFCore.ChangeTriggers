@@ -3,8 +3,14 @@ using EFCore.ChangeTriggers.SqlServer;
 using EFCore.ChangeTriggers.SqlServer.Infrastructure;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByScalar;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceEntity;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByEntity;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByScalar;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangeSourceEntity;
+using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangeSourceScalar;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +36,41 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                 })
                 .AddScoped<EntityCurrentUserProvider>()
                 .AddScoped<IUserReadRepository<ChangedByEntityUser, ChangedByEntityUserChange>, ChangedByEntityUserReadRepository>();
+        }
+
+        public static IServiceCollection AddChangedByScalar(this IServiceCollection services, string connectionString)
+        {
+            return services
+                .AddSqlServerChangeEventQueries<ChangedByScalarDbContext>(connectionString, options =>
+                {
+                    options.UseChangedBy<ChangedByScalarProvider, string>();
+                })
+                .AddScoped<ScalarCurrentUserProvider>()
+                .AddScoped<IUserReadRepository<ChangedByScalarUser, ChangedByScalarUserChange>,
+                    UserReadRepository<ChangedByScalarDbContext, ChangedByScalarUser, ChangedByScalarUserChange>>();
+        }
+
+        public static IServiceCollection AddChangeSourceEntity(this IServiceCollection services, string connectionString)
+        {
+            return services
+                .AddSqlServerChangeEventQueries<ChangeSourceEntityDbContext>(connectionString, options =>
+                {
+                    options.UseChangeSource<ChangeSourceEntityProvider, ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceEntity.ChangeSource>();
+                })
+                .AddScoped<EntityChangeSourceProvider>()
+                .AddScoped<IUserReadRepository<ChangeSourceEntityUser, ChangeSourceEntityUserChange>, ChangeSourceEntityUserReadRepository>();
+        }
+
+        public static IServiceCollection AddChangeSourceScalar(this IServiceCollection services, string connectionString)
+        {
+            return services
+                .AddSqlServerChangeEventQueries<ChangeSourceScalarDbContext>(connectionString, options =>
+                {
+                    options.UseChangeSource<ChangeSourceScalarProvider, ChangeSourceType>();
+                })
+                .AddScoped<ScalarChangeSourceProvider>()
+                .AddScoped<IUserReadRepository<ChangeSourceScalarUser, ChangeSourceScalarUserChange>,
+                    UserReadRepository<ChangeSourceScalarDbContext, ChangeSourceScalarUser, ChangeSourceScalarUserChange>>();
         }
 
         public static IServiceCollection AddSqlServerChangeEventQueries<TDbContext>(

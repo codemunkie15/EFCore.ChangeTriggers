@@ -8,7 +8,7 @@
         /// <summary>
         /// The description of the change event
         /// </summary>
-        public required string Description { get; set; }
+        public string Description { get; set; } = "";
 
         /// <summary>
         /// Gets or sets the old/previous value.

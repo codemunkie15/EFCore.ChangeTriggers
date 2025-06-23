@@ -45,8 +45,8 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.OperationTypeBuilder
             {
                 BuildChangeEventPropertyBinding(ce => ce.Description, Expression.Constant(GetDescription(operationType))),
                 BuildChangeEventPropertyBinding(ce => ce.ChangedAt, Expression.Property(c, nameof(IChange.ChangedAt))),
-                BuildChangeEventPropertyBinding(ce => ce.OldValue, Expression.Constant(string.Empty)),
-                BuildChangeEventPropertyBinding(ce => ce.NewValue, Expression.Constant(string.Empty)),
+                BuildChangeEventPropertyBinding(ce => ce.OldValue, Expression.Constant(null, typeof(string))),
+                BuildChangeEventPropertyBinding(ce => ce.NewValue, Expression.Constant(null, typeof(string))),
             }.Concat(GetAdditionalChangeEventPropertyBindings(c));
 
             var changeEventInit = Expression.MemberInit(Expression.New(typeof(TChangeEvent)), bindings);
