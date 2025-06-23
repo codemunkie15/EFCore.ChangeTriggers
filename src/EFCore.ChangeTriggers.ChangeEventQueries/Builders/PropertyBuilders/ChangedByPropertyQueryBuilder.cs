@@ -1,5 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy;
+using EFCore.ChangeTriggers.ChangeEventQueries.ChangedByEvents;
 using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using System.Linq.Expressions;
 

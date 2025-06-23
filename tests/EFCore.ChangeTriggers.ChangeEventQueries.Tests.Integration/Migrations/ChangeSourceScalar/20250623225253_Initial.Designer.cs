@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.Test
+namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.ChangeSourceScalar
 {
-    [DbContext(typeof(TestDbContext))]
-    [Migration("20250602115539_Initial")]
+    [DbContext(typeof(ChangeSourceScalarDbContext))]
+    [Migration("20250623225253_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.User", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,7 +62,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                             Id = 1,
                             IsAdmin = false,
                             LastUpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Username = "18cdd89e-8ec9-4a90-855e-47b6cd2a670b"
+                            Username = "568a6679-c50c-473f-8901-5016c6de6cd9"
                         },
                         new
                         {
@@ -94,13 +94,17 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                         });
                 });
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.UserChange", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUserChange", b =>
                 {
                     b.Property<int>("ChangeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChangeId"));
+
+                    b.Property<int>("ChangeSource")
+                        .HasColumnType("int")
+                        .HasAnnotation("ChangeTriggers:IsChangeSourceColumn", true);
 
                     b.Property<DateTimeOffset>("ChangedAt")
                         .HasColumnType("datetimeoffset")
@@ -132,12 +136,14 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
 
                     b.ToTable("TestUserChanges");
 
-                    b.HasAnnotation("ChangeTriggers:IsChangeTable", true);
+                    b
+                        .HasAnnotation("ChangeTriggers:HasChangeSource", true)
+                        .HasAnnotation("ChangeTriggers:IsChangeTable", true);
                 });
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.UserChange", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUserChange", b =>
                 {
-                    b.HasOne("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.User", "TrackedEntity")
+                    b.HasOne("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUser", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id")
                         .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true)
@@ -146,7 +152,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                     b.Navigation("TrackedEntity");
                 });
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.User", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUser", b =>
                 {
                     b.Navigation("Changes");
                 });

@@ -1,11 +1,12 @@
-﻿using EFCore.ChangeTriggers.Migrations.Operations;
+﻿using System;
+using EFCore.ChangeTriggers.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.ChangedByEntity
+namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.ChangeSourceEntity
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -13,6 +14,19 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ChangeSources",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChangeSources", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "TestUsers",
                 columns: table => new
@@ -37,7 +51,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OperationTypeId = table.Column<int>(type: "int", nullable: false),
                     ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ChangedById = table.Column<int>(type: "int", nullable: true),
+                    ChangeSourceId = table.Column<int>(type: "int", nullable: true),
                     Id = table.Column<int>(type: "int", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -48,9 +62,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                 {
                     table.PrimaryKey("PK_TestUserChanges", x => x.ChangeId);
                     table.ForeignKey(
-                        name: "FK_TestUserChanges_TestUsers_ChangedById",
-                        column: x => x.ChangedById,
-                        principalTable: "TestUsers",
+                        name: "FK_TestUserChanges_ChangeSources_ChangeSourceId",
+                        column: x => x.ChangeSourceId,
+                        principalTable: "ChangeSources",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TestUserChanges_TestUsers_Id",
@@ -61,7 +75,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
 
             migrationBuilder.AddNoCheckConstraint(
                 table: "TestUserChanges",
-                constraint: "FK_TestUserChanges_TestUsers_ChangedById");
+                constraint: "FK_TestUserChanges_ChangeSources_ChangeSourceId");
 
             migrationBuilder.AddNoCheckConstraint(
                 table: "TestUserChanges",
@@ -75,14 +89,31 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                 changeTableDataColumns: new[] { "DateOfBirth", "Id", "IsAdmin", "LastUpdatedAt", "Username" },
                 operationTypeColumn: new ChangeContextColumn("OperationTypeId", "int"),
                 changedAtColumn: new ChangeContextColumn("ChangedAt"),
-                changedByColumn: new ChangeContextColumn("ChangedById", "int"));
+                changeSourceColumn: new ChangeContextColumn("ChangeSourceId", "int"));
+
+            migrationBuilder.InsertData(
+                table: "ChangeSources",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Migrations" },
+                    { 2, "Tests" },
+                    { 3, "Web API" },
+                    { 4, "Console" },
+                    { 5, "SQL" },
+                    { 6, "Mobile" },
+                    { 7, "Public API" },
+                    { 8, "Email Service" },
+                    { 9, "Data Retention Service" },
+                    { 10, "Maintenance" }
+                });
 
             migrationBuilder.InsertData(
                 table: "TestUsers",
                 columns: new[] { "Id", "DateOfBirth", "IsAdmin", "LastUpdatedAt", "Username" },
                 values: new object[,]
                 {
-                    { 1, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "f0bffaff-20f1-4366-9b1d-4a00094c6dec" },
+                    { 1, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "66d009cc-afdf-4fd8-9560-6e7dbe62434c" },
                     { 2, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Test User 1" },
                     { 3, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Test User 2" },
                     { 4, null, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Test User 3" },
@@ -90,9 +121,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestUserChanges_ChangedById",
+                name: "IX_TestUserChanges_ChangeSourceId",
                 table: "TestUserChanges",
-                column: "ChangedById");
+                column: "ChangeSourceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestUserChanges_Id",
@@ -108,6 +139,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
 
             migrationBuilder.DropTable(
                 name: "TestUserChanges");
+
+            migrationBuilder.DropTable(
+                name: "ChangeSources");
 
             migrationBuilder.DropTable(
                 name: "TestUsers");

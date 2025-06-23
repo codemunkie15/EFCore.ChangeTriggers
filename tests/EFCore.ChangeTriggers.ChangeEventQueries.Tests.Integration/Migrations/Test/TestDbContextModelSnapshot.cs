@@ -59,7 +59,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                             Id = 1,
                             IsAdmin = false,
                             LastUpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Username = "18cdd89e-8ec9-4a90-855e-47b6cd2a670b"
+                            Username = "c4cc724b-a308-4e76-9193-61d0bc383c99"
                         },
                         new
                         {

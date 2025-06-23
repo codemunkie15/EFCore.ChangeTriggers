@@ -52,7 +52,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries
 }
 
 #pragma warning disable IDE0130 // Namespace does not match folder structure
-namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy
+namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangedByEvents
 #pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     public static class IQueryableExtensions
@@ -81,7 +81,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy
 }
 
 #pragma warning disable IDE0130 // Namespace does not match folder structure
-namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangeSource
+namespace EFCore.ChangeTriggers.ChangeEventQueries.ChangeSourceEvents
 #pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     public static class IQueryableExtensions

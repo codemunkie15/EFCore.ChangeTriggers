@@ -1,4 +1,4 @@
-﻿using EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy;
+﻿using EFCore.ChangeTriggers.ChangeEventQueries.ChangedByEvents;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 using EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.ChangedByEntity.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity;

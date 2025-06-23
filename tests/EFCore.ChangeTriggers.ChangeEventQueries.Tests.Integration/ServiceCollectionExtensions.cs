@@ -55,7 +55,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
             return services
                 .AddSqlServerChangeEventQueries<ChangeSourceEntityDbContext>(connectionString, options =>
                 {
-                    options.UseChangeSource<ChangeSourceEntityProvider, ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceEntity.ChangeSource>();
+                    options.UseChangeSource<ChangeSourceEntityProvider, ChangeSource>();
                 })
                 .AddScoped<EntityChangeSourceProvider>()
                 .AddScoped<IUserReadRepository<ChangeSourceEntityUser, ChangeSourceEntityUserChange>, ChangeSourceEntityUserReadRepository>();

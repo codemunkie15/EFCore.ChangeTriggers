@@ -1,6 +1,6 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.Builders.OperationTypeBuilders;
 using EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders;
-using EFCore.ChangeTriggers.ChangeEventQueries.ChangedBy;
+using EFCore.ChangeTriggers.ChangeEventQueries.ChangedByEvents;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders

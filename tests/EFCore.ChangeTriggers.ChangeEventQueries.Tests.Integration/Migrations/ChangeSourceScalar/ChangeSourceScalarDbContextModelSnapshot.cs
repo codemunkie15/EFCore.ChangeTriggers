@@ -4,19 +4,16 @@ using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.ChangedByEntity
+namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.ChangeSourceScalar
 {
-    [DbContext(typeof(ChangedByEntityDbContext))]
-    [Migration("20250602112443_Initial")]
-    partial class Initial
+    [DbContext(typeof(ChangeSourceScalarDbContext))]
+    partial class ChangeSourceScalarDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +22,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity.ChangedByEntityUser", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,7 +59,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                             Id = 1,
                             IsAdmin = false,
                             LastUpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Username = "f0bffaff-20f1-4366-9b1d-4a00094c6dec"
+                            Username = "568a6679-c50c-473f-8901-5016c6de6cd9"
                         },
                         new
                         {
@@ -94,7 +91,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
                         });
                 });
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity.ChangedByEntityUserChange", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUserChange", b =>
                 {
                     b.Property<int>("ChangeId")
                         .ValueGeneratedOnAdd()
@@ -102,12 +99,13 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChangeId"));
 
+                    b.Property<int>("ChangeSource")
+                        .HasColumnType("int")
+                        .HasAnnotation("ChangeTriggers:IsChangeSourceColumn", true);
+
                     b.Property<DateTimeOffset>("ChangedAt")
                         .HasColumnType("datetimeoffset")
                         .HasAnnotation("ChangeTriggers:IsChangedAtColumn", true);
-
-                    b.Property<int?>("ChangedById")
-                        .HasColumnType("int");
 
                     b.Property<string>("DateOfBirth")
                         .HasColumnType("nvarchar(max)");
@@ -131,37 +129,27 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Migrations.
 
                     b.HasKey("ChangeId");
 
-                    b.HasIndex("ChangedById");
-
                     b.HasIndex("Id");
 
                     b.ToTable("TestUserChanges");
 
                     b
-                        .HasAnnotation("ChangeTriggers:HasChangedBy", true)
+                        .HasAnnotation("ChangeTriggers:HasChangeSource", true)
                         .HasAnnotation("ChangeTriggers:IsChangeTable", true);
                 });
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity.ChangedByEntityUserChange", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUserChange", b =>
                 {
-                    b.HasOne("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity.ChangedByEntityUser", "ChangedBy")
-                        .WithMany()
-                        .HasForeignKey("ChangedById")
-                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true)
-                        .HasAnnotation("ChangeTriggers:IsChangedByColumn", true);
-
-                    b.HasOne("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity.ChangedByEntityUser", "TrackedEntity")
+                    b.HasOne("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUser", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id")
                         .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true)
                         .HasAnnotation("ChangeTriggers:IsTrackedEntityForeignKey", true);
 
-                    b.Navigation("ChangedBy");
-
                     b.Navigation("TrackedEntity");
                 });
 
-            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity.ChangedByEntityUser", b =>
+            modelBuilder.Entity("EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceScalar.ChangeSourceScalarUser", b =>
                 {
                     b.Navigation("Changes");
                 });
