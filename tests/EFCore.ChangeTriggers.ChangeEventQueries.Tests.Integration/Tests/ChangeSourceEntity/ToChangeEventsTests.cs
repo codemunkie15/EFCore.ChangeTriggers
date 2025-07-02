@@ -1,5 +1,6 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.ChangeSourceEvents;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
+using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
 using EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.ChangeSourceEntity.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangeSourceEntity;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
@@ -13,11 +14,18 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Chang
         ToChangeEventsTestBase<ChangeSourceEntityUser, ChangeSourceEntityUserChange, ChangeSourceEntityDbContext, ChangeEvent<ChangeSource>>,
         IClassFixture<ToChangeEventsFixture>
     {
-        private readonly EntityChangeSourceProvider changeSourceProvider;
+        private readonly ToChangeEventsFixture fixture;
+        private EntityChangeSourceProvider changeSourceProvider;
 
         public ToChangeEventsTests(ToChangeEventsFixture fixture) : base(fixture.Services)
         {
-            changeSourceProvider = scope.ServiceProvider.GetRequiredService<EntityChangeSourceProvider>();
+            this.fixture = fixture;
+        }
+
+        protected override void SetupServices(IServiceProvider services)
+        {
+            base.SetupServices(services);
+            changeSourceProvider = services.GetRequiredService<EntityChangeSourceProvider>();
         }
 
         protected override async Task SetChangeContext(bool useAsync)
@@ -28,7 +36,16 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Chang
 
         protected override IQueryable<ChangeEvent<ChangeSource>> ToChangeEvents(IQueryable query, ChangeEventConfiguration configuration)
         {
-            return query.ToChangeEvents<ChangeSource>(configuration);
+            return configuration is null
+                ? query.ToChangeEvents<ChangeSource>()
+                : query.ToChangeEvents<ChangeSource>(configuration);
+        }
+
+        protected override IServiceProvider BuildServiceProvider(Action<ChangeEventsDbContextOptionsBuilder> options = null)
+        {
+            return new ServiceCollection()
+                .AddChangeSourceEntity(fixture.GetConnectionString(), options)
+                .BuildServiceProvider();
         }
 
         protected override void PopulateAssertProperties(ChangeEvent<ChangeSource> changeEvent)

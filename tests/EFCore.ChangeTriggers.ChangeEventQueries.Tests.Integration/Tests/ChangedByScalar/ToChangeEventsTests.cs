@@ -1,10 +1,10 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.ChangedByEvents;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
+using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
 using EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.ChangedByScalar.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByScalar;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByScalar;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,11 +14,18 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Chang
         ToChangeEventsTestBase<ChangedByScalarUser, ChangedByScalarUserChange, ChangedByScalarDbContext, ChangeEvent<string>>,
         IClassFixture<ToChangeEventsFixture>
     {
-        private readonly ScalarCurrentUserProvider currentUserProvider;
+        private readonly ToChangeEventsFixture fixture;
+        private ScalarCurrentUserProvider currentUserProvider;
 
         public ToChangeEventsTests(ToChangeEventsFixture fixture) : base(fixture.Services)
         {
-            currentUserProvider = scope.ServiceProvider.GetRequiredService<ScalarCurrentUserProvider>();
+            this.fixture = fixture;
+        }
+
+        protected override void SetupServices(IServiceProvider services)
+        {
+            base.SetupServices(services);
+            currentUserProvider = services.GetRequiredService<ScalarCurrentUserProvider>();
         }
 
         protected override async Task SetChangeContext(bool useAsync)
@@ -29,7 +36,16 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Chang
 
         protected override IQueryable<ChangeEvent<string>> ToChangeEvents(IQueryable query, ChangeEventConfiguration configuration)
         {
-            return query.ToChangeEvents<string>(configuration);
+            return configuration is null
+                ? query.ToChangeEvents<string>()
+                : query.ToChangeEvents<string>(configuration);
+        }
+
+        protected override IServiceProvider BuildServiceProvider(Action<ChangeEventsDbContextOptionsBuilder> options = null)
+        {
+            return new ServiceCollection()
+                .AddChangedByScalar(fixture.GetConnectionString(), options)
+                .BuildServiceProvider();
         }
 
         protected override void PopulateAssertProperties(ChangeEvent<string> changeEvent)

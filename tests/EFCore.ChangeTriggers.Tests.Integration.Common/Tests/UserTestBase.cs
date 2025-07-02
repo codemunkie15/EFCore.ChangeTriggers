@@ -12,11 +12,15 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Tests
         where TUserChange : UserBase, IChange<TUser>, IHasChangeId
         where TDbContext : TestDbContext<TUser, TUserChange>
     {
-        protected readonly IUserReadRepository<TUser, TUserChange> userReadRepository;
+        protected IUserReadRepository<TUser, TUserChange> userReadRepository;
 
         protected UserTestBase(IServiceProvider services) : base(services)
         {
-            userReadRepository = scope.ServiceProvider.GetRequiredService<IUserReadRepository<TUser, TUserChange>>();
+        }
+
+        protected override void SetupServices(IServiceProvider services)
+        {
+            userReadRepository = services.GetRequiredService<IUserReadRepository<TUser, TUserChange>>();
         }
 
         protected virtual Task SetChangeContext(bool useAsync) => Task.CompletedTask;

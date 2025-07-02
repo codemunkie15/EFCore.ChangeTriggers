@@ -1,42 +1,34 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
-using EFCore.ChangeTriggers.ChangeEventQueries.Exceptions;
+using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
 using EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
-using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
 {
     public class ToChangeEventsTests : ToChangeEventsTestBase<User, UserChange, TestDbContext, ChangeEvent>, IClassFixture<ToChangeEventsFixture>
     {
+        private readonly ToChangeEventsFixture fixture;
 
         public ToChangeEventsTests(ToChangeEventsFixture fixture) : base(fixture.Services)
         {
+            this.fixture = fixture;
         }
 
         protected override IQueryable<ChangeEvent> ToChangeEvents(IQueryable query, ChangeEventConfiguration configuration)
         {
-            return query.ToChangeEvents(configuration);
+            return configuration is null
+                ? query.ToChangeEvents()
+                : query.ToChangeEvents(configuration);
         }
 
-        [Fact]
-        public void ToChangeEvents_WithNoConfiguration_ThrowsException()
+        protected override IServiceProvider BuildServiceProvider(Action<ChangeEventsDbContextOptionsBuilder> options = null)
         {
-            var changeEvents = () => dbContext.TestUserChanges.ToChangeEvents();
-
-            changeEvents.Should()
-                .Throw<ChangeEventQueryException>()
-                .WithMessage("No configuration found.*");
-        }
-
-        [Fact]
-        public void ToChangeEvents_WithNoConfigurationForEntity_ThrowsException()
-        {
-            var changeEvents = () => dbContext.TestUserChanges.ToChangeEvents(new ChangeEventConfiguration());
-
-            changeEvents.Should()
-                .Throw<ChangeEventQueryException>()
-                .WithMessage("No configuration found for entity type UserChange.");
+            return new ServiceCollection()
+                .AddTestInfrastructure(fixture.GetConnectionString(), options)
+                .BuildServiceProvider();
         }
 
         //[Fact]
@@ -75,34 +67,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
         //        .ToListAsync(TestContext.Current.CancellationToken);
 
         //    changeEvents.Should().NotBeEmpty(); // At least one event should be present
-        //}
-
-        //[Fact]
-        //public async Task ToChangeEvents_WithInsertAndDeleteEvents_ReturnsInsertAndDeleteEvents()
-        //{
-        //    var user = new User { Username = "InsertDeleteUser", IsAdmin = false, LastUpdatedAt = DateTimeOffset.UtcNow };
-        //    dbContext.TestUsers.Add(user);
-        //    await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
-        //    dbContext.TestUsers.Remove(user);
-        //    await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
-
-        //    var config = new ChangeEventConfiguration(builder =>
-        //    {
-        //        builder.Configure<UserChange>(uc =>
-        //        {
-        //            uc.AddProperty(uc => uc.Username);
-        //            uc.AddInserts();
-        //            uc.AddDeletes();
-        //        });
-        //    });
-
-        //    var changeEvents = await dbContext.TestUserChanges
-        //        .Where(uc => uc.Id == user.Id)
-        //        .ToChangeEvents(config)
-        //        .ToListAsync(TestContext.Current.CancellationToken);
-
-        //    changeEvents.Should().Contain(e => e.Description.Contains("insert", StringComparison.OrdinalIgnoreCase));
-        //    changeEvents.Should().Contain(e => e.Description.Contains("delete", StringComparison.OrdinalIgnoreCase));
         //}
 
         //[Fact]
@@ -229,14 +193,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
         //        .ToListAsync(TestContext.Current.CancellationToken);
 
         //    changeEvents.Should().Contain(e => e.OldValue == "User: CustomSelector" && e.NewValue == "User: CustomSelectorChanged");
-        //}
-
-        //[Fact]
-        //public void ToChangeEvents_WithInvalidQueryType_ThrowsException()
-        //{
-        //    var invalidQuery = dbContext.TestUsers.AsQueryable();
-        //    Action act = () => invalidQuery.ToChangeEvents();
-        //    act.Should().Throw<ChangeEventQueryException>();
         //}
     }
 }

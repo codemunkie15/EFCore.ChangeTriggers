@@ -23,26 +23,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries
         {
             var extension = changeTriggersOptionsBuilder.OptionsBuilder.GetOrCreateExtension<ChangeEventsDbContextOptionsExtension>();
 
-            changeTriggersOptionsBuilder.UseChangeEventQueries(extension);
-        }
-
-        /// <summary>
-        /// Configures the DbContext to use change event queries.
-        /// </summary>
-        /// <param name="changeTriggersOptionsBuilder">The builder being used to configure the context.</param>
-        /// <param name="configurationsAssembly">The assembly where your change event configurations are located.</param>
-        /// <returns>The options builder so that further configuration can be chained.</returns>
-        public static void UseChangeEventQueries<TBuilder, TExtension>(
-            this ChangeTriggersDbContextOptionsBuilder<TBuilder, TExtension> changeTriggersOptionsBuilder,
-            Assembly configurationsAssembly,
-            Action<ChangeEventsDbContextOptionsBuilder>? optionsAction = null)
-        where TBuilder : ChangeTriggersDbContextOptionsBuilder<TBuilder, TExtension>
-        where TExtension : ChangeTriggersDbContextOptionsExtension, new()
-        {
-            var extension = changeTriggersOptionsBuilder.OptionsBuilder.GetOrCreateExtension<ChangeEventsDbContextOptionsExtension>()
-                .WithConfigurationsAssembly(configurationsAssembly);
-
-            changeTriggersOptionsBuilder.UseChangeEventQueries(extension);
+            changeTriggersOptionsBuilder.UseChangeEventQueries(extension, optionsAction);
         }
 
         private static void UseChangeEventQueries<TBuilder, TExtension>(

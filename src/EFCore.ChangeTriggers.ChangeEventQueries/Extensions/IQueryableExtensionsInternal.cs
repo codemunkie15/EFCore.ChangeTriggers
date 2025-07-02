@@ -13,7 +13,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Extensions
             // Check if the element type implements the specified interface
             if (!typeof(TElementType).IsAssignableFrom(queryable.ElementType))
             {
-                throw new InvalidOperationException(ExceptionStrings.IQueryableInvalidElementType(typeof(TElementType).Name));
+                throw new ChangeEventQueryException(ExceptionStrings.IQueryableInvalidElementType(typeof(TElementType).Name));
             }
         }
 

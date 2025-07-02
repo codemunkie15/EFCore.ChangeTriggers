@@ -1,12 +1,14 @@
 ﻿using EFCore.ChangeTriggers.Abstractions;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
+using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Tests;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
-namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
+namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
 {
     public abstract class ToChangeEventsTestBase<TUser, TUserChange, TDbContext, TChangeEvent> : UserTestBase<TUser, TUserChange, TDbContext>
         where TUser : UserBase, ITracked<TUserChange>, new()
@@ -20,12 +22,18 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
 
         protected abstract IQueryable<TChangeEvent> ToChangeEvents(IQueryable query, ChangeEventConfiguration configuration);
 
+        protected abstract IServiceProvider BuildServiceProvider(Action<ChangeEventsDbContextOptionsBuilder> options = null);
+
         protected virtual void PopulateAssertProperties(TChangeEvent changeEvent) { }
 
-        // TODO: Single property updates vs multiple property updates in same transaction
+        public static IEnumerable<object[]> TestConfigurationData => [
+            [ConfigurationProviderMode.DbContext],
+            [ConfigurationProviderMode.Parameter]
+        ];
 
-        [Fact]
-        public async Task ToChangeEvents_WithMultipleChanges_InSameUpdate_ReturnsCorrectChangeEvents()
+        [Theory]
+        [MemberData(nameof(TestConfigurationData))]
+        public async Task ToChangeEvents_WithMultipleChanges_InSingleSave_ReturnsCorrectChangeEvents(ConfigurationProviderMode configurationProviderMode)
         {
             var startingUser = new TUser
             {
@@ -39,7 +47,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                 IsAdmin = false
             };
 
-            await RunTest(startingUser,
+            await RunTest(configurationProviderMode, startingUser,
                 act: async createdUser =>
                 {
                     createdUser.Username = newUser.Username;
@@ -55,6 +63,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                         uc.AddProperty(uc => uc.IsAdmin.ToString());
                     });
                 }),
+                serviceProvider: BuildServiceProvider(options => options.ConfigurationsAssembly(Assembly.GetExecutingAssembly())),
                 expectedChangeEvents:
                 [
                     new()
@@ -72,8 +81,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                 ]);
         }
 
-        [Fact]
-        public async Task ToChangeEvents_WithSingleChanges_InMultipleUpdates_ReturnsCorrectChangeEvents()
+        [Theory]
+        [MemberData(nameof(TestConfigurationData))]
+        public async Task ToChangeEvents_WithSingleChanges_InMultipleSaves_ReturnsCorrectChangeEvents(ConfigurationProviderMode configurationProviderMode)
         {
             var startingUser = new TUser
             {
@@ -87,7 +97,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                 IsAdmin = false
             };
 
-            await RunTest(startingUser,
+            await RunTest(configurationProviderMode, startingUser,
                 act: async createdUser =>
                 {
                     createdUser.Username = newUser.Username;
@@ -107,6 +117,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                         uc.AddProperty(uc => uc.LastUpdatedAt.ToString());
                     });
                 }),
+                serviceProvider: BuildServiceProvider(options => options.ConfigurationsAssembly(Assembly.GetExecutingAssembly())),
                 expectedChangeEvents:
                 [
                     new()
@@ -124,8 +135,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                 ]);
         }
 
-        [Fact]
-        public async Task ToChangeEvents_WithMultipleChanges_InMultipleUpdates_ReturnsCorrectChangeEvents()
+        [Theory]
+        [MemberData(nameof(TestConfigurationData))]
+        public async Task ToChangeEvents_WithMultipleChanges_InMultipleSaves_ReturnsCorrectChangeEvents(ConfigurationProviderMode configurationProviderMode)
         {
             var startingUser = new TUser
             {
@@ -143,7 +155,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                 DateOfBirth = "2000-02-02"
             };
 
-            await RunTest(startingUser,
+            await RunTest(configurationProviderMode, startingUser,
                 act: async createdUser =>
                 {
                     createdUser.Username = newUser.Username;
@@ -166,6 +178,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                         uc.AddProperty(uc => uc.DateOfBirth);
                     });
                 }),
+                serviceProvider: BuildServiceProvider(options => options.ConfigurationsAssembly(Assembly.GetExecutingAssembly())),
                 expectedChangeEvents:
                 [
                     new()
@@ -204,7 +217,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                 IsAdmin = true
             };
 
-            await RunTest(startingUser,
+            await RunTest(ConfigurationProviderMode.Parameter, startingUser,
                 act: createdUser => Task.CompletedTask,
                 config: new ChangeEventConfiguration(builder =>
                 {
@@ -213,6 +226,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                         uc.AddInserts();
                     });
                 }),
+                serviceProvider: null,
                 expectedChangeEvents:
                 [
                     new()
@@ -233,7 +247,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                 IsAdmin = true
             };
 
-            await RunTest(startingUser,
+            await RunTest(ConfigurationProviderMode.Parameter, startingUser,
                 act: async createdUser =>
                 {
                     dbContext.TestUsers.Remove(createdUser);
@@ -246,6 +260,60 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
                         uc.AddDeletes();
                     });
                 }),
+                serviceProvider: null,
+                expectedChangeEvents:
+                [
+                    new()
+                    {
+                        Description = "Entity deleted",
+                        OldValue = null,
+                        NewValue = null,
+                    }
+                ]);
+        }
+
+        //[Fact]
+        public async Task ToChangeEvents_WithGlobalInserts_ReturnsCorrectChangeEvents()
+        {
+            var startingUser = new TUser
+            {
+                Username = "Test User",
+                IsAdmin = true
+            };
+
+            await RunTest(ConfigurationProviderMode.DbContext, startingUser,
+                act: createdUser => Task.CompletedTask,
+                config: null,
+                serviceProvider: BuildServiceProvider(options => options.IncludeInserts()),
+                expectedChangeEvents:
+                [
+                    new()
+                    {
+                        Description = "Entity created",
+                        OldValue = null,
+                        NewValue = null,
+                    }
+                ]);
+        }
+
+        //[Fact]
+        public async Task ToChangeEvents_WithGlobalDeletes_ReturnsCorrectChangeEvents()
+        {
+            // Might want to configure the service provider but still pass config via parameter
+            var startingUser = new TUser
+            {
+                Username = "Test User",
+                IsAdmin = true
+            };
+
+            await RunTest(ConfigurationProviderMode.DbContext, startingUser,
+                act: async createdUser =>
+                {
+                    dbContext.TestUsers.Remove(createdUser);
+                    await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+                },
+                config: null,
+                serviceProvider: BuildServiceProvider(options => options.IncludeDeletes()),
                 expectedChangeEvents:
                 [
                     new()
@@ -258,11 +326,19 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration
         }
 
         protected async Task RunTest(
+            ConfigurationProviderMode configurationProviderMode,
             TUser startingUser,
             Func<TUser, Task> act,
             ChangeEventConfiguration config,
+            IServiceProvider serviceProvider,
             List<TChangeEvent> expectedChangeEvents)
         {
+            if (configurationProviderMode == ConfigurationProviderMode.DbContext)
+            {
+                UseServiceProvider(serviceProvider);
+                config = null;
+            }
+
             // Arrange
             await SetChangeContext(true);
 

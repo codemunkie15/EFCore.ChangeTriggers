@@ -1,10 +1,10 @@
 ﻿using EFCore.ChangeTriggers.ChangeEventQueries.ChangedByEvents;
 using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
+using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
 using EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.ChangedByEntity.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Domain.ChangedByEntity;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Providers.ChangedByEntity;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,11 +14,18 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Chang
         ToChangeEventsTestBase<ChangedByEntityUser, ChangedByEntityUserChange, ChangedByEntityDbContext, ChangeEvent<ChangedByEntityUser>>,
         IClassFixture<ToChangeEventsFixture>
     {
-        private readonly EntityCurrentUserProvider currentUserProvider;
+        private readonly ToChangeEventsFixture fixture;
+        private EntityCurrentUserProvider currentUserProvider;
 
         public ToChangeEventsTests(ToChangeEventsFixture fixture) : base(fixture.Services)
         {
-            currentUserProvider = scope.ServiceProvider.GetRequiredService<EntityCurrentUserProvider>();
+            this.fixture = fixture;
+        }
+
+        protected override void SetupServices(IServiceProvider services)
+        {
+            base.SetupServices(services);
+            currentUserProvider = services.GetRequiredService<EntityCurrentUserProvider>();
         }
 
         protected override async Task SetChangeContext(bool useAsync)
@@ -29,7 +36,16 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests.Chang
 
         protected override IQueryable<ChangeEvent<ChangedByEntityUser>> ToChangeEvents(IQueryable query, ChangeEventConfiguration configuration)
         {
-            return query.ToChangeEvents<ChangedByEntityUser>(configuration);
+            return configuration is null
+                ? query.ToChangeEvents<ChangedByEntityUser>()
+                : query.ToChangeEvents<ChangedByEntityUser>(configuration);
+        }
+
+        protected override IServiceProvider BuildServiceProvider(Action<ChangeEventsDbContextOptionsBuilder> options = null)
+        {
+            return new ServiceCollection()
+                .AddChangedByEntity(fixture.GetConnectionString(), options)
+                .BuildServiceProvider();
         }
 
         protected override void PopulateAssertProperties(ChangeEvent<ChangedByEntityUser> changeEvent)

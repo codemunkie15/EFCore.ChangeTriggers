@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure
 {
@@ -10,6 +11,14 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure
         {
             this.optionsBuilder = optionsBuilder;
         }
+
+        /// <summary>
+        /// Configures the assembly where your change event configurations are located.
+        /// </summary>
+        /// <param name="configurationsAssembly">The assembly where your change event configurations are located.</param>
+        /// <returns>The options builder so that further calls can be chained</returns>
+        public ChangeEventsDbContextOptionsBuilder ConfigurationsAssembly(Assembly configurationsAssembly)
+            => WithOption(e => e.WithConfigurationsAssembly(configurationsAssembly));
 
         /// <summary>
         /// Configures the context to include insert events for every change entity.

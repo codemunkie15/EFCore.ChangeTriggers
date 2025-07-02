@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using EFCore.ChangeTriggers.Infrastructure;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure
 {
@@ -16,7 +17,10 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure
 
         public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
         {
-            return other is ChangeEventsDbContextOptionsExtensionInfo;
+            return other is ChangeEventsDbContextOptionsExtensionInfo otherInfo &&
+                Extension.ConfigurationsAssembly == otherInfo.Extension.ConfigurationsAssembly &&
+                Extension.IncludeInserts == otherInfo.Extension.IncludeInserts &&
+                Extension.IncludeDeletes == otherInfo.Extension.IncludeDeletes;
         }
 
         public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)

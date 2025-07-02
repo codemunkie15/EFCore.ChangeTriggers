@@ -9,7 +9,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Design
         public TestDbContext CreateDbContext(string[] args)
         {
             var services = new ServiceCollection()
-                .AddSqlServerChangeEventQueries<TestDbContext>("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;")
+                .AddTestInfrastructure("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;")
                 .BuildServiceProvider();
 
             return services.GetRequiredService<TestDbContext>();

@@ -17,6 +17,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders
             var configurationTypes = configurationsAssembly
                 .GetTypes()
                 .Where(type => !type.IsAbstract &&
+                       !type.ContainsGenericParameters &&
                        type.GetConstructor(Type.EmptyTypes) != null &&
                        type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IChangeEventEntityConfiguration<>)));
 

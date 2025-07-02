@@ -41,7 +41,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
             this.query = query;
             this.propertyBuilder = propertyBuilder;
             this.operationTypeBuilder = operationTypeBuilder;
-            this.configuration = configuration;
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public IQueryable<TChangeEvent> Build()
