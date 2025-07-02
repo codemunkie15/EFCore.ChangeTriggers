@@ -27,8 +27,8 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
         protected virtual void PopulateAssertProperties(TChangeEvent changeEvent) { }
 
         public static IEnumerable<object[]> TestConfigurationData => [
-            [ConfigurationProviderMode.DbContext],
-            [ConfigurationProviderMode.Parameter]
+            [ConfigurationProviderMode.DbContext], // Use global configuration from DbContext
+            [ConfigurationProviderMode.Parameter] // Use configuration passed as ToChangeEvents() parameter
         ];
 
         [Theory]
@@ -47,7 +47,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                 IsAdmin = false
             };
 
-            await RunTest(configurationProviderMode, startingUser,
+            await RunTest(
+                configurationProviderMode,
+                startingUser,
                 act: async createdUser =>
                 {
                     createdUser.Username = newUser.Username;
@@ -55,15 +57,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
 
                     await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
                 },
-                config: new ChangeEventConfiguration(builder =>
-                {
-                    builder.Configure<TUserChange>(uc =>
-                    {
-                        uc.AddProperty(uc => uc.Username);
-                        uc.AddProperty(uc => uc.IsAdmin.ToString());
-                    });
-                }),
-                serviceProvider: BuildServiceProvider(options => options.ConfigurationsAssembly(Assembly.GetExecutingAssembly())),
                 expectedChangeEvents:
                 [
                     new()
@@ -78,7 +71,15 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                         OldValue = startingUser.IsAdmin.ToString(),
                         NewValue = newUser.IsAdmin.ToString(),
                     }
-                ]);
+                ],
+                configuration: new ChangeEventConfiguration(builder =>
+                {
+                    builder.Configure<TUserChange>(uc =>
+                    {
+                        uc.AddProperty(uc => uc.Username);
+                        uc.AddProperty(uc => uc.IsAdmin.ToString());
+                    });
+                }));
         }
 
         [Theory]
@@ -97,7 +98,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                 IsAdmin = false
             };
 
-            await RunTest(configurationProviderMode, startingUser,
+            await RunTest(
+                configurationProviderMode,
+                startingUser,
                 act: async createdUser =>
                 {
                     createdUser.Username = newUser.Username;
@@ -108,16 +111,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
 
                     await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
                 },
-                config: new ChangeEventConfiguration(builder =>
-                {
-                    builder.Configure<TUserChange>(uc =>
-                    {
-                        uc.AddProperty(uc => uc.Username);
-                        uc.AddProperty(uc => uc.IsAdmin.ToString());
-                        uc.AddProperty(uc => uc.LastUpdatedAt.ToString());
-                    });
-                }),
-                serviceProvider: BuildServiceProvider(options => options.ConfigurationsAssembly(Assembly.GetExecutingAssembly())),
                 expectedChangeEvents:
                 [
                     new()
@@ -132,7 +125,16 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                         OldValue = startingUser.IsAdmin.ToString(),
                         NewValue = newUser.IsAdmin.ToString(),
                     }
-                ]);
+                ],
+                configuration: new ChangeEventConfiguration(builder =>
+                {
+                    builder.Configure<TUserChange>(uc =>
+                    {
+                        uc.AddProperty(uc => uc.Username);
+                        uc.AddProperty(uc => uc.IsAdmin.ToString());
+                        uc.AddProperty(uc => uc.LastUpdatedAt.ToString());
+                    });
+                }));
         }
 
         [Theory]
@@ -155,7 +157,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                 DateOfBirth = "2000-02-02"
             };
 
-            await RunTest(configurationProviderMode, startingUser,
+            await RunTest(
+                configurationProviderMode,
+                startingUser,
                 act: async createdUser =>
                 {
                     createdUser.Username = newUser.Username;
@@ -168,17 +172,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
 
                     await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
                 },
-                config: new ChangeEventConfiguration(builder =>
-                {
-                    builder.Configure<TUserChange>(uc =>
-                    {
-                        uc.AddProperty(uc => uc.Username);
-                        uc.AddProperty(uc => uc.IsAdmin.ToString());
-                        uc.AddProperty(uc => uc.LastUpdatedAt.ToString());
-                        uc.AddProperty(uc => uc.DateOfBirth);
-                    });
-                }),
-                serviceProvider: BuildServiceProvider(options => options.ConfigurationsAssembly(Assembly.GetExecutingAssembly())),
                 expectedChangeEvents:
                 [
                     new()
@@ -205,7 +198,17 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                         OldValue = startingUser.DateOfBirth.ToString(),
                         NewValue = newUser.DateOfBirth.ToString(),
                     },
-                ]);
+                ],
+                configuration: new ChangeEventConfiguration(builder =>
+                {
+                    builder.Configure<TUserChange>(uc =>
+                    {
+                        uc.AddProperty(uc => uc.Username);
+                        uc.AddProperty(uc => uc.IsAdmin.ToString());
+                        uc.AddProperty(uc => uc.LastUpdatedAt.ToString());
+                        uc.AddProperty(uc => uc.DateOfBirth);
+                    });
+                }));
         }
 
         [Fact]
@@ -217,16 +220,9 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                 IsAdmin = true
             };
 
-            await RunTest(ConfigurationProviderMode.Parameter, startingUser,
+            await RunTest(
+                startingUser,
                 act: createdUser => Task.CompletedTask,
-                config: new ChangeEventConfiguration(builder =>
-                {
-                    builder.Configure<TUserChange>(uc =>
-                    {
-                        uc.AddInserts();
-                    });
-                }),
-                serviceProvider: null,
                 expectedChangeEvents:
                 [
                     new()
@@ -235,7 +231,14 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                         OldValue = null,
                         NewValue = null,
                     }
-                ]);
+                ],
+                configuration: new ChangeEventConfiguration(builder =>
+                {
+                    builder.Configure<TUserChange>(uc =>
+                    {
+                        uc.AddInserts();
+                    });
+                }));
         }
 
         [Fact]
@@ -247,20 +250,13 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                 IsAdmin = true
             };
 
-            await RunTest(ConfigurationProviderMode.Parameter, startingUser,
+            await RunTest(
+                startingUser,
                 act: async createdUser =>
                 {
                     dbContext.TestUsers.Remove(createdUser);
                     await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
                 },
-                config: new ChangeEventConfiguration(builder =>
-                {
-                    builder.Configure<TUserChange>(uc =>
-                    {
-                        uc.AddDeletes();
-                    });
-                }),
-                serviceProvider: null,
                 expectedChangeEvents:
                 [
                     new()
@@ -269,22 +265,30 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                         OldValue = null,
                         NewValue = null,
                     }
-                ]);
+                ],
+                configuration: new ChangeEventConfiguration(builder =>
+                {
+                    builder.Configure<TUserChange>(uc =>
+                    {
+                        uc.AddDeletes();
+                    });
+                }));
         }
 
         //[Fact]
         public async Task ToChangeEvents_WithGlobalInserts_ReturnsCorrectChangeEvents()
         {
+            UseServiceProvider(BuildServiceProvider(options => options.IncludeInserts()));
+
             var startingUser = new TUser
             {
                 Username = "Test User",
                 IsAdmin = true
             };
 
-            await RunTest(ConfigurationProviderMode.DbContext, startingUser,
+            await RunTest(
+                startingUser,
                 act: createdUser => Task.CompletedTask,
-                config: null,
-                serviceProvider: BuildServiceProvider(options => options.IncludeInserts()),
                 expectedChangeEvents:
                 [
                     new()
@@ -299,21 +303,21 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
         //[Fact]
         public async Task ToChangeEvents_WithGlobalDeletes_ReturnsCorrectChangeEvents()
         {
-            // Might want to configure the service provider but still pass config via parameter
+            UseServiceProvider(BuildServiceProvider(options => options.IncludeDeletes()));
+
             var startingUser = new TUser
             {
                 Username = "Test User",
                 IsAdmin = true
             };
 
-            await RunTest(ConfigurationProviderMode.DbContext, startingUser,
+            await RunTest(
+                startingUser,
                 act: async createdUser =>
                 {
                     dbContext.TestUsers.Remove(createdUser);
                     await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
                 },
-                config: null,
-                serviceProvider: BuildServiceProvider(options => options.IncludeDeletes()),
                 expectedChangeEvents:
                 [
                     new()
@@ -325,20 +329,29 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
                 ]);
         }
 
-        protected async Task RunTest(
+        protected Task RunTest(
             ConfigurationProviderMode configurationProviderMode,
             TUser startingUser,
             Func<TUser, Task> act,
-            ChangeEventConfiguration config,
-            IServiceProvider serviceProvider,
-            List<TChangeEvent> expectedChangeEvents)
+            List<TChangeEvent> expectedChangeEvents,
+            ChangeEventConfiguration configuration = null)
         {
             if (configurationProviderMode == ConfigurationProviderMode.DbContext)
             {
-                UseServiceProvider(serviceProvider);
-                config = null;
+                UseServiceProvider(BuildServiceProvider(options =>
+                    options.ConfigurationsAssembly(Assembly.GetExecutingAssembly())));
+                configuration = null;
             }
 
+            return RunTest(startingUser, act, expectedChangeEvents, configuration);
+        }
+
+        protected async Task RunTest(
+            TUser startingUser,
+            Func<TUser, Task> act,
+            List<TChangeEvent> expectedChangeEvents,
+            ChangeEventConfiguration configuration = null)
+        {
             // Arrange
             await SetChangeContext(true);
 
@@ -354,7 +367,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.Tests
             var changes = userReadRepository.GetUserChanges()
                 .Where(uc => uc.Id == createdUser.Id);
 
-            var changeEvents = await ToChangeEvents(changes, config)
+            var changeEvents = await ToChangeEvents(changes, configuration)
                 .ToListAsync(TestContext.Current.CancellationToken);
 
             // Assert
