@@ -17,7 +17,7 @@ EFCore.ChangeTriggers is an Entity Framework Core extension that enables compreh
 ![Example](https://raw.githubusercontent.com/codemunkie15/EFCore.ChangeTriggers/main/docs/images/Example1.png)
 
 ## Getting started
-See the documentation here.
+See the documentation [here](https://codemunkie15.github.io/EFCore.ChangeTriggers).
 
 ## Why use SQL triggers?
 Unlike EF Core interceptors, which only capture changes made through the EF context, SQL triggers can also capture updates made through direct SQL commands (including seed data from migrations). This means that no matter how data is modified, whether through an application or directly in the database, you can keep a complete history of entity modifications.
