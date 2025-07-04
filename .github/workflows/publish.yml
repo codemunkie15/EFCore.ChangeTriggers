@@ -23,6 +23,13 @@ jobs:
         with:
           dotnet-version: '8.0.x'
         
+      - name: "Install dotnet-ef"
+        run: dotnet tool install --global dotnet-ef
+
+      - name: "Re-scaffold integration test migrations"
+        shell: pwsh
+        run: .\tests\EFCore.ChangeTriggers.Tests.Integration.Common\Scripts\readd-all-migrations.ps1
+
       - name: Run pack
         run: dotnet pack --configuration $BUILD_CONFIG
         
