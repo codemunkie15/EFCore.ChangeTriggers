@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <Nullable>disable</Nullable>
+	<IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
