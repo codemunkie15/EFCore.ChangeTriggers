@@ -17,7 +17,7 @@ namespace TestHarness.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -91,8 +91,8 @@ namespace TestHarness.Migrations
                         });
 
                     b
-                        .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "TestHarness.DbModels.Permissions.PermissionChange")
-                        .HasAnnotation("ChangeTriggers:Use", true);
+                        .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
+                        .HasAnnotation("SqlServer:UseSqlOutputClause", false);
 
                     b.HasData(
                         new
@@ -148,7 +148,7 @@ namespace TestHarness.Migrations
 
                     b.ToTable("PermissionChanges", (string)null);
 
-                    b.HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "TestHarness.DbModels.Permissions.Permission");
+                    b.HasAnnotation("ChangeTriggers:IsChangeTable", true);
                 });
 
             modelBuilder.Entity("TestHarness.DbModels.Users.User", b =>
@@ -181,8 +181,9 @@ namespace TestHarness.Migrations
                         });
 
                     b
-                        .HasAnnotation("ChangeTriggers:ChangeEntityTypeName", "TestHarness.DbModels.Users.UserChange")
-                        .HasAnnotation("ChangeTriggers:Use", true);
+                        .HasAnnotation("ChangeTriggers:HasChangeTrigger", true)
+                        .HasAnnotation("ChangeTriggers:TriggerNameFormat", "{0}_CustomTriggerName")
+                        .HasAnnotation("SqlServer:UseSqlOutputClause", false);
 
                     b.HasData(
                         new
@@ -201,8 +202,9 @@ namespace TestHarness.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChangeId"));
 
-                    b.Property<int>("ChangeSource")
-                        .HasColumnType("int")
+                    b.Property<string>("ChangeSource")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
                         .HasAnnotation("ChangeTriggers:IsChangeSourceColumn", true);
 
                     b.Property<DateTimeOffset>("ChangedAt")
@@ -241,7 +243,23 @@ namespace TestHarness.Migrations
 
                     b.ToTable("UserChanges", (string)null);
 
-                    b.HasAnnotation("ChangeTriggers:TrackedEntityTypeName", "TestHarness.DbModels.Users.User");
+                    b
+                        .HasAnnotation("ChangeTriggers:HasChangedBy", true)
+                        .HasAnnotation("ChangeTriggers:HasChangeSource", true)
+                        .HasAnnotation("ChangeTriggers:IsChangeTable", true);
+
+                    b.HasData(
+                        new
+                        {
+                            ChangeId = 50,
+                            ChangeSource = "Migration",
+                            ChangedAt = new DateTimeOffset(new DateTime(2024, 10, 23, 15, 33, 34, 839, DateTimeKind.Unspecified).AddTicks(2871), new TimeSpan(0, 0, 0, 0, 0)),
+                            ChangedById = 1,
+                            DateOfBirth = "Test",
+                            Id = 1,
+                            Name = "Test",
+                            OperationType = 1
+                        });
                 });
 
             modelBuilder.Entity("PermissionUser", b =>
@@ -275,7 +293,8 @@ namespace TestHarness.Migrations
                     b.HasOne("TestHarness.DbModels.Permissions.Permission", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id", "SubId")
-                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true)
+                        .HasAnnotation("ChangeTriggers:IsTrackedEntityForeignKey", true);
 
                     b.Navigation("TrackedEntity");
                 });
@@ -300,11 +319,13 @@ namespace TestHarness.Migrations
                     b.HasOne("TestHarness.DbModels.Users.User", "TrackedEntity")
                         .WithMany("Changes")
                         .HasForeignKey("Id")
-                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true)
+                        .HasAnnotation("ChangeTriggers:IsTrackedEntityForeignKey", true);
 
                     b.HasOne("TestHarness.DbModels.PaymentMethods.PaymentMethod", "PrimaryPaymentMethod")
                         .WithMany()
-                        .HasForeignKey("PrimaryPaymentMethodId");
+                        .HasForeignKey("PrimaryPaymentMethodId")
+                        .HasAnnotation("ChangeTriggers:HasNoCheckConstraint", true);
 
                     b.Navigation("ChangedBy");
 

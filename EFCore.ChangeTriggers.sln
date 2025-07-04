@@ -10,9 +10,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A08D766D-29B3-4975-BBD8-002D11533635}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.ChangeEventQueries", "src\EFCore.ChangeTriggers.ChangeEventQueries\EFCore.ChangeTriggers.ChangeEventQueries.csproj", "{DDFEC41F-DC6B-4D79-8C9C-E03EB393AAFC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{163D18F2-0582-4FDC-BDF5-F424389F7154}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.ChangeTriggers.SqlServer.Tests.Integration", "tests\EFCore.ChangeTriggers.SqlServer.Tests.Integration\EFCore.ChangeTriggers.SqlServer.Tests.Integration.csproj", "{13B0C4F0-A80C-4CF9-AF3B-F33243958492}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.Tests.Integration.Common", "tests\EFCore.ChangeTriggers.Tests.Integration.Common\EFCore.ChangeTriggers.Tests.Integration.Common.csproj", "{C93C273B-1A6D-434D-A616-985A7BE2FE2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration", "tests\EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration\EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.csproj", "{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,9 +42,26 @@ Global
 		{DDFEC41F-DC6B-4D79-8C9C-E03EB393AAFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDFEC41F-DC6B-4D79-8C9C-E03EB393AAFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDFEC41F-DC6B-4D79-8C9C-E03EB393AAFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13B0C4F0-A80C-4CF9-AF3B-F33243958492}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13B0C4F0-A80C-4CF9-AF3B-F33243958492}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13B0C4F0-A80C-4CF9-AF3B-F33243958492}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13B0C4F0-A80C-4CF9-AF3B-F33243958492}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C93C273B-1A6D-434D-A616-985A7BE2FE2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C93C273B-1A6D-434D-A616-985A7BE2FE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C93C273B-1A6D-434D-A616-985A7BE2FE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C93C273B-1A6D-434D-A616-985A7BE2FE2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{13B0C4F0-A80C-4CF9-AF3B-F33243958492} = {163D18F2-0582-4FDC-BDF5-F424389F7154}
+		{C93C273B-1A6D-434D-A616-985A7BE2FE2C} = {163D18F2-0582-4FDC-BDF5-F424389F7154}
+		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E} = {163D18F2-0582-4FDC-BDF5-F424389F7154}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9BE8BE84-B419-4B5B-BD62-A97FE7E5DF36}

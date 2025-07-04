@@ -1,11 +1,9 @@
-﻿using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
+﻿using EFCore.ChangeTriggers.ChangeEventQueries;
 using EFCore.ChangeTriggers.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Linq;
 using TestHarness;
 using TestHarness.DbModels.Users;
 
@@ -17,21 +15,41 @@ builder.Services
     .AddDbContext<MyDbContext>(options =>
     {
         options
-            .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False")
-            .UseSqlServerChangeTriggers<ChangedByProvider, User, ChangeSourceProvider, ChangeSourceType>();
+            .UseSqlServer("Data Source=localhost\\SQLEXPRESS;Database=ChangeTriggers;Integrated Security=True;Encrypt=False;TrustServerCertificate=False", options =>
+            {
+                //options.UseCompatibilityLevel()
+            })
+            .UseSqlServerChangeTriggers(options =>
+            {
+                options
+                    .UseTriggerNameFactory(tableName => $"{tableName}_GlobalCustomTriggerName")
+                    .UseChangedBy<ChangedByProvider, User>()
+                    .UseChangeSource<ChangeSourceProvider, ChangeSourceType>()
+                    .UseChangeEventQueries(typeof(MyDbContext).Assembly, options =>
+                    {
+                        options
+                            .IncludeInserts()
+                            .IncludeDeletes();
+                    });
+            });
     })
+    .AddScoped(services => new CurrentUserProvider(new User { Id = 7 }))
     .AddScoped<TestDataService>()
     .AddScoped<TestChangeQueriesService>();
 
 var host = builder.Build();
 
-var dbContext = host.Services.GetRequiredService<MyDbContext>();
-var testDataService = host.Services.GetRequiredService<TestDataService>();
-var testChangeQueriesService = host.Services.GetRequiredService<TestChangeQueriesService>();
+for (int i = 0; i < 5; i++)
+{
+    var scope = host.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+    var testDataService = scope.ServiceProvider.GetRequiredService<TestDataService>();
+    var testChangeQueriesService = scope.ServiceProvider.GetRequiredService<TestChangeQueriesService>();
 
-//await testDataService.CreateAsync();
+    //await testDataService.CreateAsync();
 
-await testChangeQueriesService.RunAsync();
+    await testChangeQueriesService.RunAsync();
+}
 
 Console.ReadLine();
 

@@ -1,10 +1,9 @@
-﻿using EFCore.ChangeTriggers.Abstractions;
-using EFCore.ChangeTriggers.Models;
-using System;
+﻿using EFCore.ChangeTriggers;
+using EFCore.ChangeTriggers.Abstractions;
 
 namespace TestHarness.DbModels.Users
 {
-    public class UserChange : UserBase, IChange<User, int>, IHasChangeSource<ChangeSourceType>, IHasChangedBy<User>
+    public class UserChange : UserBase, IChange<User>, IHasChangeSource<ChangeSourceType>, IHasChangedBy<User>
     {
         public int ChangeId { get; set; }
 

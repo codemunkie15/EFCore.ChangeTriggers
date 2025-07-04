@@ -348,3 +348,12 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Proof of concept backups
+/PoC
+
+# Docs local build
+/docs/_site
+
+# Integration test migration files - these will be scaffolded by the CI pipeline
+/tests/EFCore.ChangeTriggers.SqlServer.Tests.Integration/Migrations

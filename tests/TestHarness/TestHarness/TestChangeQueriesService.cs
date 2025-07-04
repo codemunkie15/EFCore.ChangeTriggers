@@ -1,4 +1,5 @@
-﻿using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
+﻿using EFCore.ChangeTriggers.ChangeEventQueries;
+using EFCore.ChangeTriggers.ChangeEventQueries.Configuration;
 using Microsoft.EntityFrameworkCore;
 using TestHarness.DbModels.Users;
 
@@ -15,39 +16,20 @@ namespace TestHarness
 
         public async Task RunAsync()
         {
-            var query = dbContext
-                .CreateChangeEventQueryBuilder<User, ChangeSourceType>()
-                .AddChanges(
-                    dbContext.UserChanges.Where(uc => uc.Id == 2),
-                    builder =>
+            var config = new ChangeEventConfiguration();
+
+            var query = await dbContext.UserChanges.Where(uc => uc.Id == 1)
+                .ToChangeEvents<User, ChangeSourceType>(new ChangeEventConfiguration(builder =>
                     {
-                        builder
-                            .AddEntityProperties() // Auto add simple properties (Name, DateOfBirth)
-                            .AddProperty("Primary payment method changed", e => e.PrimaryPaymentMethod.Name); // Add a custom property for primary payment method that uses the name
-                    }
-                ).Build();
-
-            var changes = await query.ToListAsync();
-
-            var markdown = changes.ToMarkdownTable();
-
-            var query2 = dbContext
-                .CreateChangeEventQueryBuilder()
-                .AddChanges(
-                    dbContext.PermissionChanges,
-                    builder =>
-                    {
-                        builder
-                            .AddProperty("Name changed", e => e.Name)
-                            .AddProperty("Order changed", e => e.Order.ToString())
-                            .AddProperty("Reference changed", e => e.Reference.ToString())
-                            .AddProperty("Enabled changed", e => e.Enabled.ToString());
+                        builder.Configure<UserChange>(uc =>
+                        {
+                            uc.AddInserts();
+                            uc.AddProperty(uc => uc.Name);
+                            uc.AddProperty(uc => uc.PrimaryPaymentMethod.Name)
+                                .WithDescription("Payment method changed");
+                        });
                     })
-                .Build();
-
-            var changes1 = query.OrderBy(ce => ce.ChangedAt).ToListAsync();
-            var changes2 = await query2.OrderBy(ce => ce.ChangedAt).ToListAsync();
-
+                ).OrderBy(ce => ce.ChangedAt).ToListAsync();
         }
     }
 }

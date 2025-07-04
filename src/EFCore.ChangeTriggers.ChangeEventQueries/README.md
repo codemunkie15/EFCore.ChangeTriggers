@@ -2,7 +2,7 @@
 
 [![Nuget](https://img.shields.io/nuget/v/EFCore.ChangeTriggers.ChangeEventQueries)](https://www.nuget.org/packages/EFCore.ChangeTriggers.ChangeEventQueries)
 
-EFCore.ChangeTriggers.ChangeEventQueries is an EFCore.ChangeTriggers add-on for querying change tables in a human-readable format (usually to display in a grid).
+EFCore.ChangeTriggers.ChangeEventQueries is an EFCore.ChangeTriggers add-on for querying change entities in a human-readable format (usually to display in a grid). It projects change entities into events to see which properties actually changed values.
 
 ## Example
 
@@ -13,19 +13,20 @@ EFCore.ChangeTriggers.ChangeEventQueries is an EFCore.ChangeTriggers add-on for 
 ### Query
 
 ```C#
-var query = dbContext
-	.CreateChangeEventQueryBuilder<User, ChangeSourceType>() // Creates a query builder to use
-	.AddChanges( // AddChanges returns the builder so multiple calls can be chained for different change entities
-		dbContext.UserChanges.Where(uc => uc.Id == 2), // Add any where clauses to your query here
-		builder =>
-		{
-			builder
-				.AddEntityProperties() // Auto add simple properties (Name, DateOfBirth)
-				.AddProperty("Primary payment method changed", e => e.PrimaryPaymentMethod.Name); // Add a custom property for primary payment method that uses the payment method name
-		}
-	).Build();
-
-var changes = await query.ToListAsync();
+var query = await dbContext.UserChanges
+    .Where(uc => uc.Id == 1)
+    .ToChangeEvents<User, ChangeSourceType>(
+        new ChangeEventConfiguration(builder =>
+        {
+            builder.Configure<UserChange>(uc =>
+            {
+                uc.AddInserts();
+                uc.AddProperty(uc => uc.Name);
+                uc.AddProperty(uc => uc.PrimaryPaymentMethod.Name)
+                    .WithDescription("Payment method changed");
+            });
+        }))
+    .OrderBy(ce => ce.ChangedAt).ToListAsync();
 ```
 
 ### Results
