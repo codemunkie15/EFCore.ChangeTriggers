@@ -20,8 +20,6 @@ jobs:
           
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
         
       - name: "Install dotnet-ef"
         run: dotnet tool install --global dotnet-ef
@@ -30,11 +28,14 @@ jobs:
         shell: pwsh
         run: .\tests\EFCore.ChangeTriggers.Tests.Integration.Common\Scripts\readd-all-migrations.ps1
 
-      - name: Run pack
-        run: dotnet pack --configuration $BUILD_CONFIG
-        
+      - name: Build solution
+        run: dotnet build --configuration $BUILD_CONFIG
+
       - name: Run tests
         run: dotnet test --configuration $BUILD_CONFIG --no-build
+
+      - name: Run pack
+        run: dotnet pack --configuration $BUILD_CONFIG --no-build
         
       - name: Publish
         run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
