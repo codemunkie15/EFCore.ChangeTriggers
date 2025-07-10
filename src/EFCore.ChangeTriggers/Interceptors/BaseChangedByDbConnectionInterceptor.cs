@@ -34,7 +34,7 @@ namespace EFCore.ChangeTriggers.Interceptors
             var changedByRawValue = eventData.Context.Model.GetRawValue(changedBy); // TODO: Is there a better way to get this?
             var changedByProviderValue = eventData.Context.Model.ConvertToProvider(changedByRawValue);
 
-            SetChangedByChangeContext(eventData, changedByProviderValue);
+            SetChangedByChangeContext(connection, eventData, changedByProviderValue);
         }
 
         public override async Task ConnectionOpenedAsync(DbConnection connection, ConnectionEndEventData eventData, CancellationToken cancellationToken = new())
@@ -51,11 +51,11 @@ namespace EFCore.ChangeTriggers.Interceptors
             var changedByRawValue = eventData.Context.Model.GetRawValue(changedBy);
             var changedByProviderValue = eventData.Context.Model.ConvertToProvider(changedByRawValue);
 
-            await SetChangedByChangeContextAsync(eventData, changedByProviderValue, cancellationToken);
+            await SetChangedByChangeContextAsync(connection, eventData, changedByProviderValue, cancellationToken);
         }
 
-        protected abstract void SetChangedByChangeContext(ConnectionEndEventData eventData, object? changedByProviderValue);
+        protected abstract void SetChangedByChangeContext(DbConnection connection, ConnectionEndEventData eventData, object? changedByProviderValue);
 
-        protected abstract Task SetChangedByChangeContextAsync(ConnectionEndEventData eventData, object? changedByProviderValue, CancellationToken cancellationToken);
+        protected abstract Task SetChangedByChangeContextAsync(DbConnection connection, ConnectionEndEventData eventData, object? changedByProviderValue, CancellationToken cancellationToken);
     }
 }

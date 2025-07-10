@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration", "tests\EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration\EFCore.ChangeTriggers.ChangeEventQueries.Tests.Integration.csproj", "{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.ChangeTriggers.MySql", "src\EFCore.ChangeTriggers.MySql\EFCore.ChangeTriggers.MySql.csproj", "{47656EB9-5B1D-4BF8-83A4-6A5250B797D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F902BDED-C2C7-4972-B50F-AFA6F1561C4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47656EB9-5B1D-4BF8-83A4-6A5250B797D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47656EB9-5B1D-4BF8-83A4-6A5250B797D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47656EB9-5B1D-4BF8-83A4-6A5250B797D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47656EB9-5B1D-4BF8-83A4-6A5250B797D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
