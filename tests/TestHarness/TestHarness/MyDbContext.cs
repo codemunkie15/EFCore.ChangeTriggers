@@ -26,13 +26,13 @@ namespace TestHarness
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
-            //configurationBuilder
-            //    .DefaultTypeMapping<ChangeSourceType>()
-            //    .HasConversion<string>();
+            configurationBuilder
+                .DefaultTypeMapping<ChangeSourceType>()
+                .HasConversion<string>();
 
-            //configurationBuilder
-            //    .Properties<ChangeSourceType>()
-            //    .HaveConversion<string>();
+            configurationBuilder
+                .Properties<ChangeSourceType>()
+                .HaveConversion<string>();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

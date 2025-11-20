@@ -46,9 +46,9 @@ for (int i = 0; i < 5; i++)
     var testDataService = scope.ServiceProvider.GetRequiredService<TestDataService>();
     var testChangeQueriesService = scope.ServiceProvider.GetRequiredService<TestChangeQueriesService>();
 
-    await testDataService.CreateAsync();
+    //await testDataService.CreateAsync();
 
-    //await testChangeQueriesService.RunAsync();
+    await testChangeQueriesService.RunAsync();
 }
 
 Console.ReadLine();
