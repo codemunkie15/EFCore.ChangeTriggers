@@ -133,7 +133,6 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 
         private MethodCallExpression BuildChangePairWhereClause(Expression selectManyExpression, ChangePair<Expression> selectors)
         {
-            // TODO: Can the Expression.Lambda be removed here?
             var outerWhere = Expression.NotEqual(selectors.Current, selectors.Previous);
             return selectManyExpression.ApplyWhere(outerWhere, cpJoinParam);
         }

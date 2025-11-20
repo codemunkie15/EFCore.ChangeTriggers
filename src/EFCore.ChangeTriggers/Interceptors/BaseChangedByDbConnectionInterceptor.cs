@@ -31,7 +31,7 @@ namespace EFCore.ChangeTriggers.Interceptors
                 ? changedByProvider.GetMigrationChangedBy()
                 : changedByProvider.GetChangedBy();
 
-            var changedByRawValue = eventData.Context.Model.GetRawValue(changedBy); // TODO: Is there a better way to get this?
+            var changedByRawValue = eventData.Context.Model.GetRawValue(changedBy);
             var changedByProviderValue = eventData.Context.Model.ConvertToProvider(changedByRawValue);
 
             SetChangedByChangeContext(connection, changedByProviderValue);

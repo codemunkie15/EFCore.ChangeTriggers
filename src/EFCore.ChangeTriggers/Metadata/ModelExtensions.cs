@@ -33,9 +33,8 @@ namespace EFCore.ChangeTriggers.Metadata
                 return null;
             }
 
-            var test = model.GetModelDependencies().TypeMappingSource.FindMapping(value.GetType(), model);
-
-            return test?.Converter?.ConvertToProvider(value) ?? value;
+            var mapping = model.GetModelDependencies().TypeMappingSource.FindMapping(value.GetType(), model);
+            return mapping?.Converter?.ConvertToProvider(value) ?? value;
         }
     }
 }
