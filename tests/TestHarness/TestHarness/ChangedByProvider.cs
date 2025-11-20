@@ -12,6 +12,11 @@ namespace TestHarness
             this.currentUserProvider = currentUserProvider;
         }
 
+        public override User GetChangedBy()
+        {
+            return currentUserProvider.GetCurrentUser();
+        }
+
         public override Task<User> GetChangedByAsync()
         {
             return Task.FromResult(currentUserProvider.GetCurrentUser());

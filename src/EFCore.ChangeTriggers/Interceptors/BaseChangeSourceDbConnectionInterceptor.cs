@@ -34,7 +34,7 @@ namespace EFCore.ChangeTriggers.Interceptors
             var changeSourceRawValue = eventData.Context.Model.GetRawValue(changeSource);
             var changeSourceProviderValue = eventData.Context.Model.ConvertToProvider(changeSourceRawValue);
 
-            SetChangeSourceChangeContext(eventData, changeSourceProviderValue);
+            SetChangeSourceChangeContext(connection, changeSourceProviderValue);
         }
 
         public override async Task ConnectionOpenedAsync(DbConnection connection, ConnectionEndEventData eventData, CancellationToken cancellationToken = new())
@@ -51,11 +51,11 @@ namespace EFCore.ChangeTriggers.Interceptors
             var changeSourceRawValue = eventData.Context.Model.GetRawValue(changeSource);
             var changeSourceProviderValue = eventData.Context.Model.ConvertToProvider(changeSourceRawValue);
 
-            await SetChangeSourceChangeContextAsync(eventData, changeSourceProviderValue, cancellationToken);
+            await SetChangeSourceChangeContextAsync(connection, changeSourceProviderValue, cancellationToken);
         }
 
-        protected abstract void SetChangeSourceChangeContext(ConnectionEndEventData eventData, object? changeSourceProviderValue);
+        protected abstract void SetChangeSourceChangeContext(DbConnection connection, object? changeSourceProviderValue);
 
-        protected abstract Task SetChangeSourceChangeContextAsync(ConnectionEndEventData eventData, object? changeSourceProviderValue, CancellationToken cancellationToken);
+        protected abstract Task SetChangeSourceChangeContextAsync(DbConnection connection, object? changeSourceProviderValue, CancellationToken cancellationToken);
     }
 }

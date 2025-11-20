@@ -28,7 +28,7 @@ namespace TestHarness
 
             user.PaymentMethods.Add(pm);
 
-            await dbContext.SaveChangesAsync();
+            dbContext.SaveChanges();
 
             user.PrimaryPaymentMethod = pm;
 

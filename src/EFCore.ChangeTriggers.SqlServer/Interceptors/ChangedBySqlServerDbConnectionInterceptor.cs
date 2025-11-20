@@ -5,6 +5,7 @@ using EFCore.ChangeTriggers.Interceptors;
 using EFCore.ChangeTriggers.SqlServer.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Data.Common;
 
 namespace EFCore.ChangeTriggers.SqlServer.Interceptors
 {
@@ -19,34 +20,31 @@ namespace EFCore.ChangeTriggers.SqlServer.Interceptors
         {
         }
 
-        protected override void SetChangedByChangeContext(
-            ConnectionEndEventData eventData,
-            object? changedByProviderValue)
+        protected override void SetChangedByChangeContext(DbConnection connection, object? changedByProviderValue)
         {
-            if (eventData.Connection.IsMasterDatabase())
+            if (connection.IsMasterDatabase())
             {
                 // Database is probably being created, so don't set session context.
                 return;
             }
 
-            eventData.Context!.Database.ExecuteSql(
-                $"EXEC sp_set_session_context {ChangeContextConstants.ChangedByContextName}, {changedByProviderValue}");
+            using var command = connection.CreateSetSessionContextCommand(ChangeContextConstants.ChangedByContextName, changedByProviderValue);
+            command.ExecuteNonQuery();
         }
 
         protected override async Task SetChangedByChangeContextAsync(
-            ConnectionEndEventData eventData,
+            DbConnection connection,
             object? changedByProviderValue,
             CancellationToken cancellationToken)
         {
-            if (eventData.Connection.IsMasterDatabase())
+            if (connection.IsMasterDatabase())
             {
                 // Database is probably being created, so don't set session context.
                 return;
             }
 
-            await eventData.Context!.Database.ExecuteSqlAsync(
-                $"EXEC sp_set_session_context {ChangeContextConstants.ChangedByContextName}, {changedByProviderValue}",
-                cancellationToken);
+            using var command = connection.CreateSetSessionContextCommand(ChangeContextConstants.ChangedByContextName, changedByProviderValue);
+            await command.ExecuteNonQueryAsync(cancellationToken);
         }
     }
 }
