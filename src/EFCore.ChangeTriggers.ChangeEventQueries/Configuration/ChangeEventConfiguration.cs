@@ -30,7 +30,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Configuration
             buildAction(builder);
         }
 
-        internal void AddEntityConfigiration(ChangeEventEntityConfiguration entityConfiguration)
+        internal void AddEntityConfiguration(ChangeEventEntityConfiguration entityConfiguration)
         {
             if (!entityConfigurations.TryAdd(entityConfiguration.EntityType, entityConfiguration))
             {

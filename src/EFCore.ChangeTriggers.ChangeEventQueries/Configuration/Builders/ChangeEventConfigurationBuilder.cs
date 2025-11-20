@@ -29,7 +29,7 @@
             var entityBuilder = new ChangeEventEntityConfigurationBuilder<TChangeEntity>(entityConfiguration);
             configureEntity(entityBuilder);
 
-            changeEventConfiguration.AddEntityConfigiration(entityConfiguration);
+            changeEventConfiguration.AddEntityConfiguration(entityConfiguration);
 
             return this;
         }
