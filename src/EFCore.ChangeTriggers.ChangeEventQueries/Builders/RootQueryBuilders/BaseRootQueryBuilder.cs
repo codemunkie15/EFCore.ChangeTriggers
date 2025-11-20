@@ -7,7 +7,6 @@ using EFCore.ChangeTriggers.ChangeEventQueries.Extensions;
 using EFCore.ChangeTriggers.ChangeEventQueries.Infrastructure;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using System.Linq.Expressions;
 
 namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
 {
@@ -79,7 +78,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.RootQueryBuilders
             }
 
             return changeEventsQuery
-                ?? throw new Exception("Change this");
+                ?? throw new ChangeEventQueryException(ExceptionStrings.EntityConfigurationNotValid());
         }
 
         private static ChangeEventConfiguration GetConfigurationFromDbContext(IQueryable query)

@@ -25,5 +25,8 @@
 
         public static string ConfigurationAlreadyAdded(string typeName)
             => $"A configuration for entity type {typeName} has already been added.";
+
+        public static string EntityConfigurationNotValid()
+            => $"The entity configuration is not valid.";
     }
 }
