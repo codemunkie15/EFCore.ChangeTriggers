@@ -6,6 +6,6 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Domain
     {
         public ICollection<UserChange> Changes { get; set; }
 
-        public static User SystemUser { get; } = new User { Id = 1 };
+        public static User SystemUser { get; } = new User { Id = 1, Username = nameof(SystemUser) };
     }
 }

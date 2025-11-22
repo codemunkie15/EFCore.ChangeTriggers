@@ -6,5 +6,5 @@ public class ChangeSourceEntityUser : UserBase, ITracked<ChangeSourceEntityUserC
 {
     public ICollection<ChangeSourceEntityUserChange> Changes { get; set; }
 
-    public static ChangeSourceEntityUser SystemUser { get; } = new ChangeSourceEntityUser { Id = 1 };
+    public static ChangeSourceEntityUser SystemUser { get; } = new ChangeSourceEntityUser { Id = 1, Username = nameof(SystemUser) };
 }

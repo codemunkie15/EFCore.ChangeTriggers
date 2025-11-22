@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EFCore.ChangeTriggers.Migrations
@@ -33,7 +34,11 @@ namespace EFCore.ChangeTriggers.Migrations
             IModelRuntimeInitializer modelRuntimeInitializer,
             IDiagnosticsLogger<DbLoggerCategory.Migrations> logger,
             IRelationalCommandDiagnosticsLogger commandLogger,
-            IDatabaseProvider databaseProvider)
+            IDatabaseProvider databaseProvider,
+            IMigrationsModelDiffer migrationsModelDiffer,
+            IDesignTimeModel designTimeModel,
+            IDbContextOptions dbContextOptions,
+            IExecutionStrategy executionStrategy)
             : base(
                   migrationsAssembly,
                   historyRepository,
@@ -47,7 +52,11 @@ namespace EFCore.ChangeTriggers.Migrations
                   modelRuntimeInitializer,
                   logger,
                   commandLogger,
-                  databaseProvider)
+                  databaseProvider,
+                  migrationsModelDiffer,
+                  designTimeModel,
+                  dbContextOptions,
+                  executionStrategy)
         {
             this.changeTriggersExtensionContext = changeTriggersExtensionContext;
             this.setChangeContextOperationGenerators = setChangeContextOperationGenerators;

@@ -6,5 +6,5 @@ public class ChangedByScalarUser : UserBase, ITracked<ChangedByScalarUserChange>
 {
     public ICollection<ChangedByScalarUserChange> Changes { get; set; }
 
-    public static ChangedByScalarUser SystemUser { get; } = new ChangedByScalarUser { Id = 1 };
+    public static ChangedByScalarUser SystemUser { get; } = new ChangedByScalarUser { Id = 1, Username = nameof(SystemUser) };
 }

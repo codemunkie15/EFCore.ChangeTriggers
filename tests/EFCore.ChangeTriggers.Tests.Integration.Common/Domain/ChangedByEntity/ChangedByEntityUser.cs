@@ -6,5 +6,5 @@ public class ChangedByEntityUser : UserBase, ITracked<ChangedByEntityUserChange>
 {
     public ICollection<ChangedByEntityUserChange> Changes { get; set; }
 
-    public static ChangedByEntityUser SystemUser { get; } = new ChangedByEntityUser { Id = 1 };
+    public static ChangedByEntityUser SystemUser { get; } = new ChangedByEntityUser { Id = 1, Username = nameof(SystemUser) };
 }

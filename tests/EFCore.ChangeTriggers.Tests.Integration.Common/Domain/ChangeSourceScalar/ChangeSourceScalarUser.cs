@@ -6,5 +6,5 @@ public class ChangeSourceScalarUser : UserBase, ITracked<ChangeSourceScalarUserC
 {
     public ICollection<ChangeSourceScalarUserChange> Changes { get; set; }
 
-    public static ChangeSourceScalarUser SystemUser { get; } = new ChangeSourceScalarUser { Id = 1 };
+    public static ChangeSourceScalarUser SystemUser { get; } = new ChangeSourceScalarUser { Id = 1 , Username = nameof(SystemUser) };
 }
