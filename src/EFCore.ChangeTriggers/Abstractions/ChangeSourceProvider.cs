@@ -9,13 +9,13 @@
         public virtual TChangeSource GetChangeSource()
         {
             throw new NotImplementedException(
-                $"Your ChangeSourceProvider does not implement the {nameof(IChangeSourceProvider<TChangeSource>.GetChangeSource)}() method.");
+                $"Your ChangeSourceProvider does not implement the {nameof(IChangeSourceProvider<>.GetChangeSource)}() method.");
         }
 
         public virtual Task<TChangeSource> GetChangeSourceAsync()
         {
             throw new NotImplementedException(
-                $"Your ChangeSourceProvider does not implement the {nameof(IChangeSourceProvider<TChangeSource>.GetChangeSourceAsync)}() method.");
+                $"Your ChangeSourceProvider does not implement the {nameof(IChangeSourceProvider<>.GetChangeSourceAsync)}() method.");
         }
 
         public virtual TChangeSource GetMigrationChangeSource()

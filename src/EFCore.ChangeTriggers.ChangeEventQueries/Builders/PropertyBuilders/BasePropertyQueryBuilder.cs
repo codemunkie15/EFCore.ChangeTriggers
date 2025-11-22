@@ -33,8 +33,8 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
             cpJoinParam = Expression.Parameter(cpGenericType, "cp");
             cpJoinProps = new()
             {
-                Current = Expression.Property(cpJoinParam, nameof(ChangePair<_>.Current)),
-                Previous = Expression.Property(cpJoinParam, nameof(ChangePair<_>.Previous))
+                Current = Expression.Property(cpJoinParam, nameof(ChangePair<>.Current)),
+                Previous = Expression.Property(cpJoinParam, nameof(ChangePair<>.Previous))
             };
 
             changedAtProp = query.ElementType.GetProperty(nameof(IChange.ChangedAt))!;
@@ -101,8 +101,8 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 
             var joinedChangesInit = Expression.MemberInit(
                 Expression.New(cpConstructor),
-                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<_>.Current))!, changeParams.Current),
-                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<_>.Previous))!, changeParams.Previous)
+                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<>.Current))!, changeParams.Current),
+                Expression.Bind(cpGenericType.GetProperty(nameof(ChangePair<>.Previous))!, changeParams.Previous)
             );
 
             var resultSelector = Expression.Lambda(joinedChangesInit, changeParams.Current, changeParams.Previous);

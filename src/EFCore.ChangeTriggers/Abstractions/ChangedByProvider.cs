@@ -9,13 +9,13 @@
         public virtual TChangedBy GetChangedBy()
         {
             throw new NotImplementedException(
-                $"Your ChangedByProvider does not implement the {nameof(IChangedByProvider<TChangedBy>.GetChangedBy)}() method.");
+                $"Your ChangedByProvider does not implement the {nameof(IChangedByProvider<>.GetChangedBy)}() method.");
         }
 
         public virtual Task<TChangedBy> GetChangedByAsync()
         {
             throw new NotImplementedException(
-                $"Your ChangedByProvider does not implement the {nameof(IChangedByProvider<TChangedBy>.GetChangedByAsync)}() method.");
+                $"Your ChangedByProvider does not implement the {nameof(IChangedByProvider<>.GetChangedByAsync)}() method.");
         }
 
         public virtual TChangedBy GetMigrationChangedBy()

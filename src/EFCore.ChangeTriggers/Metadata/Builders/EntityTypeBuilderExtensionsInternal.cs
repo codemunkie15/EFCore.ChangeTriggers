@@ -18,8 +18,8 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
                     ExceptionStrings.NoPrimaryKeyConfigured(builder.Metadata.DisplayName()));
 
             builder
-                .HasMany(nameof(ITracked<_>.Changes))
-                .WithOne(nameof(IHasTrackedEntity<_>.TrackedEntity))
+                .HasMany(nameof(ITracked<>.Changes))
+                .WithOne(nameof(IHasTrackedEntity<>.TrackedEntity))
                 .HasForeignKey(trackedTablePrimaryKey.Properties.Select(p => p.Name).ToArray())
                 .IsTrackedEntityForeignKey();
 
@@ -47,7 +47,7 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
 
         public static EntityTypeBuilder HasChangedByInternal(this EntityTypeBuilder builder, Type changedByClrType)
         {
-            const string changedByPropertyName = nameof(IHasChangedBy<_>.ChangedBy);
+            const string changedByPropertyName = nameof(IHasChangedBy<>.ChangedBy);
 
             builder.EnsureSameClrType(changedByPropertyName, changedByClrType);
 
@@ -66,7 +66,7 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
             else
             {
                 // Configure ChangedBy as a scalar property
-                builder.Property(nameof(IHasChangedBy<_>.ChangedBy))
+                builder.Property(nameof(IHasChangedBy<>.ChangedBy))
                     .IsChangedByProperty();
             }
 
@@ -75,7 +75,7 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
 
         public static EntityTypeBuilder HasChangeSourceInternal(this EntityTypeBuilder builder, Type changeSourceClrType)
         {
-            const string changeSourcePropertyName = nameof(IHasChangeSource<_>.ChangeSource);
+            const string changeSourcePropertyName = nameof(IHasChangeSource<>.ChangeSource);
 
             builder.EnsureSameClrType(changeSourcePropertyName, changeSourceClrType);
 
@@ -93,7 +93,7 @@ namespace EFCore.ChangeTriggers.Metadata.Builders
             else
             {
                 // Configure ChangeSource as a scalar property
-                builder.Property(nameof(IHasChangeSource<_>.ChangeSource))
+                builder.Property(nameof(IHasChangeSource<>.ChangeSource))
                     .IsChangeSourceProperty();
             }
 

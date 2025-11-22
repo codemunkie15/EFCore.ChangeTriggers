@@ -15,7 +15,7 @@ namespace EFCore.ChangeTriggers.ChangeEventQueries.Builders.PropertyBuilders
 
         protected override IEnumerable<MemberBinding> GetAdditionalChangeEventPropertyBindings(Expression changeEntity)
         {
-            yield return BuildChangeEventPropertyBinding(ce => ce.ChangedBy, Expression.Property(changeEntity, nameof(IHasChangedBy<_>.ChangedBy)));
+            yield return BuildChangeEventPropertyBinding(ce => ce.ChangedBy, Expression.Property(changeEntity, nameof(IHasChangedBy<>.ChangedBy)));
         }
     }
 }
