@@ -9,7 +9,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Design
         public ChangedByEntityDbContext CreateDbContext(string[] args)
         {
             var services = new ServiceCollection()
-                .AddChangedByEntity("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;")
+                .AddChangedByEntityServices("Server=(localdb)\\mssqllocaldb;Database=DesignTimeDb;Trusted_Connection=True;")
                 .BuildServiceProvider();
 
             return services.GetRequiredService<ChangedByEntityDbContext>();

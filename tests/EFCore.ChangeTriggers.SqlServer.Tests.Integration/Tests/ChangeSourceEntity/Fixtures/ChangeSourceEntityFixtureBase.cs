@@ -1,6 +1,5 @@
 ﻿using EFCore.ChangeTriggers.Tests.Integration.Common.Fixtures;
 using EFCore.ChangeTriggers.Tests.Integration.Common.Persistence;
-using EFCore.ChangeTriggers.Tests.Integration.Common.Scopes;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Tests.ChangeSourceEntity.Fixtures
@@ -13,14 +12,9 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration.Tests.ChangeSourceEn
         {
         }
 
-        public ChangeSourceEntityTestScope CreateTestScope()
-        {
-            return new ChangeSourceEntityTestScope(Services);
-        }
-
         protected override void ConfigureServices(IServiceCollection services)
         {
-            services.AddChangeSourceEntity(GetConnectionString());
+            services.AddChangeSourceEntityServices(GetConnectionString());
         }
     }
 }

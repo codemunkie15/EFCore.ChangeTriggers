@@ -18,14 +18,23 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
 {
     internal static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddTestInfrastructure(this IServiceCollection serviceCollection, string connectionString)
+        public static IServiceCollection AddTestServices(this IServiceCollection serviceCollection, string connectionString)
         {
             return serviceCollection
                 .AddSqlServerChangeTriggers<TestDbContext>(connectionString)
                 .AddScoped<IUserReadRepository<User, UserChange>, UserReadRepository<TestDbContext, User, UserChange>>();
         }
 
-        public static IServiceCollection AddChangedByEntity(this IServiceCollection serviceCollection, string connectionString)
+        public static IServiceCollection AddExcludedChangePropertiesServices(this IServiceCollection serviceCollection, string connectionString)
+        {
+            return serviceCollection
+                .AddSqlServerChangeTriggers<ExcludedChangePropertiesDbContext>(connectionString)
+                .AddScoped<
+                    IUserReadRepository<UserWithPassword, UserWithPasswordChange>,
+                    UserReadRepository<ExcludedChangePropertiesDbContext, UserWithPassword, UserWithPasswordChange>>();
+        }
+
+        public static IServiceCollection AddChangedByEntityServices(this IServiceCollection serviceCollection, string connectionString)
         {
             return serviceCollection
                 .AddSqlServerChangeTriggers<ChangedByEntityDbContext>(connectionString, options =>
@@ -37,7 +46,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
                 .AddScoped<IUserReadRepository<ChangedByEntityUser, ChangedByEntityUserChange>, ChangedByEntityUserReadRepository>();
         }
 
-        public static IServiceCollection AddChangedByScalar(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddChangedByScalarServices(this IServiceCollection services, string connectionString)
         {
             return services
                 .AddSqlServerChangeTriggers<ChangedByScalarDbContext>(connectionString, options =>
@@ -50,7 +59,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
                     UserReadRepository<ChangedByScalarDbContext, ChangedByScalarUser, ChangedByScalarUserChange>>();
         }
 
-        public static IServiceCollection AddChangeSourceEntity(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddChangeSourceEntityServices(this IServiceCollection services, string connectionString)
         {
             return services
                 .AddSqlServerChangeTriggers<ChangeSourceEntityDbContext>(connectionString, options =>
@@ -62,7 +71,7 @@ namespace EFCore.ChangeTriggers.SqlServer.Tests.Integration
                 .AddScoped<IUserReadRepository<ChangeSourceEntityUser, ChangeSourceEntityUserChange>, ChangeSourceEntityUserReadRepository>();
         }
 
-        public static IServiceCollection AddChangeSourceScalar(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddChangeSourceScalarServices(this IServiceCollection services, string connectionString)
         {
             return services
                 .AddSqlServerChangeTriggers<ChangeSourceScalarDbContext>(connectionString, options =>
