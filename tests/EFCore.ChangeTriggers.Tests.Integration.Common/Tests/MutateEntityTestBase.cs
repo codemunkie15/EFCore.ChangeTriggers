@@ -58,6 +58,28 @@ namespace EFCore.ChangeTriggers.Tests.Integration.Common.Tests
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
+        public async Task UpdateEntity_WithNullValues_InsertsChangeEntity_WithCorrectProperties(bool useAsync)
+        {
+            await RunMutateEntityTest(
+                useAsync,
+                OperationType.Update,
+                async () =>
+                {
+                    // Act
+                    var user = new TUser();
+                    dbContext.TestUsers.Add(user);
+                    await dbContext.SaveChangesSyncOrAsync(useAsync);
+
+                    user.Username = null;
+                    await dbContext.SaveChangesSyncOrAsync(useAsync);
+
+                    return user;
+                });
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
         public async Task DeleteEntity_InsertsChangeEntity_WithCorrectProperties(bool useAsync)
         {
             await RunMutateEntityTest(
